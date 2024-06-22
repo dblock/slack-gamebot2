@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::GamesEndpoint do
+describe SlackGamebot::Api::Endpoints::GamesEndpoint do
   include Api::Test::EndpointTest
 
   it_behaves_like 'a cursor api', Game

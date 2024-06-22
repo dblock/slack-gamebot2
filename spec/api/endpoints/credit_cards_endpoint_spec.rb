@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::CreditCardsEndpoint do
+describe SlackGamebot::Api::Endpoints::CreditCardsEndpoint do
   include Api::Test::EndpointTest
 
   context 'credit cards' do

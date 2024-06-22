@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::RootEndpoint do
+describe SlackGamebot::Api::Endpoints::RootEndpoint do
   include Api::Test::EndpointTest
 
   it 'hypermedia root' do

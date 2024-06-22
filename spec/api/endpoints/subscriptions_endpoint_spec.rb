@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::SubscriptionsEndpoint do
+describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
   include Api::Test::EndpointTest
 
   context 'subcriptions' do

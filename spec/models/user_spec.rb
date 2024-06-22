@@ -4,8 +4,7 @@ describe User do
   let(:team) { Fabricate(:team) }
 
   describe '#find_by_slack_mention!' do
-    let(:web_client) { double(Slack::Web::Client, users_info: nil) }
-    let(:client) { double(Slack::RealTime::Client, owner: team, web_client: web_client) }
+    let(:client) { double(Slack::Web::Client, owner: team, users_info: nil) }
     let!(:user) { Fabricate(:user, team: team, nickname: 'bob') }
 
     it 'finds by slack id' do
@@ -44,8 +43,7 @@ describe User do
 
   context 'with a mismatching user id in slack_mention' do
     let!(:user) { Fabricate(:user, team: team, nickname: 'bob') }
-    let(:web_client) { double(Slack::Web::Client, users_info: { user: { id: user.user_id, name: user.user_name } }) }
-    let(:client) { double(Slack::RealTime::Client, owner: team, web_client: web_client) }
+    let(:client) { double(Slack::Web::Client, owner: team, users_info: { user: { id: user.user_id, name: user.user_name } }) }
 
     it 'finds by different slack id returned from slack info' do
       expect(User.find_by_slack_mention!(client, '<@unknown>')).to eq user
@@ -53,8 +51,7 @@ describe User do
   end
 
   describe '#find_many_by_slack_mention!' do
-    let(:web_client) { double(Slack::Web::Client, users_info: nil) }
-    let(:client) { double(Slack::RealTime::Client, owner: team, web_client: web_client) }
+    let(:client) { double(Slack::Web::Client, owner: team, users_info: nil) }
     let!(:users) { [Fabricate(:user, team: team), Fabricate(:user, team: team)] }
 
     it 'finds by slack_id or slack_mention' do
@@ -70,11 +67,7 @@ describe User do
   end
 
   describe '#find_create_or_update_by_slack_id!', vcr: { cassette_name: 'user_info' } do
-    let(:client) { SlackRubyBot::Client.new }
-
-    before do
-      client.owner = team
-    end
+    let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
 
     context 'without a user' do
       it 'creates a user' do

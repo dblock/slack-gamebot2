@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::TeamsEndpoint do
+describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
   include Api::Test::EndpointTest
 
   let!(:game) { Fabricate(:game) }
@@ -121,17 +121,13 @@ describe Api::Endpoints::TeamsEndpoint do
 
     context 'register' do
       before do
-        oauth_access = {
-          'bot' => {
-            'bot_access_token' => 'token',
-            'bot_user_id' => 'bot_user_id'
-          },
+        oauth_access = Slack::Messages::Message.new(
           'access_token' => 'access_token',
-          'user_id' => 'activated_user_id',
-          'team_id' => 'team_id',
-          'team_name' => 'team_name'
-        }
-        allow_any_instance_of(Slack::Web::Client).to receive(:oauth_access).with(
+          'scope' => 'commands,incoming-webhook',
+          'authed_user' => { 'id' => 'activated_user_id' },
+          'team' => { 'id' => 'team_id', 'name' => 'team_name' }
+        )
+        allow_any_instance_of(Slack::Web::Client).to receive(:oauth_v2_access).with(
           hash_including(
             code: 'code',
             client_id: game.client_id,
@@ -149,9 +145,9 @@ describe Api::Endpoints::TeamsEndpoint do
           expect(team.name).to eq 'team_name'
           team = Team.find(team.id)
           expect(team.game).to eq game
-          expect(team.token).to eq 'token'
+          expect(team.token).to eq 'access_token'
           expect(team.aliases).to eq game.aliases
-          expect(team.bot_user_id).to eq 'bot_user_id'
+          expect(team.bot_user_id).to be_nil
           expect(team.activated_user_id).to eq 'activated_user_id'
         end.to change(Team, :count).by(1)
       end
@@ -165,9 +161,9 @@ describe Api::Endpoints::TeamsEndpoint do
           expect(team.name).to eq 'team_name'
           team = Team.find(team.id)
           expect(team.game).to eq game
-          expect(team.token).to eq 'token'
+          expect(team.token).to eq 'access_token'
           expect(team.aliases).to eq game.aliases
-          expect(team.bot_user_id).to eq 'bot_user_id'
+          expect(team.bot_user_id).to be_nil
           expect(team.activated_user_id).to eq 'activated_user_id'
         end.to change(Team, :count).by(1)
       end
@@ -175,17 +171,17 @@ describe Api::Endpoints::TeamsEndpoint do
       it 'reactivates a deactivated team' do
         allow_any_instance_of(Team).to receive(:activated!)
         expect(SlackRubyBotServer::Service.instance).to receive(:start!)
-        existing_team = Fabricate(:team, game: game, token: 'token', active: false, aliases: %w[foo bar])
+        existing_team = Fabricate(:team, game: game, token: 'access_token', active: false, aliases: %w[foo bar])
         expect do
           team = client.teams._post(code: 'code', game: existing_team.game.name)
           expect(team.team_id).to eq existing_team.team_id
           expect(team.name).to eq existing_team.name
           expect(team.active).to be true
           team = Team.find(team.id)
-          expect(team.token).to eq 'token'
+          expect(team.token).to eq 'access_token'
           expect(team.active).to be true
           expect(team.aliases).to eq %w[foo bar]
-          expect(team.bot_user_id).to eq 'bot_user_id'
+          expect(team.bot_user_id).to be_nil
           expect(team.activated_user_id).to eq 'activated_user_id'
         end.not_to change(Team, :count)
       end
@@ -193,7 +189,7 @@ describe Api::Endpoints::TeamsEndpoint do
       it 'reactivates a team deactivated on slack' do
         allow_any_instance_of(Team).to receive(:activated!)
         expect(SlackRubyBotServer::Service.instance).to receive(:start!)
-        existing_team = Fabricate(:team, game: game, token: 'token', aliases: %w[foo bar])
+        existing_team = Fabricate(:team, game: game, token: 'access_token', aliases: %w[foo bar])
         expect do
           expect_any_instance_of(Team).to receive(:ping!) { raise Slack::Web::Api::Errors::SlackError, 'invalid_auth' }
           team = client.teams._post(code: 'code', game: existing_team.game.name)
@@ -201,10 +197,10 @@ describe Api::Endpoints::TeamsEndpoint do
           expect(team.name).to eq existing_team.name
           expect(team.active).to be true
           team = Team.find(team.id)
-          expect(team.token).to eq 'token'
+          expect(team.token).to eq 'access_token'
           expect(team.active).to be true
           expect(team.aliases).to eq %w[foo bar]
-          expect(team.bot_user_id).to eq 'bot_user_id'
+          expect(team.bot_user_id).to be_nil
           expect(team.activated_user_id).to eq 'activated_user_id'
         end.not_to change(Team, :count)
       end
@@ -219,9 +215,9 @@ describe Api::Endpoints::TeamsEndpoint do
           expect(team.name).to eq existing_team.name
           expect(team.active).to be true
           team = Team.find(team.id)
-          expect(team.token).to eq 'token'
+          expect(team.token).to eq 'access_token'
           expect(team.active).to be true
-          expect(team.bot_user_id).to eq 'bot_user_id'
+          expect(team.bot_user_id).to be_nil
           expect(team.activated_user_id).to eq 'activated_user_id'
         end.not_to change(Team, :count)
       end
@@ -236,10 +232,10 @@ describe Api::Endpoints::TeamsEndpoint do
           expect(team.name).to eq existing_team.name
           expect(team.active).to be true
           team = Team.find(team.id)
-          expect(team.token).to eq 'token'
+          expect(team.token).to eq 'access_token'
           expect(team.active).to be true
           expect(team.aliases).to eq %w[foo bar]
-          expect(team.bot_user_id).to eq 'bot_user_id'
+          expect(team.bot_user_id).to be_nil
           expect(team.activated_user_id).to eq 'activated_user_id'
           expect(team.dead_at).to be_nil
         end.not_to change(Team, :count)
@@ -247,7 +243,7 @@ describe Api::Endpoints::TeamsEndpoint do
 
       it 'cannot switch games' do
         expect(SlackRubyBotServer::Service.instance).not_to receive(:start!)
-        Fabricate(:team, game: Fabricate(:game), token: 'token', active: false)
+        Fabricate(:team, game: Fabricate(:game), token: 'access_token', active: false)
         expect { client.teams._post(code: 'code', game_id: game.id.to_s) }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
           expect(json['error']).to eq 'Invalid Game'
@@ -258,7 +254,7 @@ describe Api::Endpoints::TeamsEndpoint do
         allow_any_instance_of(Team).to receive(:activated!)
         expect(SlackRubyBotServer::Service.instance).not_to receive(:start!)
         expect_any_instance_of(Team).to receive(:ping_if_active!)
-        existing_team = Fabricate(:team, game: game, token: 'token')
+        existing_team = Fabricate(:team, game: game, token: 'access_token')
         expect { client.teams._post(code: 'code', game: game.name) }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
           expect(json['message']).to eq "Team #{existing_team.name} is already registered."
@@ -325,17 +321,14 @@ describe Api::Endpoints::TeamsEndpoint do
       allow_any_instance_of(Team).to receive(:activated!).twice
       expect(SlackRubyBotServer::Service.instance).to receive(:start!)
       existing_team = Fabricate(:team, game: game, token: 'token', active: false, aliases: %w[foo bar])
-      oauth_access = {
-        'bot' => {
-          'bot_access_token' => 'another_token',
-          'bot_user_id' => 'bot_user_id'
-        },
-        'user_id' => 'activated_user_id',
-        'team_id' => existing_team.team_id,
-        'team_name' => existing_team.name
-      }
+      oauth_access = Slack::Messages::Message.new(
+        'access_token' => 'another_token',
+        'scope' => 'commands,incoming-webhook',
+        'authed_user' => { 'id' => 'activated_user_id' },
+        'team' => { 'id' => existing_team.team_id, 'name' => existing_team.name }
+      )
 
-      allow_any_instance_of(Slack::Web::Client).to receive(:oauth_access).with(
+      allow_any_instance_of(Slack::Web::Client).to receive(:oauth_v2_access).with(
         hash_including(
           code: 'code',
           client_id: game.client_id,
@@ -351,7 +344,7 @@ describe Api::Endpoints::TeamsEndpoint do
         expect(team.token).to eq 'another_token'
         expect(team.active).to be true
         expect(team.aliases).to eq %w[foo bar]
-        expect(team.bot_user_id).to eq 'bot_user_id'
+        expect(team.bot_user_id).to be_nil
         expect(team.activated_user_id).to eq 'activated_user_id'
       end.not_to change(Team, :count)
     end

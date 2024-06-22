@@ -50,12 +50,9 @@ describe Challenge do
   end
 
   describe '#split_teammates_and_opponents', vcr: { cassette_name: 'user_info' } do
-    let!(:challenger) { Fabricate(:user) }
-    let(:client) { SlackRubyBot::Client.new }
-
-    before do
-      client.owner = challenger.team
-    end
+    let!(:team) { Fabricate(:team) }
+    let!(:challenger) { Fabricate(:user, team: team) }
+    let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
 
     it 'splits a single challenge' do
       opponent = Fabricate(:user, user_name: 'username')
@@ -65,16 +62,16 @@ describe Challenge do
     end
 
     it 'splits a double challenge' do
-      teammate = Fabricate(:user)
-      opponent1 = Fabricate(:user, user_name: 'username')
-      opponent2 = Fabricate(:user)
+      teammate = Fabricate(:user, team: team)
+      opponent1 = Fabricate(:user, team: team, user_name: 'username')
+      opponent2 = Fabricate(:user, team: team)
       challengers, opponents = Challenge.split_teammates_and_opponents(client, challenger, ['username', opponent2.slack_mention, 'with', teammate.slack_mention])
       expect(challengers).to eq([challenger, teammate])
       expect(opponents).to eq([opponent1, opponent2])
     end
 
     it 'requires known opponents' do
-      allow(client.web_client).to receive(:users_info)
+      allow(client).to receive(:users_info)
       expect do
         Challenge.split_teammates_and_opponents(client, challenger, ['username'])
       end.to raise_error SlackGamebot::Error, "I don't know who username is! Ask them to _register_."
@@ -82,14 +79,11 @@ describe Challenge do
   end
 
   describe '#create_from_teammates_and_opponents!' do
-    let!(:challenger) { Fabricate(:user) }
-    let(:teammate) { Fabricate(:user) }
-    let(:opponent) { Fabricate(:user) }
-    let(:client) { SlackRubyBot::Client.new }
-
-    before do
-      client.owner = challenger.team
-    end
+    let(:team) { Fabricate(:team) }
+    let!(:challenger) { Fabricate(:user, team: team) }
+    let(:teammate) { Fabricate(:user, team: team) }
+    let(:opponent) { Fabricate(:user, team: team) }
+    let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
 
     it 'requires an opponent' do
       expect do
@@ -105,7 +99,7 @@ describe Challenge do
 
     context 'with unbalanced option enabled' do
       before do
-        challenger.team.update_attributes!(unbalanced: true)
+        team.update_attributes!(unbalanced: true)
       end
 
       it 'requires an opponent' do
@@ -114,7 +108,7 @@ describe Challenge do
         end.to raise_error Mongoid::Errors::Validations, /Number of teammates \(1\) and opponents \(0\) must match./
       end
 
-      it 'does not requires the same number of opponents' do
+      it 'does not require the same number of opponents' do
         expect do
           Challenge.create_from_teammates_and_opponents!(client, 'channel', challenger, [opponent.slack_mention, 'with', teammate.slack_mention])
         end.not_to raise_error
@@ -152,7 +146,7 @@ describe Challenge do
     end
 
     context 'with another doubles proposed challenge' do
-      let(:challenge) { Fabricate(:challenge, challengers: [Fabricate(:user), Fabricate(:user)], challenged: [Fabricate(:user), Fabricate(:user)]) }
+      let(:challenge) { Fabricate(:challenge, challengers: [Fabricate(:user, team: team), Fabricate(:user, team: team)], challenged: [Fabricate(:user, team: team), Fabricate(:user, team: team)]) }
 
       it 'cannot create a duplicate challenge for the challenger' do
         existing_challenger = challenge.challengers.last
@@ -224,7 +218,8 @@ describe Challenge do
   end
 
   describe '#cancel!' do
-    let(:challenge) { Fabricate(:challenge) }
+    let(:team) { Fabricate(:team) }
+    let(:challenge) { Fabricate(:challenge, team: team) }
 
     it 'can be canceled by challenger' do
       canceled_by = challenge.challengers.first
@@ -246,7 +241,7 @@ describe Challenge do
     end
 
     it 'cannot be canceled_by by another player' do
-      player = Fabricate(:user)
+      player = Fabricate(:user, team: team)
       expect do
         challenge.cancel!(player)
       end.to raise_error Mongoid::Errors::Validations, /Only #{challenge.challengers.map(&:display_name).and} or #{challenge.challenged.map(&:display_name).and} can cancel this challenge./

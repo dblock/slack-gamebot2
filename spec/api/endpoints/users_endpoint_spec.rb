@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::UsersEndpoint do
+describe SlackGamebot::Api::Endpoints::UsersEndpoint do
   include Api::Test::EndpointTest
 
   let!(:team) { Fabricate(:team, api: true) }

@@ -1,26 +1,10 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__))
+# frozen_string_literal: true
 
-ENV['RACK_ENV'] ||= 'development'
-
-require 'bundler/setup'
-Bundler.require :default, ENV.fetch('RACK_ENV', nil)
-
-require 'slack-ruby-bot-server-rtm'
-require 'slack-gamebot'
+require_relative 'app'
 
 NewRelic::Agent.manual_start
 
-SlackRubyBotServer::RealTime.configure do |config|
-  config.server_class = SlackGamebot::Server
-end
+SlackRubyBotServer::App.instance.prepare!
+SlackRubyBotServer::Service.start!
 
-SlackGamebot::App.instance.prepare!
-
-Thread.abort_on_exception = true
-
-Thread.new do
-  SlackRubyBotServer::Service.instance.start_from_database!
-  SlackGamebot::App.instance.after_start!
-end
-
-run Api::Middleware.instance
+run SlackRubyBotServer::Api::Middleware.instance

@@ -3,25 +3,12 @@ Slack-Gamebot
 
 [![Add to Slack](https://platform.slack-edge.com/img/add_to_slack@2x.png)](https://www.playplay.io)
 
-Or roll your own ...
-
 [![Tests](https://github.com/dblock/slack-gamebot/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/slack-gamebot/actions/workflows/test.yml)
 [![Code Climate](https://codeclimate.com/github/dblock/slack-gamebot/badges/gpa.svg)](https://codeclimate.com/github/dblock/slack-gamebot)
 
 A generic game bot for slack. Works for ping-pong (2, 4 or more players), chess, etc. Inspired by [slack-pongbot](https://github.com/andrewvy/slack-pongbot), but more robust, generic and easier to improve and contribute to.
 
 ![](screenshots/game.gif)
-
-## Installation
-
-Create a new Bot Integration under [services/new/bot](http://slack.com/services/new/bot). Note the API token.
-You will be able to invoke gamebot by the name you give it in the UI above.
-
-Run `SLACK_API_TOKEN=<your API token> foreman start`
-
-## Production Deployment
-
-See [DEPLOYMENT](DEPLOYMENT.md)
 
 ## Usage
 

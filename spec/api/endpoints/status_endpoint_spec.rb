@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::Endpoints::StatusEndpoint do
+describe SlackGamebot::Api::Endpoints::StatusEndpoint do
   include Api::Test::EndpointTest
 
   before do

@@ -23,7 +23,7 @@ module Api
       end
 
       def app
-        Api::Middleware.instance
+        SlackGamebot::Api::Middleware.instance
       end
     end
   end

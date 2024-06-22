@@ -89,7 +89,7 @@
                 PONG
               </p>
               <p>
-                <a class="add-to-slack" href="https://slack.com/oauth/authorize?scope=bot&amp;client_id=<%= Game.where(name: 'pong').first.try(:client_id) %>"><img alt="Add Pongbot to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+                <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= Game.where(name: 'pong').first.try(:client_id) %>"><img alt="Add Pongbot to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
               </p>
             </div>
             <div>
@@ -105,9 +105,9 @@
                   </p>
                   <p class='game'>
                     <%= game.name.upcase %>
-                  </p[>
+                  </p>
                   <p>
-                    <a class="add-to-slack" href="https://slack.com/oauth/authorize?scope=bot&amp;client_id=<%= game.client_id %>"><img alt="Add <%= game.name %> to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+                    <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= game.client_id %>"><img alt="Add <%= game.name %> to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
                   </p>
                 </div>
               </div>
