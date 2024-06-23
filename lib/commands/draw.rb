@@ -1,11 +1,10 @@
 module SlackGamebot
   module Commands
-    class Draw < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Draw < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'draw' do |client, data, match|
-        challenger = ::User.find_create_or_update_by_slack_id!(client, data.user)
-        expression = match['expression'] if match['expression']
+      user_in_channel_command 'draw' do |channel, challenger, data|
+        expression = data.match['expression'] if data.match['expression']
         arguments = expression.split.reject(&:blank?) if expression
 
         scores = nil
@@ -23,10 +22,10 @@ module SlackGamebot
             current = :teammates
           else
             if current == :opponents
-              opponents << ::User.find_by_slack_mention!(client, argument)
+              opponents << channel.find_or_create_by_mention!(argument)
               current = :scores unless multi_player
             elsif current == :teammates
-              teammates << ::User.find_by_slack_mention!(client, argument)
+              teammates << channel.find_or_create_by_mention!(argument)
               current = :scores if opponents.count == teammates.count
             else
               scores ||= []
@@ -35,29 +34,34 @@ module SlackGamebot
           end
         end
 
-        challenge = ::Challenge.find_by_user(client.owner, data.channel, challenger, [
+        challenge = ::Challenge.find_by_user(challenger,
+                                             [
                                                ChallengeState::PROPOSED,
                                                ChallengeState::ACCEPTED,
                                                ChallengeState::DRAWN
                                              ])
 
         if !(teammates & opponents).empty?
-          client.say(channel: data.channel, text: 'You cannot draw to yourself!', gif: 'loser')
-          logger.info "Cannot draw to yourself: #{client.owner} - #{match}"
+          data.team.slack_client.say(channel: data.channel, text: 'You cannot draw to yourself!', gif: 'loser')
+          logger.info "Cannot draw to yourself: #{channel} - #{match}"
         elsif opponents.any? && (challenge.nil? || (challenge.challengers != opponents && challenge.challenged != opponents))
           challenge = ::Challenge.create!(
-            team: client.owner, channel: data.channel,
-            created_by: challenger, updated_by: challenger,
-            challengers: teammates, challenged: opponents,
-            draw: [challenger], draw_scores: scores,
+            team: channel.team,
+            channel: channel,
+            created_by: challenger,
+            updated_by: challenger,
+            challengers: teammates,
+            challenged: opponents,
+            draw: [challenger],
+            draw_scores: scores,
             state: ChallengeState::DRAWN
           )
           messages = [
             "Match is a draw, waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",
             challenge.draw_scores? ? "Recorded #{Score.scores_to_string(challenge.draw_scores)}." : nil
           ].compact
-          client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
-          logger.info "DRAW TO: #{client.owner} - #{challenge}"
+          data.team.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
+          logger.info "DRAW TO: #{channel} - #{challenge}"
         elsif challenge
           if challenge.draw.include?(challenger)
             challenge.update_attributes!(draw_scores: scores) if scores
@@ -65,29 +69,29 @@ module SlackGamebot
               "Match is a draw, still waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",
               challenge.draw_scores? ? "Recorded #{Score.scores_to_string(challenge.draw_scores)}." : nil
             ].compact
-            client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
+            data.team.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
           else
             challenge.draw!(challenger, scores)
             if challenge.state == ChallengeState::PLAYED
-              client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'tie')
+              data.team.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'tie')
             else
               messages = [
                 "Match is a draw, waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",
                 challenge.draw_scores? ? "Recorded #{Score.scores_to_string(challenge.draw_scores)}." : nil
               ].compact
-              client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
+              data.team.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
             end
           end
-          logger.info "DRAW: #{client.owner} - #{challenge}"
+          logger.info "DRAW: #{channel} - #{challenge}"
         else
           match = ::Match.any_of({ winner_ids: challenger.id }, loser_ids: challenger.id).desc(:id).first
           if match&.tied?
             match.update_attributes!(scores: scores)
-            client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
-            logger.info "SCORED: #{client.owner} - #{match}"
+            data.team.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
+            logger.info "SCORED: #{channel} - #{match}"
           else
-            client.say(channel: data.channel, text: 'No challenge to draw!')
-            logger.info "DRAW: #{client.owner} - #{data.user}, N/A"
+            data.team.slack_client.say(channel: data.channel, text: 'No challenge to draw!')
+            logger.info "DRAW: #{channel} - #{data.user}, N/A"
           end
         end
       end

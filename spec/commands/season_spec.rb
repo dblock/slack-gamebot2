@@ -1,8 +1,7 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Season, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+describe SlackGamebot::Commands::Season do
+  include_context 'user'
 
   shared_examples_for 'season' do
     context 'no seasons' do
@@ -13,17 +12,17 @@ describe SlackGamebot::Commands::Season, vcr: { cassette_name: 'user_info' } do
 
     context 'current season' do
       before do
-        Fabricate(:match)
+        Fabricate(:match, channel: channel)
       end
 
       it 'returns current season' do
-        current_season = Season.new(team: team)
+        current_season = Season.new(team: team, channel: channel)
         expect(message: '@gamebot season').to respond_with_slack_message current_season.to_s
       end
 
       context 'after reset' do
         before do
-          Season.create!(team: team, created_by: User.first)
+          Season.create!(team: team, channel: channel, created_by: user)
         end
 
         it 'returns current season' do
@@ -34,10 +33,12 @@ describe SlackGamebot::Commands::Season, vcr: { cassette_name: 'user_info' } do
   end
 
   it_behaves_like 'season'
+
   context 'with another team' do
     let!(:team2) { Fabricate(:team) }
-    let!(:match2) { Fabricate(:match, team: team2) }
-    let!(:season2) { Fabricate(:season, team: team2) }
+    let!(:channel2) { Fabricate(:channel, team: team2) }
+    let!(:match2) { Fabricate(:match, channel: channel2, team: team2) }
+    let!(:season2) { Fabricate(:season, channel: channel2, team: team2) }
 
     it_behaves_like 'season'
   end

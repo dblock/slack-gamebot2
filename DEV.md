@@ -24,21 +24,11 @@ Create a Slack team [here](https://slack.com/create).
 
 Create a test app [here](https://api.slack.com/apps). This gives you a client ID and a client secret.
 
-Under _Features/OAuth & Permissions_, configure the redirect URL to `http://localhost:5000?game=pong`.
+Under _Features/OAuth & Permissions_, configure the redirect URL to `http://localhost:5000`.
 
 Add the following Permission Scope.
 
-* Add a bot user with the username @bot.
-
-### Run a Console
-
-Create a game from the console.
-
-```
-$ script/console
-
-2.3.1> Game.create!(name: 'pong', client_id: 'slack client id', client_secret: 'slack client secret', bot_name: 'pongbot', aliases: ['pp', 'pong'])
-```
+- TODO
 
 ### Stripe Keys
 

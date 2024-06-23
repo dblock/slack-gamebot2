@@ -1,12 +1,12 @@
 module SlackGamebot
   module Commands
-    class Leaderboard < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Leaderboard < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::Channel
 
-      subscribed_command 'leaderboard' do |client, data, match|
-        max = client.owner.leaderboard_max
+      channel_command 'leaderboard' do |channel, data, _match|
+        max = channel.leaderboard_max
         reverse = false
-        arguments = match['expression'].split.reject(&:blank?) if match['expression']
+        arguments = data.match['expression'].split.reject(&:blank?) if data.match['expression']
         arguments ||= []
         number = arguments.shift
         if number
@@ -21,18 +21,18 @@ module SlackGamebot
                   Integer(number)
                 end
         end
-        ranked_players = client.owner.users.ranked
+        ranked_players = channel.users.ranked
         if ranked_players.any?
           ranked_players = ranked_players.send(reverse ? :desc : :asc, :rank)
           ranked_players = ranked_players.limit(max) if max && max >= 1
           message = ranked_players.each_with_index.map do |user, index|
             "#{reverse ? index + 1 : user.rank}. #{user}"
           end.join("\n")
-          client.say(channel: data.channel, text: message)
+          data.team.slack_client.say(channel: data.channel, text: message)
         else
-          client.say(channel: data.channel, text: "There're no ranked players.", gif: 'empty')
+          data.team.slack_client.say(channel: data.channel, text: "There're no ranked players.", gif: 'empty')
         end
-        logger.info "LEADERBOARD #{max || '∞'}: #{client.owner} - #{data.user}"
+        logger.info "LEADERBOARD #{max || '∞'}: #{channel} - #{data.user}"
       end
     end
   end

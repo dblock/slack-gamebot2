@@ -1,12 +1,12 @@
 module SlackGamebot
   module Commands
-    class Register < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Register < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'register' do |client, data, _match|
-        ts = Time.now.utc
-        user = ::User.find_create_or_update_by_slack_id!(client, data.user)
+      user_in_channel_command 'register' do |channel, user, data|
+        ts = Time.now.utc - 1
         user.register! if user && !user.registered?
+        user.promote! if user && !channel.captains.any?
         message = if user.created_at >= ts
                     "Welcome <@#{data.user}>! You're ready to play."
                   elsif user.updated_at >= ts
@@ -15,8 +15,8 @@ module SlackGamebot
                     "Welcome back <@#{data.user}>, you're already registered."
                   end
         message += " You're also team captain." if user.captain?
-        client.say(channel: data.channel, text: message, gif: 'welcome')
-        logger.info "REGISTER: #{client.owner} - #{data.user}"
+        data.team.slack_client.say(channel: data.channel, text: message, gif: 'welcome')
+        logger.info "REGISTER: #{channel} - #{data.user}"
         user
       end
     end

@@ -1,24 +1,23 @@
 module SlackGamebot
   module Commands
-    class Cancel < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Cancel < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'cancel' do |client, data, _match|
-        player = ::User.find_create_or_update_by_slack_id!(client, data.user)
-        challenge = ::Challenge.find_by_user(client.owner, data.channel, player)
+      user_in_channel_command 'cancel' do |channel, player, data|
+        challenge = ::Challenge.find_by_user(player)
         if challenge
           challenge.cancel!(player)
           if challenge.challengers.include?(player)
-            client.say(channel: data.channel, text: "#{challenge.challengers.map(&:display_name).and} canceled a challenge against #{challenge.challenged.map(&:display_name).and}.", gif: 'chicken')
+            data.team.slack_client.say(channel: data.channel, text: "#{challenge.challengers.map(&:display_name).and} canceled a challenge against #{challenge.challenged.map(&:display_name).and}.", gif: 'chicken')
           elsif challenge.challenged.include?(player)
-            client.say(channel: data.channel, text: "#{challenge.challenged.map(&:display_name).and} canceled a challenge against #{challenge.challengers.map(&:display_name).and}.", gif: 'chicken')
+            data.team.slack_client.say(channel: data.channel, text: "#{challenge.challenged.map(&:display_name).and} canceled a challenge against #{challenge.challengers.map(&:display_name).and}.", gif: 'chicken')
           else
-            client.say(channel: data.channel, text: "#{player.display_name} canceled #{challenge}.", gif: 'chicken')
+            data.team.slack_client.say(channel: data.channel, text: "#{player.display_name} canceled #{challenge}.", gif: 'chicken')
           end
-          logger.info "CANCEL: #{client.owner} - #{challenge}"
+          logger.info "CANCEL: #{channel} - #{challenge}"
         else
-          client.say(channel: data.channel, text: 'No challenge to cancel!')
-          logger.info "CANCEL: #{client.owner} -  #{data.user}, N/A"
+          data.team.slack_client.say(channel: data.channel, text: 'No challenge to cancel!')
+          logger.info "CANCEL: #{channel} -  #{data.user}, N/A"
         end
       end
     end

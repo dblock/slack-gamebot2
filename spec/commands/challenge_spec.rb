@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
-  let(:user) { Fabricate(:user, user_name: 'username') }
-  let(:opponent) { Fabricate(:user) }
+describe SlackGamebot::Commands::Challenge do
+  include_context 'channel'
+
+  let(:user) { Fabricate(:user, channel: channel, user_name: 'username') }
+  let(:opponent) { Fabricate(:user, channel: channel) }
 
   it 'creates a singles challenge by user id' do
     expect do
-      expect(message: "@gamebot challenge <@#{opponent.user_id}>", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+      expect(message: "@gamebot challenge <@#{opponent.user_id}>", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
     challenge = Challenge.last
-    expect(challenge.channel).to eq 'pongbot'
+    expect(challenge.channel).to eq channel
     expect(challenge.created_by).to eq user
     expect(challenge.challengers).to eq [user]
     expect(challenge.challenged).to eq [opponent]
@@ -21,22 +21,22 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
 
   it 'creates a singles challenge by user name' do
     expect do
-      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
   end
 
   it 'creates a doubles challenge by user name' do
-    opponent2 = Fabricate(:user, team: team)
-    teammate = Fabricate(:user, team: team)
+    opponent2 = Fabricate(:user, channel: channel)
+    teammate = Fabricate(:user, channel: channel)
     expect do
-      expect(message: "@gamebot challenge #{opponent.slack_mention} #{opponent2.user_name} with #{teammate.user_name}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+      expect(message: "@gamebot challenge #{opponent.slack_mention} #{opponent2.user_name} with #{teammate.user_name}", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} and #{teammate.slack_mention} challenged #{opponent.slack_mention} and #{opponent2.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
     challenge = Challenge.last
-    expect(challenge.channel).to eq 'pongbot'
+    expect(challenge.channel).to eq channel
     expect(challenge.created_by).to eq user
     expect(challenge.challengers).to eq [teammate, user]
     expect(challenge.challenged).to eq [opponent2, opponent]
@@ -44,7 +44,7 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
 
   it 'creates a singles challenge by user name case-insensitive' do
     expect do
-      expect(message: "@gamebot challenge #{opponent.user_name.capitalize}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+      expect(message: "@gamebot challenge #{opponent.user_name.capitalize}", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
@@ -52,17 +52,17 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
 
   it 'requires an opponent' do
     expect do
-      expect(message: '@gamebot challenge', user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+      expect(message: '@gamebot challenge', user: user, channel: channel).to respond_with_slack_message(
         'Number of teammates (1) and opponents (0) must match.'
       )
     end.not_to change(Challenge, :count)
   end
 
   it 'requires the same number of opponents' do
-    opponent1 = Fabricate(:user)
-    opponent2 = Fabricate(:user)
+    opponent1 = Fabricate(:user, channel: channel)
+    opponent2 = Fabricate(:user, channel: channel)
     expect do
-      expect(message: "@gamebot challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+      expect(message: "@gamebot challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
         'Number of teammates (1) and opponents (2) must match.'
       )
     end.not_to change(Challenge, :count)
@@ -70,14 +70,14 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
 
   context 'with unbalanced option enabled' do
     before do
-      team.update_attributes!(unbalanced: true)
+      channel.update_attributes!(unbalanced: true)
     end
 
     it 'allows different number of opponents' do
-      opponent1 = Fabricate(:user)
-      opponent2 = Fabricate(:user)
+      opponent1 = Fabricate(:user, channel: channel)
+      opponent2 = Fabricate(:user, channel: channel)
       expect do
-        expect(message: "@gamebot challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+        expect(message: "@gamebot challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
           "#{user.slack_mention} challenged #{opponent1.slack_mention} and #{opponent2.slack_mention} to a match!"
         )
       end.to change(Challenge, :count).by(1)
@@ -88,9 +88,9 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
   end
 
   it 'does not butcher names with special characters' do
-    allow(client).to receive(:users_info)
-    expect(message: '@gamebot challenge Jung-hwa', user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
-      "I don't know who Jung-hwa is! Ask them to _register_."
+    allow(channel.team.slack_client).to receive(:users_info)
+    expect(message: '@gamebot challenge Jung-hwa', user: user, channel: channel).to respond_with_slack_message(
+      "I don't know who Jung-hwa is!"
     )
   end
 
@@ -100,26 +100,26 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
     end
 
     it 'by slack id' do
-      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
-        "I don't know who #{opponent.slack_mention} is! Ask them to _register_."
+      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+        "I know who #{opponent.slack_mention} is, but they are unregistered. Ask them to _register_."
       )
     end
 
     it 'requires the opponent to be registered by name' do
-      expect(message: "@gamebot challenge #{opponent.user_name}", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
-        "I don't know who #{opponent.user_name} is! Ask them to _register_."
+      expect(message: "@gamebot challenge #{opponent.user_name}", user: user, channel: channel).to respond_with_slack_message(
+        "I know who #{opponent.user_name} is, but they are unregistered. Ask them to _register_."
       )
     end
   end
 
   context 'subscription expiration' do
     before do
-      team.update_attributes!(created_at: 3.weeks.ago)
+      team.update_attributes!(subscribed: false, created_at: 3.weeks.ago)
     end
 
     it 'prevents new challenges' do
-      expect(message: "@gamebot challenge <@#{opponent.user_id}>", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
-        "Your trial subscription has expired. Subscribe your team for $29.99 a year at https://www.playplay.io/subscribe?team_id=#{team.team_id}&game=#{team.game.name}."
+      expect(message: "@gamebot challenge <@#{opponent.user_id}>", user: user, channel: channel).to respond_with_slack_message(
+        "Your trial subscription has expired. Subscribe your team for $49.99 a year at https://gamebot.playplay.io/subscribe?team_id=#{team.team_id}."
       )
     end
   end
@@ -127,12 +127,12 @@ describe SlackGamebot::Commands::Challenge, vcr: { cassette_name: 'user_info' } 
   User::EVERYONE.each do |username|
     it "challenges #{username}" do
       expect do
-        expect(message: "@gamebot challenge <!#{username}>", user: user.user_id, channel: 'pongbot').to respond_with_slack_message(
+        expect(message: "@gamebot challenge <!#{username}>", user: user, channel: channel).to respond_with_slack_message(
           "#{user.slack_mention} challenged anyone to a match!"
         )
       end.to change(Challenge, :count).by(1)
       challenge = Challenge.last
-      expect(challenge.channel).to eq 'pongbot'
+      expect(challenge.channel).to eq channel
       expect(challenge.created_by).to eq user
       expect(challenge.challengers).to eq [user]
       expect(challenge.challenged).to eq team.users.everyone

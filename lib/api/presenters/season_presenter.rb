@@ -11,9 +11,9 @@ module SlackGamebot
 
         collection :user_ranks, extend: UserRankPresenter, embedded: true
 
-        link :team do |opts|
+        link :channel do |opts|
           request = Grape::Request.new(opts[:env])
-          "#{request.base_url}/api/teams/#{represented.team.id}" if represented.team
+          "#{request.base_url}/api/channels/#{represented.channel.id}" if represented.channel
         end
 
         link :created_by do |opts|

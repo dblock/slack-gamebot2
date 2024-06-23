@@ -1,17 +1,16 @@
 module SlackGamebot
   module Commands
-    class Team < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Team < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'team' do |client, data, _match|
-        ::User.find_create_or_update_by_slack_id!(client, data.user)
-        captains = if client.owner.captains.count == 1
-                     ", captain #{client.owner.captains.first.user_name}"
-                   elsif client.owner.captains.count > 1
-                     ", captains #{client.owner.captains.map(&:display_name).and}"
+      user_in_channel_command 'team' do |channel, _user, data|
+        captains = if channel.captains.count == 1
+                     ", captain #{channel.captains.first.display_name}"
+                   elsif channel.captains.count > 1
+                     ", captains #{channel.captains.map(&:display_name).and}"
                    end
-        client.say(channel: data.channel, text: "Team _#{client.owner.name}_ (#{client.owner.team_id})#{captains}.", gif: 'team')
-        logger.info "TEAM: #{client.owner} - #{data.user}"
+        data.team.slack_client.say(channel: data.channel, text: "Team #{channel.team.team_id} #{channel.slack_mention}#{captains}.", gif: 'team')
+        logger.info "TEAM: #{channel} - #{data.user}"
       end
     end
   end

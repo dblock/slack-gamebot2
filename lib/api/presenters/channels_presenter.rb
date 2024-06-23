@@ -1,13 +1,13 @@
 module SlackGamebot
   module Api
     module Presenters
-      module GamesPresenter
+      module ChannelsPresenter
         include Roar::JSON::HAL
         include Roar::Hypermedia
         include Grape::Roar::Representer
         include Api::Presenters::PaginatedPresenter
 
-        collection :results, extend: GamePresenter, as: :games, embedded: true
+        collection :results, extend: ChannelPresenter, as: :channels, embedded: true
       end
     end
   end

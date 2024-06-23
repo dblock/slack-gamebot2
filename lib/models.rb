@@ -1,5 +1,5 @@
-require_relative 'models/game'
 require_relative 'models/team'
+require_relative 'models/channel'
 require_relative 'models/elo'
 require_relative 'models/user'
 require_relative 'models/user_rank'

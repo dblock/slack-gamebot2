@@ -1,49 +1,34 @@
 require 'spec_helper'
 
 describe 'Subscribe', :js, type: :feature do
-  let!(:game) { Fabricate(:game, name: 'pong') }
-
   context 'without team_id' do
     before do
       visit '/subscribe'
     end
 
     it 'requires a team' do
-      expect(find_by_id('messages')).to have_text('Missing or invalid team ID and/or game.')
-      find_by_id('subscribe', visible: false)
-    end
-  end
-
-  context 'without game' do
-    let!(:team) { Fabricate(:team) }
-
-    before do
-      visit "/subscribe?team_id=#{team.team_id}"
-    end
-
-    it 'requires a game' do
-      expect(find_by_id('messages')).to have_text('Missing or invalid team ID and/or game.')
+      expect(find_by_id('messages')).to have_text('Missing or invalid team ID.')
       find_by_id('subscribe', visible: false)
     end
   end
 
   context 'for a subscribed team' do
-    let!(:team) { Fabricate(:team, game: game, subscribed: true) }
+    let!(:team) { Fabricate(:team, subscribed: true) }
 
     before do
-      visit "/subscribe?team_id=#{team.team_id}&game=#{team.game.name}"
+      visit "/subscribe?team_id=#{team.team_id}"
     end
 
     it 'displays an error' do
-      expect(find_by_id('messages')).to have_text("Team #{team.name} is already subscribed to #{team.game.name}, thank you.")
+      expect(find_by_id('messages')).to have_text("Team #{team.name} is already subscribed, thank you.")
       find_by_id('subscribe', visible: false)
     end
   end
 
   shared_examples 'subscribes' do
     it 'subscribes' do
-      visit "/subscribe?team_id=#{team.team_id}&game=#{team.game.name}"
-      expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} to #{team.game.name} for $29.99 a year!")
+      visit "/subscribe?team_id=#{team.team_id}"
+      expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} for $49.99 a year!")
       find_by_id('subscribe', visible: true)
 
       expect(Stripe::Customer).to receive(:create).and_return('id' => 'customer_id')
@@ -64,7 +49,7 @@ describe 'Subscribe', :js, type: :feature do
 
       sleep 5
 
-      expect(find_by_id('messages')).to have_text("Team #{team.name} successfully subscribed to #{team.game.name}.\nThank you!")
+      expect(find_by_id('messages')).to have_text("Team #{team.name} successfully subscribed.\nThank you!")
       find_by_id('subscribe', visible: false)
 
       team.reload
@@ -83,33 +68,19 @@ describe 'Subscribe', :js, type: :feature do
     end
 
     context 'a team' do
-      let!(:team) { Fabricate(:team, game: game) }
-
-      it_behaves_like 'subscribes'
-    end
-
-    context 'a team with two games' do
-      let!(:team) { Fabricate(:team, game: game) }
-      let!(:team2) { Fabricate(:team, team_id: team.team_id, game: Fabricate(:game)) }
-
-      it_behaves_like 'subscribes'
-    end
-
-    context 'a second team with two games' do
-      let!(:team2) { Fabricate(:team, game: Fabricate(:game)) }
-      let!(:team) { Fabricate(:team, game: game, team_id: team2.team_id) }
+      let!(:team) { Fabricate(:team) }
 
       it_behaves_like 'subscribes'
     end
 
     context 'with a coupon' do
-      let!(:team) { Fabricate(:team, game: game) }
+      let!(:team) { Fabricate(:team) }
 
       it 'applies the coupon' do
         coupon = double(Stripe::Coupon, id: 'coupon-id', amount_off: 1200)
         expect(Stripe::Coupon).to receive(:retrieve).with('coupon-id').and_return(coupon)
-        visit "/subscribe?team_id=#{team.team_id}&game=#{team.game.name}&coupon=coupon-id"
-        expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} to #{team.game.name} for $17.99 for the first year and $29.99 thereafter with coupon coupon-id!")
+        visit "/subscribe?team_id=#{team.team_id}&coupon=coupon-id"
+        expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} for $37.99 for the first year and $49.99 thereafter with coupon coupon-id!")
         find_by_id('subscribe', visible: true)
 
         expect(Stripe::Customer).to receive(:create).with(hash_including(coupon: 'coupon-id')).and_return('id' => 'customer_id')
@@ -130,7 +101,7 @@ describe 'Subscribe', :js, type: :feature do
 
         sleep 5
 
-        expect(find_by_id('messages')).to have_text("Team #{team.name} successfully subscribed to #{team.game.name}.\nThank you!")
+        expect(find_by_id('messages')).to have_text("Team #{team.name} successfully subscribed.\nThank you!")
         find_by_id('subscribe', visible: false)
 
         team.reload

@@ -3,9 +3,10 @@ module SlackGamebot
     module Endpoints
       class ChallengesEndpoint < Grape::API
         format :json
-        helpers Api::Helpers::CursorHelpers
-        helpers Api::Helpers::SortHelpers
-        helpers Api::Helpers::PaginationParameters
+        helpers Helpers::AuthHelpers
+        helpers Helpers::CursorHelpers
+        helpers Helpers::SortHelpers
+        helpers Helpers::PaginationParameters
 
         namespace :challenges do
           desc 'Get a challenge.'
@@ -14,20 +15,20 @@ module SlackGamebot
           end
           get ':id' do
             challenge = Challenge.find(params[:id]) || error!('Not Found', 404)
-            error!('Not Found', 404) unless challenge.team.api?
+            authorize_channel! challenge.channel
             present challenge, with: SlackGamebot::Api::Presenters::ChallengePresenter
           end
 
           desc 'Get all the challenges.'
           params do
-            requires :team_id, type: String
+            requires :channel_id, type: String, desc: 'Channel ID.'
             use :pagination
           end
           sort Challenge::SORT_ORDERS
           get do
-            team = Team.find(params[:team_id]) || error!('Not Found', 404)
-            error!('Not Found', 404) unless team.api?
-            challenges = paginate_and_sort_by_cursor(team.challenges, default_sort_order: '-_id')
+            channel = Channel.find(params[:channel_id]) || error!('Not Found', 404)
+            authorize_channel! channel
+            challenges = paginate_and_sort_by_cursor(channel.challenges, default_sort_order: '-_id')
             present challenges, with: SlackGamebot::Api::Presenters::ChallengesPresenter
           end
         end

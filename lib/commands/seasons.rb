@@ -1,20 +1,20 @@
 module SlackGamebot
   module Commands
-    class Seasons < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Seasons < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::Channel
 
-      subscribed_command 'seasons' do |client, data, _match|
-        current_season = ::Season.new(team: client.owner)
+      channel_command 'seasons' do |channel, data, _match|
+        current_season = ::Season.new(team: channel.team, channel: channel)
         if current_season.valid?
-          message = [current_season, client.owner.seasons.desc(:_id)].flatten.map(&:to_s).join("\n")
-          client.say(channel: data.channel, text: message)
-        elsif ::Season.where(team: client.owner).any? # don't use client.owner.seasons, would include current_season
-          message = client.owner.seasons.desc(:_id).map(&:to_s).join("\n")
-          client.say(channel: data.channel, text: message)
+          message = [current_season, channel.seasons.desc(:_id)].flatten.map(&:to_s).join("\n")
+          data.team.slack_client.say(channel: data.channel, text: message)
+        elsif ::Season.where(channel: channel).any? # don't use channel.seasons, would include current_season
+          message = channel.seasons.desc(:_id).map(&:to_s).join("\n")
+          data.team.slack_client.say(channel: data.channel, text: message)
         else
-          client.say(channel: data.channel, text: "There're no seasons.", gif: %w[winter summer fall spring].sample)
+          data.team.slack_client.say(channel: data.channel, text: "There're no seasons.", gif: %w[winter summer fall spring].sample)
         end
-        logger.info "SEASONS: #{client.owner} - #{data.user}"
+        logger.info "SEASONS: #{channel} - #{data.user}"
       end
     end
   end

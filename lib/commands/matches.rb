@@ -1,12 +1,12 @@
 module SlackGamebot
   module Commands
-    class Matches < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Matches < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::Channel
 
-      subscribed_command 'matches' do |client, data, match|
+      channel_command 'matches' do |channel, data, _match|
         totals = {}
         totals.default = 0
-        arguments = match['expression'].split.reject(&:blank?) if match['expression']
+        arguments = data.match['expression'].split.reject(&:blank?) if data.match['expression']
         # limit
         max = 10
         if arguments&.any?
@@ -25,10 +25,9 @@ module SlackGamebot
           end
         end
         # users
-        team = client.owner
-        users = ::User.find_many_by_slack_mention!(client, arguments) if arguments&.any?
+        users = channel.find_or_create_many_by_mention!(arguments) if arguments&.any?
         user_ids = users.map(&:id) if users&.any?
-        matches = team.matches.current
+        matches = channel.matches.current
         matches = matches.any_of({ :winner_ids.in => user_ids }, :loser_ids.in => user_ids) if user_ids&.any?
         matches.each do |m|
           totals[m.to_s] += 1
@@ -45,8 +44,8 @@ module SlackGamebot
             "#{s} #{count} times"
           end
         end.join("\n")
-        client.say(channel: data.channel, text: message.empty? ? 'No matches.' : message)
-        logger.info "MATCHES: #{team} - #{data.user}"
+        data.team.slack_client.say(channel: data.channel, text: message.empty? ? 'No matches.' : message)
+        logger.info "MATCHES: #{channel} - #{data.user}"
       end
     end
   end

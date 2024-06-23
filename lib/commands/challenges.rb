@@ -1,11 +1,10 @@
 module SlackGamebot
   module Commands
-    class Challenges < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Challenges < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::Channel
 
-      subscribed_command 'challenges' do |client, data, _match|
-        challenges = ::Challenge.where(
-          channel: data.channel,
+      channel_command 'challenges' do |channel, data|
+        challenges = channel.challenges.where(
           :state.in => [
             ChallengeState::PROPOSED,
             ChallengeState::ACCEPTED,
@@ -17,11 +16,11 @@ module SlackGamebot
           challenges_s = challenges.map do |challenge|
             "#{challenge} was #{challenge.state} #{(challenge.updated_at || challenge.created_at).ago_in_words}"
           end.join("\n")
-          client.say(channel: data.channel, text: challenges_s, gif: 'memories')
+          data.team.slack_client.say(channel: data.channel, text: challenges_s, gif: 'memories')
         else
-          client.say(channel: data.channel, text: 'All the challenges have been played.', gif: 'boring')
+          data.team.slack_client.say(channel: data.channel, text: 'All the challenges have been played.', gif: 'boring')
         end
-        logger.info "CHALLENGES: #{client.owner} - #{data.user}"
+        logger.info "CHALLENGES: #{channel} - #{data.user}"
       end
     end
   end

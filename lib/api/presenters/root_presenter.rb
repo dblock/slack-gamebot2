@@ -16,49 +16,49 @@ module SlackGamebot
 
         link :users do |opts|
           {
-            href: "#{base_url(opts)}/api/users/#{link_params(Api::Helpers::PaginationParameters::ALL, :team_id, :captain)}",
+            href: "#{base_url(opts)}/api/users/#{link_params(Api::Helpers::PaginationParameters::ALL, :channel_id, :captain)}",
             templated: true
           }
         end
 
         link :challenges do |opts|
           {
-            href: "#{base_url(opts)}/api/challenges/#{link_params(Api::Helpers::PaginationParameters::ALL, :team_id)}",
+            href: "#{base_url(opts)}/api/challenges/#{link_params(Api::Helpers::PaginationParameters::ALL, :channel_id)}",
             templated: true
           }
         end
 
         link :matches do |opts|
           {
-            href: "#{base_url(opts)}/api/matches/#{link_params(Api::Helpers::PaginationParameters::ALL, :team_id)}",
+            href: "#{base_url(opts)}/api/matches/#{link_params(Api::Helpers::PaginationParameters::ALL, :channel_id)}",
             templated: true
           }
         end
 
         link :current_season do |opts|
           {
-            href: "#{base_url(opts)}/api/seasons/current/{?team_id}",
+            href: "#{base_url(opts)}/api/seasons/current/{?channel_id}",
             templated: true
           }
         end
 
         link :seasons do |opts|
           {
-            href: "#{base_url(opts)}/api/seasons/#{link_params(Api::Helpers::PaginationParameters::ALL, :team_id)}",
+            href: "#{base_url(opts)}/api/seasons/#{link_params(Api::Helpers::PaginationParameters::ALL, :channel_id)}",
             templated: true
           }
         end
 
         link :teams do |opts|
           {
-            href: "#{base_url(opts)}/api/teams/#{link_params(Api::Helpers::PaginationParameters::ALL, :active, :game_id)}",
+            href: "#{base_url(opts)}/api/teams/#{link_params(Api::Helpers::PaginationParameters::ALL, :active)}",
             templated: true
           }
         end
 
-        link :games do |opts|
+        link :channels do |opts|
           {
-            href: "#{base_url(opts)}/api/games/#{link_params(Api::Helpers::PaginationParameters::ALL)}",
+            href: "#{base_url(opts)}/api/channels/#{link_params(Api::Helpers::PaginationParameters::ALL, :team_id)}",
             templated: true
           }
         end
@@ -71,7 +71,7 @@ module SlackGamebot
           "#{base_url(opts)}/api/credit_cards"
         end
 
-        %i[challenge match user season team game].each do |model|
+        %i[challenge match user season team channel].each do |model|
           link model do |opts|
             {
               href: "#{base_url(opts)}/api/#{model.to_s.pluralize}/{id}",

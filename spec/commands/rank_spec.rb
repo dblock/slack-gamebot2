@@ -1,34 +1,33 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Rank, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+describe SlackGamebot::Commands::Rank do
+  include_context 'channel'
 
   shared_examples_for 'rank' do
-    let!(:user_elo_12) { Fabricate(:user, elo: 12, wins: 0, losses: 25) }
-    let!(:user_elo_38) { Fabricate(:user, elo: 38, wins: 3, losses: 3) }
-    let!(:user_elo_42) { Fabricate(:user, elo: 42, wins: 3, losses: 2) }
-    let!(:user_elo_67) { Fabricate(:user, elo: 67, wins: 5, losses: 2) }
-    let!(:user_elo_98) { Fabricate(:user, elo: 98, wins: 7, losses: 0) }
+    let!(:user_elo_12) { Fabricate(:user, channel: channel, elo: 12, wins: 0, losses: 25) }
+    let!(:user_elo_38) { Fabricate(:user, channel: channel, elo: 38, wins: 3, losses: 3) }
+    let!(:user_elo_42) { Fabricate(:user, channel: channel, elo: 42, wins: 3, losses: 2) }
+    let!(:user_elo_67) { Fabricate(:user, channel: channel, elo: 67, wins: 5, losses: 2) }
+    let!(:user_elo_98) { Fabricate(:user, channel: channel, elo: 98, wins: 7, losses: 0) }
     it 'ranks the requester if no argument is passed' do
-      expect(message: '@gamebot rank', user: user_elo_42.user_id).to respond_with_slack_message '3. username: 3 wins, 2 losses (elo: 42)'
+      expect(message: '@gamebot rank', user: user_elo_42).to respond_with_slack_message "3. #{user_elo_42.user_name}: 3 wins, 2 losses (elo: 42)"
     end
 
     it 'ranks someone who is not ranked' do
-      user = Fabricate(:user, team: team)
-      expect(message: '@gamebot rank', user: user.user_id).to respond_with_slack_message 'username: not ranked'
+      user = Fabricate(:user, channel: channel)
+      expect(message: '@gamebot rank', user: user).to respond_with_slack_message "#{user.user_name}: not ranked"
     end
 
     it 'ranks someone who is not ranked by default' do
-      user1 = Fabricate(:user, team: team)
-      Fabricate(:user, team: team)
-      expect(message: '@gamebot rank', user: user1.user_id).to respond_with_slack_message 'username: not ranked'
+      user1 = Fabricate(:user, channel: channel)
+      Fabricate(:user, channel: channel)
+      expect(message: '@gamebot rank', user: user1).to respond_with_slack_message "#{user1.user_name}: not ranked"
     end
 
     it 'ranks someone who is not ranked by name' do
-      user1 = Fabricate(:user, team: team)
-      Fabricate(:user, team: team)
-      expect(message: "@gamebot rank #{user1.user_name}", user: user1.user_id).to respond_with_slack_message "#{user1.user_name}: not ranked"
+      user1 = Fabricate(:user, channel: channel)
+      Fabricate(:user, channel: channel)
+      expect(message: "@gamebot rank #{user1.user_name}", user: user1).to respond_with_slack_message "#{user1.user_name}: not ranked"
     end
 
     it 'ranks one player by slack mention' do
@@ -46,10 +45,12 @@ describe SlackGamebot::Commands::Rank, vcr: { cassette_name: 'user_info' } do
   end
 
   it_behaves_like 'rank'
+
   context 'with another team' do
     let!(:team2) { Fabricate(:team) }
-    let!(:user2_elo_42) { Fabricate(:user, team: team2, elo: 42, wins: 3, losses: 2) }
-    let!(:user2_elo_48) { Fabricate(:user, team: team2, elo: 48, wins: 2, losses: 3) }
+    let!(:channel2) { Fabricate(:channel, team: team2) }
+    let!(:user2_elo_42) { Fabricate(:user, channel: channel2, elo: 42, wins: 3, losses: 2) }
+    let!(:user2_elo_48) { Fabricate(:user, channel: channel2, elo: 48, wins: 2, losses: 3) }
 
     it_behaves_like 'rank'
   end

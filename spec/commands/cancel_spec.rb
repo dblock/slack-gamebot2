@@ -1,12 +1,11 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Cancel, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+describe SlackGamebot::Commands::Cancel do
+  include_context 'channel'
 
   context 'challenger' do
-    let(:challenger) { Fabricate(:user, user_name: 'username') }
-    let!(:challenge) { Fabricate(:challenge, challengers: [challenger]) }
+    let(:challenger) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challengers: [challenger]) }
 
     it 'cancels a challenge' do
       expect(message: '@gamebot cancel', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
@@ -17,8 +16,8 @@ describe SlackGamebot::Commands::Cancel, vcr: { cassette_name: 'user_info' } do
   end
 
   context 'challenged' do
-    let(:challenged) { Fabricate(:user, user_name: 'username') }
-    let!(:challenge) { Fabricate(:challenge, challenged: [challenged]) }
+    let(:challenged) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged]) }
 
     it 'cancels a challenge' do
       expect(message: '@gamebot cancel', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(

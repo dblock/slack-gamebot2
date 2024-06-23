@@ -16,6 +16,8 @@ describe Api do
         '/api/users',
         '/api/challenges/{id}',
         '/api/challenges',
+        '/api/channels/{id}',
+        '/api/channels',
         '/api/matches/{id}',
         '/api/matches',
         '/api/seasons/current',
@@ -23,10 +25,11 @@ describe Api do
         '/api/seasons',
         '/api/teams/{id}',
         '/api/teams',
-        '/api/games/{id}',
-        '/api/games',
         '/api/subscriptions',
-        '/api/credit_cards'
+        '/api/credit_cards',
+        '/api/slack/action',
+        '/api/slack/command',
+        '/api/slack/event'
       ].sort
     end
   end

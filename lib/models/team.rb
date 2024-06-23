@@ -1,30 +1,24 @@
 class Team
-  field :gifs, type: Boolean, default: true
-  field :api, type: Boolean, default: false
-  field :aliases, type: Array, default: []
   field :dead_at, type: DateTime
   field :trial_informed_at, type: DateTime
-  field :elo, type: Integer, default: 0
-  field :unbalanced, type: Boolean, default: false
-  field :leaderboard_max, type: Integer
 
   field :stripe_customer_id, type: String
   field :subscribed, type: Boolean, default: false
   field :subscribed_at, type: DateTime
 
   scope :api, -> { where(api: true) }
+  field :api, type: Boolean, default: false
+  field :api_token, type: String
+
   scope :subscribed, -> { where(subscribed: true) }
 
-  validates_presence_of :game_id
+  has_many :channels, dependent: :destroy
 
-  has_many :users, dependent: :destroy
-  has_many :seasons, dependent: :destroy
-  has_many :matches, dependent: :destroy
-  has_many :challenges, dependent: :destroy
+  has_many :users
+  has_many :seasons
+  has_many :matches
+  has_many :challenges
 
-  belongs_to :game
-
-  before_validation :update_subscribed_at
   after_update :subscribed!
   after_save :activated!
 
@@ -70,20 +64,15 @@ class Team
   end
 
   def subscribe_text
-    "Subscribe your team for $29.99 a year at #{SlackRubyBotServer::Service.url}/subscribe?team_id=#{team_id}&game=#{game.name}."
+    "Subscribe your team for $49.99 a year at #{SlackRubyBotServer::Service.url}/subscribe?team_id=#{team_id}."
   end
 
   def update_cc_text
-    "Update your credit card info at #{SlackRubyBotServer::Service.url}/update_cc?team_id=#{team_id}&game=#{game.name}."
-  end
-
-  def captains
-    users.captains
+    "Update your credit card info at #{SlackRubyBotServer::Service.url}/update_cc?team_id=#{team_id}."
   end
 
   def to_s
     {
-      game: game.name,
       name: name,
       domain: domain,
       id: team_id
@@ -123,7 +112,7 @@ class Team
   end
 
   def slack_client
-    @slack_client ||= Slack::Web::Client.new(token: token)
+    @slack_client ||= SlackGamebot::Web::Client.new(token: token)
   end
 
   def slack_channels
@@ -153,21 +142,6 @@ class Team
     channel = slack_client.conversations_open(users: activated_user_id.to_s)
     logger.info "Sending DM '#{message}' to #{activated_user_id}."
     slack_client.chat_postMessage(text: make_message(message, gif_name), channel: channel.channel.id, as_user: true)
-  end
-
-  def self.find_or_create_from_env!
-    token = ENV.fetch('SLACK_API_TOKEN', nil)
-    return unless token
-
-    team = Team.where(token: token).first
-    team ||= Team.new(token: token)
-    info = Slack::Web::Client.new(token: token).team_info
-    team.team_id = info['team']['id']
-    team.name = info['team']['name']
-    team.domain = info['team']['domain']
-    team.game = Game.first || Game.create!(name: 'default')
-    team.save!
-    team
   end
 
   def stripe_customer
@@ -251,23 +225,58 @@ class Team
     end
   end
 
-  private
-
-  SUBSCRIBED_TEXT = <<~EOS.freeze
-    Your team has been subscribed. Thank you!
-    Follow https://twitter.com/playplayio for news and updates.
-  EOS
-
   def make_message(message, gif_name = nil)
     gif = Giphy.random(gif_name) if gif_name && gifs?
     [message, gif].compact.join("\n")
   end
 
-  def update_subscribed_at
-    return unless subscribed? && subscribed_changed?
+  def find_create_or_update_channel_by_channel_id!(channel_id, user_id)
+    raise 'missing channel_id' unless channel_id
+    return nil if channel_id[0] == 'D'
 
-    self.subscribed_at = subscribed? ? DateTime.now.utc : nil
+    channel = channels.where(channel_id: channel_id).first
+    return channel if channel
+
+    # multi user DM
+    channel_info = slack_client.conversations_info(channel: channel_id)
+    return nil if channel_info && (channel_info.channel.is_im || channel_info.channel.is_mpim)
+
+    channels.create!(channel_id: channel_id, enabled: true, inviter_id: user_id)
   end
+
+  def find_create_or_update_user_in_channel_by_slack_id!(channel_id, user_id)
+    channel = find_create_or_update_channel_by_channel_id!(channel_id, user_id)
+    channel ? channel.find_or_create_user!(user_id) : user_id
+  end
+
+  def join_channel!(channel_id, inviter_id)
+    channel = channels.where(channel_id: channel_id).first
+    channel ||= channels.create!(channel_id: channel_id)
+    channel.update_attributes!(enabled: true, inviter_id: inviter_id)
+    channel
+  end
+
+  def leave_channel!(channel_id)
+    channel = channels.where(channel_id: channel_id).first
+    channel&.update_attributes!(enabled: false)
+    channel || false
+  end
+
+  private
+
+  INSTALLED_TEXT =
+    "Hi there! I'm your team's game bot. " \
+    "I don't play actual games, but I'll be keeping your leaderboards. " \
+    'Thanks for trying me out. ' \
+    'To start, invite me to a channel. ' \
+    'You can always DM me `help` for instructions.'.freeze
+
+  SUBSCRIBED_TEXT =
+    "Hi there! I'm your team's game bot. " \
+    "I don't play actual games, but I'll be keeping your leaderboards. " \
+    'Your team has purchased a yearly subscription. ' \
+    'Follow us on Twitter at https://twitter.com/playplayio for news and updates. ' \
+    'Thanks for being a customer!'.freeze
 
   def subscribed!
     return unless subscribed? && subscribed_changed?
@@ -275,29 +284,10 @@ class Team
     inform! SUBSCRIBED_TEXT, 'thanks'
   end
 
-  def bot_mention
-    "<@#{bot_user_id || 'bot'}>"
-  end
-
-  def activated_text
-    <<~EOS
-      Welcome! Invite #{bot_mention} to a channel to get started.
-    EOS
-  end
-
   def activated!
     return unless active? && activated_user_id && bot_user_id
     return unless active_changed? || activated_user_id_changed?
 
-    inform_activated!
-  end
-
-  def inform_activated!
-    im = slack_client.conversations_open(users: activated_user_id.to_s)
-    slack_client.chat_postMessage(
-      text: activated_text,
-      channel: im['channel']['id'],
-      as_user: true
-    )
+    inform! INSTALLED_TEXT, 'installed'
   end
 end

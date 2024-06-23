@@ -10,26 +10,58 @@ module SlackGamebot
           "#{base_url(opts)}/status"
         end
 
-        property :games_count
-        property :games
+        property :ping
+        property :teams_count
+        property :channels_count
+        property :active_teams_count
+        property :api_teams_count
+        property :api_channels_count
+        property :users_count
+        property :challenges_count
+        property :matches_count
+        property :seasons_count
 
-        def games_count
-          Game.count
+        def teams_count
+          Team.count
         end
 
-        def games
-          Game.all.each_with_object({}) do |game, h|
-            h[game.name] = {}
-            h[game.name][:teams_count] = game.teams.count
-            h[game.name][:active_teams_count] = game.teams.active.count
-            h[game.name][:api_teams_count] = game.teams.api.count
-            h[game.name][:users_count] = game.users.count
-            h[game.name][:challenges_count] = game.challenges.count
-            h[game.name][:matches_count] = game.matches.count
-            h[game.name][:seasons_count] = game.seasons.count
-            team = game.teams.active.asc(:_id).first
-            h[game.name][:ping] = team.ping_if_active! if team
-          end
+        def channels_count
+          Channel.count
+        end
+
+        def active_teams_count
+          Team.active.count
+        end
+
+        def api_teams_count
+          Team.api.count
+        end
+
+        def api_channels_count
+          Channel.api.count
+        end
+
+        def users_count
+          User.count
+        end
+
+        def challenges_count
+          Challenge.count
+        end
+
+        def matches_count
+          Match.count
+        end
+
+        def seasons_count
+          Season.count
+        end
+
+        def ping
+          team = Team.active.asc(:_id).first
+          return unless team
+
+          team.ping_if_active!
         end
 
         private

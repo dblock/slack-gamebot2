@@ -1,12 +1,11 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+describe SlackGamebot::Commands::Lost do
+  include_context 'channel'
 
   context 'with an existing challenge' do
-    let(:challenged) { Fabricate(:user, user_name: 'username') }
-    let!(:challenge) { Fabricate(:challenge, challenged: [challenged]) }
+    let(:challenged) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged]) }
 
     before do
       challenge.accept!(challenged)
@@ -105,12 +104,12 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
   end
 
   context 'with an existing unbalanced challenge' do
-    let(:challenged1) { Fabricate(:user, user_name: 'username') }
-    let(:challenged2) { Fabricate(:user) }
-    let(:challenge) { Fabricate(:challenge, challenged: [challenged1, challenged2]) }
+    let(:challenged1) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let(:challenged2) { Fabricate(:user, channel: channel) }
+    let(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged1, challenged2]) }
 
     before do
-      team.update_attributes!(unbalanced: true)
+      channel.update_attributes!(unbalanced: true)
       challenge.accept!(challenged1)
     end
 
@@ -132,13 +131,13 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
   end
 
   context 'lost to' do
-    let(:loser) { Fabricate(:user, user_name: 'username') }
-    let(:winner) { Fabricate(:user) }
+    let(:loser) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let(:winner) { Fabricate(:user, channel: channel) }
 
     it 'a player' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name}", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot lost to #{winner.user_name}", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} defeated #{loser.user_name}."
           )
         end.not_to change(Challenge, :count)
@@ -151,7 +150,7 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
     it 'same player' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{loser.user_name}", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot lost to #{loser.user_name}", user: loser, channel: channel).to respond_with_slack_message(
             'You cannot lose to yourself!'
           )
         end.not_to change(Challenge, :count)
@@ -159,11 +158,11 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
     end
 
     it 'two players' do
-      winner2 = Fabricate(:user, team: team)
-      loser2 = Fabricate(:user, team: team)
+      winner2 = Fabricate(:user, channel: channel)
+      loser2 = Fabricate(:user, channel: channel)
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser.user_id, channel: 'pongbot').to respond_with_slack_message(
+          expect(message: "@gamebot lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} and #{winner2.user_name} defeated #{loser.user_name} and #{loser2.user_name}."
           )
         end.not_to change(Challenge, :count)
@@ -174,11 +173,11 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
     end
 
     it 'two players with scores' do
-      winner2 = Fabricate(:user, team: team)
-      loser2 = Fabricate(:user, team: team)
+      winner2 = Fabricate(:user, channel: channel)
+      loser2 = Fabricate(:user, channel: channel)
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name} 15:21", user: loser.user_id, channel: 'pongbot').to respond_with_slack_message(
+          expect(message: "@gamebot lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name} 15:21", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} and #{winner2.user_name} defeated #{loser.user_name} and #{loser2.user_name} with the score of 21:15."
           )
         end.not_to change(Challenge, :count)
@@ -192,7 +191,7 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
     it 'with score' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} 15:21", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot lost to #{winner.user_name} 15:21", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} defeated #{loser.user_name} with the score of 21:15."
           )
         end.not_to change(Challenge, :count)
@@ -207,7 +206,7 @@ describe SlackGamebot::Commands::Lost, vcr: { cassette_name: 'user_info' } do
     it 'with scores' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} 21:15 14:21 5:11", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot lost to #{winner.user_name} 21:15 14:21 5:11", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} defeated #{loser.user_name} with the scores of 15:21 21:14 11:5."
           )
         end.not_to change(Challenge, :count)

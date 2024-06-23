@@ -1,12 +1,11 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Resigned, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+describe SlackGamebot::Commands::Resigned do
+  include_context 'channel'
 
   context 'with a challenge' do
-    let(:challenged) { Fabricate(:user, user_name: 'username') }
-    let!(:challenge) { Fabricate(:challenge, challenged: [challenged]) }
+    let(:challenged) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged]) }
 
     before do
       challenge.accept!(challenged)
@@ -31,13 +30,13 @@ describe SlackGamebot::Commands::Resigned, vcr: { cassette_name: 'user_info' } d
   end
 
   context 'resigned to' do
-    let(:loser) { Fabricate(:user, user_name: 'username') }
-    let(:winner) { Fabricate(:user) }
+    let(:loser) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let(:winner) { Fabricate(:user, channel: channel) }
 
     it 'a player' do
       expect do
         expect do
-          expect(message: "@gamebot resigned to #{winner.display_name}", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot resigned to #{winner.display_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{loser.user_name} resigned against #{winner.display_name}."
           )
         end.not_to change(Challenge, :count)
@@ -49,11 +48,11 @@ describe SlackGamebot::Commands::Resigned, vcr: { cassette_name: 'user_info' } d
     end
 
     it 'two players' do
-      winner2 = Fabricate(:user, team: team)
-      loser2 = Fabricate(:user, team: team)
+      winner2 = Fabricate(:user, channel: channel)
+      loser2 = Fabricate(:user, channel: channel)
       expect do
         expect do
-          expect(message: "@gamebot resigned to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser.user_id, channel: 'pongbot').to respond_with_slack_message(
+          expect(message: "@gamebot resigned to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{loser.display_name} and #{loser2.display_name} resigned against #{winner.display_name} and #{winner2.display_name}."
           )
         end.not_to change(Challenge, :count)

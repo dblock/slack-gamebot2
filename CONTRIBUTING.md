@@ -1,8 +1,8 @@
 # Contributing to SlackGamebot
 
-This project is work of [many contributors](https://github.com/dblock/slack-gamebot/graphs/contributors).
+This project is work of [many contributors](https://github.com/dblock/slack-gamebot2/graphs/contributors).
 
-You're encouraged to submit [pull requests](https://github.com/dblock/slack-gamebot/pulls), [propose features and discuss issues](https://github.com/dblock/slack-gamebot/issues).
+You're encouraged to submit [pull requests](https://github.com/dblock/slack-gamebot2/pulls), [propose features and discuss issues](https://github.com/dblock/slack-gamebot2/issues).
 
 See [DEV](DEV.md) for how to setup a development environment.
 
@@ -10,12 +10,12 @@ In the examples below, substitute your Github username for `contributor` in URLs
 
 ## Fork the Project
 
-Fork the [project on Githubo](https://github.com/dblock/slack-gamebot) and check out your copy.
+Fork the [project on Githubo](https://github.com/dblock/slack-gamebot2) and check out your copy.
 
 ```
 git clone https://github.com/contributor/slack-gamebot.git
 cd slack-gamebot
-git remote add upstream https://github.com/dblock/slack-gamebot.git
+git remote add upstream https://github.com/dblock/slack-gamebot2.git
 ```
 
 ## Create a Topic Branch
@@ -107,7 +107,7 @@ git push origin my-feature-branch -f
 Update the [CHANGELOG](CHANGELOG.md) with the pull request number. A typical entry looks as follows.
 
 ```
-* [#123](https://github.com/dblock/slack-gamebot/pull/123): Reticulated splines - [@contributor](https://github.com/contributor).
+* [#123](https://github.com/dblock/slack-gamebot2/pull/123): Reticulated splines - [@contributor](https://github.com/contributor).
 ```
 
 Amend your previous commit and force push the changes.

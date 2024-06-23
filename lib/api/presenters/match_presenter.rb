@@ -12,9 +12,9 @@ module SlackGamebot
         property :scores, type: Array, desc: 'Match scores.'
         property :created_at, type: DateTime, desc: 'Date/time when the match was created.'
 
-        link :team do |opts|
+        link :channel do |opts|
           request = Grape::Request.new(opts[:env])
-          "#{request.base_url}/api/teams/#{represented.team.id}" if represented.team
+          "#{request.base_url}/api/channels/#{represented.channel.id}" if represented.channel
         end
 
         link :challenge do |opts|

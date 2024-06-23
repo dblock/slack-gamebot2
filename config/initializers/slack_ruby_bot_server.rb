@@ -1,4 +1,15 @@
 SlackRubyBotServer.configure do |config|
   config.oauth_version = :v2
-  config.oauth_scope = ['chat:write', 'im:history', 'mpim:history', 'channels:history', 'groups:history']
+  config.oauth_scope = [
+    'app_mentions:read',
+    'channels:read',
+    'chat:write',
+    'groups:read',
+    'im:history',
+    'im:write',
+    'mpim:history',
+    'mpim:read',
+    'mpim:write',
+    'users:read'
+  ]
 end

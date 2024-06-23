@@ -1,26 +1,19 @@
 require 'spec_helper'
 
 describe SlackGamebot::Commands::Help do
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
-  let(:message_hook) { SlackGamebot::Commands::Base }
-
   context 'subscribed team' do
-    let!(:team) { Fabricate(:team, subscribed: true) }
+    include_context 'subscribed team'
 
     it 'help' do
-      expect(client).to receive(:say).with(channel: 'channel', text: [SlackGamebot::Commands::Help::HELP].join("\n"))
-      expect(client).to receive(:say).with(channel: 'channel', gif: 'help')
-      message_hook.call(client, Hashie::Mash.new(channel: 'channel', text: '@gamebot help'))
+      expect(message: '@gamebot help', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message(SlackGamebot::Commands::Help::HELP)
     end
   end
 
   context 'non-subscribed team' do
-    let!(:team) { Fabricate(:team) }
+    include_context 'team'
 
     it 'help' do
-      expect(client).to receive(:say).with(channel: 'channel', text: [SlackGamebot::Commands::Help::HELP, team.trial_message].join("\n"))
-      expect(client).to receive(:say).with(channel: 'channel', gif: 'help')
-      message_hook.call(client, Hashie::Mash.new(channel: 'channel', text: '@gamebot help'))
+      expect(message: '@gamebot help', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message([SlackGamebot::Commands::Help::HELP, team.trial_message].join("\n"))
     end
   end
 end

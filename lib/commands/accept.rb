@@ -1,20 +1,19 @@
 module SlackGamebot
   module Commands
-    class Accept < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Accept < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'accept' do |client, data, _match|
-        challenger = ::User.find_create_or_update_by_slack_id!(client, data.user)
-        challenge = ::Challenge.find_by_user(client.owner, data.channel, challenger)
-        challenge ||= ::Challenge.find_open_challenge(client.owner, data.channel)
+      user_in_channel_command 'accept' do |channel, user, data|
+        challenge = ::Challenge.find_by_user(user)
+        challenge ||= ::Challenge.find_open_challenge(channel)
 
         if challenge
-          challenge.accept!(challenger)
-          client.say(channel: data.channel, text: "#{challenge.challenged.map(&:display_name).and} accepted #{challenge.challengers.map(&:display_name).and}'s challenge.", gif: 'game')
-          logger.info "ACCEPT: #{client.owner} - #{challenge}"
+          challenge.accept!(user)
+          data.team.slack_client.say(channel: data.channel, text: "#{challenge.challenged.map(&:display_name).and} accepted #{challenge.challengers.map(&:display_name).and}'s challenge.", gif: 'game')
+          logger.info "ACCEPT: #{user} - #{challenge}"
         else
-          client.say(channel: data.channel, text: 'No challenge to accept!')
-          logger.info "ACCEPT: #{client.owner} - #{data.user}, N/A"
+          data.team.slack_client.say(channel: data.channel, text: 'No challenge to accept!')
+          logger.info "ACCEPT: #{user} - N/A"
         end
       end
     end

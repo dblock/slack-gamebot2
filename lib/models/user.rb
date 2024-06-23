@@ -16,16 +16,22 @@ class User
   field :captain, type: Boolean, default: false
   field :registered, type: Boolean, default: true
   field :nickname, type: String
+  field :is_admin, type: Boolean, default: false
+  field :is_owner, type: Boolean, default: false
 
   belongs_to :team, index: true
-  validates_presence_of :team
+  belongs_to :channel, index: true
 
-  index({ user_id: 1, team_id: 1 }, unique: true)
-  index(user_name: 1, team_id: 1)
-  index(wins: 1, team_id: 1)
-  index(losses: 1, team_id: 1)
-  index(ties: 1, team_id: 1)
-  index(elo: 1, team_id: 1)
+  validates_presence_of :channel
+  validates_presence_of :team
+  validate :validate_team
+
+  index({ user_id: 1, channel_id: 1 }, unique: true)
+  index(user_name: 1, channel_id: 1)
+  index(wins: 1, channel_id: 1)
+  index(losses: 1, channel_id: 1)
+  index(ties: 1, channel_id: 1)
+  index(elo: 1, channel_id: 1)
 
   before_save :update_elo_history!
   after_save :rank!
@@ -39,7 +45,7 @@ class User
   scope :everyone, -> { where(user_id: ANYONE) }
 
   def current_matches
-    Match.current.where(team: team).any_of({ winner_ids: _id }, loser_ids: _id)
+    Match.current.where(channel: channel).any_of({ winner_ids: _id }, loser_ids: _id)
   end
 
   def slack_mention
@@ -55,71 +61,14 @@ class User
   end
 
   def self.slack_mention?(user_name)
-    slack_id = ::Regexp.last_match[1] if user_name =~ /^<[@!](.*)>$/
+    slack_match = user_name.match(/^<[@!](.*)>$/)
+    slack_id = slack_match[1] if slack_match
     slack_id = ANYONE if slack_id && EVERYONE.include?(slack_id)
     slack_id
   end
 
-  def self.find_by_slack_mention!(client, user_name)
-    team = client.owner
-    slack_id = slack_mention?(user_name)
-    user = if slack_id
-             team.users.where(user_id: slack_id).first
-           else
-             regexp = ::Regexp.new("^#{user_name}$", 'i')
-             query = User.where(team: team).any_of({ user_name: regexp }, nickname: regexp)
-             query.first
-           end
-    unless user
-      case slack_id
-      when ANYONE
-        user = User.create!(team: team, user_id: ANYONE, user_name: ANYONE, nickname: 'anyone', registered: true)
-      else
-        begin
-          users_info = client.users_info(user: slack_id || "@#{user_name}")
-          if users_info
-            info = Hashie::Mash.new(users_info).user
-            if info
-              user = team.users.where(user_id: info.id).first
-              user ||= User.create!(team: team, user_id: info.id, user_name: info.name, registered: true)
-            end
-          end
-        rescue Slack::Web::Api::Errors::SlackError => e
-          raise e unless e.message == 'user_not_found'
-        end
-      end
-    end
-    raise SlackGamebot::Error, "I don't know who #{user_name} is! Ask them to _register_." unless user&.registered?
-    raise SlackGamebot::Error, "I don't know who #{user_name} is!" unless user
-
-    user
-  end
-
-  def self.find_many_by_slack_mention!(client, user_names)
-    user_names.map { |user| find_by_slack_mention!(client, user) }
-  end
-
-  # Find an existing record, update the username if necessary, otherwise create a user record.
-  def self.find_create_or_update_by_slack_id!(client, slack_id)
-    instance = User.where(team: client.owner, user_id: slack_id).first
-    users_info = client.users_info(user: slack_id)
-    instance_info = Hashie::Mash.new(users_info).user if users_info
-    if users_info && instance
-      instance.update_attributes!(user_name: instance_info.name) if instance.user_name != instance_info.name
-    elsif !instance && instance_info
-      instance = User.create!(team: client.owner, user_id: slack_id, user_name: instance_info.name, registered: true)
-    end
-    if instance
-      instance.register! unless instance.registered?
-      instance.promote! unless instance.captain? || client.owner.captains.count > 0
-    end
-    raise SlackGamebot::Error, "I don't know who <@#{slack_id}> is!" unless instance
-
-    instance
-  end
-
-  def self.reset_all!(team)
-    User.where(team: team).set(
+  def self.reset_all!(channel)
+    User.where(channel: channel).set(
       wins: 0,
       losses: 0,
       ties: 0,
@@ -136,14 +85,14 @@ class User
     wins_s = "#{wins} win#{wins == 1 ? '' : 's'}"
     losses_s = "#{losses} loss#{losses == 1 ? '' : 'es'}"
     ties_s = "#{ties} tie#{ties == 1 ? '' : 's'}" if ties && ties > 0
-    elo_s = "elo: #{team_elo}"
+    elo_s = "elo: #{channel_elo}"
     lws_s = "lws: #{winning_streak}" if winning_streak >= losing_streak && winning_streak >= 3
     lls_s = "lls: #{losing_streak}" if losing_streak > winning_streak && losing_streak >= 3
     "#{display_name}: #{[wins_s, losses_s, ties_s].compact.join(', ')} (#{[elo_s, lws_s, lls_s].compact.join(', ')})"
   end
 
-  def team_elo
-    elo + team.elo
+  def channel_elo
+    elo + channel.elo
   end
 
   def promote!
@@ -158,20 +107,20 @@ class User
     return if registered?
 
     update_attributes!(registered: true)
-    User.rank!(team)
+    User.rank!(channel)
   end
 
   def unregister!
     return unless registered?
 
     update_attributes!(registered: false, rank: nil)
-    User.rank!(team)
+    User.rank!(channel)
   end
 
   def rank!
     return unless elo_changed?
 
-    User.rank!(team)
+    User.rank!(channel)
     reload.rank
   end
 
@@ -181,9 +130,9 @@ class User
     elo_history << elo
   end
 
-  def self.rank!(team)
+  def self.rank!(channel)
     rank = 1
-    players = any_of({ :wins.gt => 0 }, { :losses.gt => 0 }, :ties.gt => 0).where(team: team, registered: true).desc(:elo).desc(:wins).asc(:losses).desc(:ties)
+    players = any_of({ :wins.gt => 0 }, { :losses.gt => 0 }, :ties.gt => 0).where(channel: channel, registered: true).desc(:elo).desc(:wins).asc(:losses).desc(:ties)
     players.each_with_index do |player, index|
       if player.registered?
         rank += 1 if index > 0 && %i[elo wins losses ties].any? { |property| players[index - 1].send(property) != player.send(property) }
@@ -216,10 +165,18 @@ class User
     update_attributes!(losing_streak: longest_losing_streak, winning_streak: longest_winning_streak)
   end
 
-  def self.rank_section(team, users)
+  def self.rank_section(channel, users)
     ranks = users.map(&:rank)
     return users unless ranks.min && ranks.max
 
-    where(team: team, :rank.gte => ranks.min, :rank.lte => ranks.max).asc(:rank).asc(:wins).asc(:ties)
+    where(channel: channel, :rank.gte => ranks.min, :rank.lte => ranks.max).asc(:rank).asc(:wins).asc(:ties)
+  end
+
+  private
+
+  def validate_team
+    return if team == channel.team
+
+    errors.add(:team, 'Channel team must match.')
   end
 end

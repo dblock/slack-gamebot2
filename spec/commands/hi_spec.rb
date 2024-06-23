@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe SlackGamebot::Commands::Hi do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+  include_context 'team'
 
   it 'says hi' do
-    expect(message: '@gamebot hi').to respond_with_slack_message('Hi <@user>!')
+    expect(message: '@gamebot hi', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message('Hi <@user_not_in_channel>!')
   end
 end

@@ -1,19 +1,17 @@
 $(document).ready(function() {
   // Slack OAuth
   var code = $.url('?code')
-  var game = $.url('?game')
-  if (code && game && (game == 'pong' || game == 'chess' || game == 'pool' || game == 'tic-tac-toe')) {
+  if (code) {
     PlayPlay.register();
     PlayPlay.message('Working, please wait ...');
     $.ajax({
       type: "POST",
       url: "/api/teams",
       data: {
-        code: code,
-        game: game
+        code: code
       },
       success: function(data) {
-        PlayPlay.message('Team successfully registered!<br>Create a #' + game + ' channel on Slack and invite @' + game + 'bot to it.');
+        PlayPlay.message('Team successfully registered!<br>Invite the bot to a channel and follow its lead.');
       },
       error: PlayPlay.error
     });

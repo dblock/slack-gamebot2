@@ -2,7 +2,7 @@ module SlackGamebot
   class App < SlackRubyBotServer::App
     DEAD_MESSAGE = <<~EOS.freeze
       This leaderboard has been dead for over a month, deactivating.
-      Re-install the bot at https://www.playplay.io. Your data will be purged in 2 weeks.
+      Re-install the bot at https://gamebot.playplay.io. Your data will be purged in 2 weeks.
     EOS
 
     def after_start!
@@ -89,7 +89,7 @@ module SlackGamebot
     end
 
     def check_active_subscriptions_without_teams!
-      Stripe::Subscription.all(plan: 'slack-playplay-yearly').each do |subscription|
+      Stripe::Subscription.all(plan: 'slack-gamebot2-yearly').each do |subscription|
         next if subscription.cancel_at_period_end
         next if Team.where(stripe_customer_id: subscription.customer).exists?
 

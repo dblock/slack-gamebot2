@@ -1,9 +1,9 @@
 Slack-Gamebot
 =============
 
-[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack@2x.png)](https://www.playplay.io)
+[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack@2x.png)](https://gamebot.playplay.io)
 
-[![Tests](https://github.com/dblock/slack-gamebot/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/slack-gamebot/actions/workflows/test.yml)
+[![Tests](https://github.com/dblock/slack-gamebot2/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/slack-gamebot2/actions/workflows/test.yml)
 [![Code Climate](https://codeclimate.com/github/dblock/slack-gamebot/badges/gpa.svg)](https://codeclimate.com/github/dblock/slack-gamebot)
 
 A generic game bot for slack. Works for ping-pong (2, 4 or more players), chess, etc. Inspired by [slack-pongbot](https://github.com/andrewvy/slack-pongbot), but more robust, generic and easier to improve and contribute to.
@@ -435,7 +435,7 @@ gamebot unset elo
 
 #### gamebot set aliases &lt;alias|none&gt; ...
 
-Set additional aliases for the bot. For example you could upload a custom emoji for :pong: and set an alias for it.
+Set additional aliases for the bot. For example, you could upload a custom emoji for :pong: and set an alias for it.
 
 ```
 gamebot set aliases pp :pong:
@@ -481,7 +481,7 @@ DM to show paid subscription information.
 ```
 subscription
 
-Your trial subscription expires in 13 days. Subscribe your team for $29.99 a year at ... .
+Your trial subscription expires in 13 days. Subscribe your team for $49.99 a year at ... .
 ```
 
 Captains are able to see credit card info.
@@ -490,8 +490,8 @@ Captains are able to see credit card info.
 subscription
 
 Customer since August 11, 2018.
-Subscribed to Slack PlayPlay (Yearly) ($29.99), will auto-renew on August 11, 2019.
-Invoice for $29.99 on August 11, 2018, paid.
+Subscribed to Slack PlayPlay (Yearly) ($49.99), will auto-renew on August 11, 2019.
+Invoice for $49.99 on August 11, 2018, paid.
 On file Visa card, user@example.com ending with 4242, expires 2/2022.
 Update your credit card info at ... .
 ```
@@ -503,14 +503,14 @@ DM to cancel auto-renew for a paid subscription.
 ```
 unsubscribe
 
-Subscribed to Slack PlayPlay (Yearly) ($29.99), will auto-renew on August 11, 2019.
+Subscribed to Slack PlayPlay (Yearly) ($49.99), will auto-renew on August 11, 2019.
 Send `unsubscribe sub_DOvlBd1lETNimB` to unsubscribe.
 ```
 
 ```
 unsubscribe sub_DOvlBd1lETNimB
 
-Successfully canceled auto-renew for Slack PlayPlay (Yearly) ($29.99).
+Successfully canceled auto-renew for Slack PlayPlay (Yearly) ($49.99).
 ```
 
 ## API

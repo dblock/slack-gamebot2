@@ -7,7 +7,25 @@ describe SlackGamebot::Api::Endpoints::RootEndpoint do
     get '/api/'
     expect(last_response.status).to eq 200
     links = JSON.parse(last_response.body)['_links']
-    expect(links.keys.sort).to eq(%w[self status team teams user users challenge challenges credit_cards match matches current_season season seasons subscriptions game games].sort)
+    expect(links.keys.sort).to eq(%w[
+      self
+      status
+      team
+      teams
+      user
+      users
+      challenge
+      challenges
+      channel
+      channels
+      credit_cards
+      match
+      matches
+      current_season
+      season
+      seasons
+      subscriptions
+    ].sort)
   end
 
   it 'follows all links' do

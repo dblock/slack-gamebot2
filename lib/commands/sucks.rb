@@ -1,18 +1,17 @@
 module SlackGamebot
   module Commands
-    class Sucks < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Sucks < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'sucks', 'suck', 'you suck', 'sucks!', 'you suck!' do |client, data, _match|
-        user = ::User.find_create_or_update_by_slack_id!(client, data.user)
+      user_in_channel_command 'sucks', 'suck', 'you suck', 'sucks!', 'you suck!' do |channel, user, data|
         if user.losses && user.losses > 5
-          client.say(channel: data.channel, text: "No <@#{data.user}>, with #{user.losses} losses, you suck!", gif: 'loser')
+          data.team.slack_client.say(channel: data.channel, text: "No <@#{data.user}>, with #{user.losses} losses, you suck!", gif: 'loser')
         elsif user.rank && user.rank > 3
-          client.say(channel: data.channel, text: "No <@#{data.user}>, with a rank of #{user.rank}, you suck!", gif: 'loser')
+          data.team.slack_client.say(channel: data.channel, text: "No <@#{data.user}>, with a rank of #{user.rank}, you suck!", gif: 'loser')
         else
-          client.say(channel: data.channel, text: "No <@#{data.user}>, you suck!", gif: 'rude')
+          data.team.slack_client.say(channel: data.channel, text: "No <@#{data.user}>, you suck!", gif: 'rude')
         end
-        logger.info "SUCKS: #{client.owner} - #{data.user}"
+        logger.info "SUCKS: #{channel} - #{data.user}"
       end
     end
   end

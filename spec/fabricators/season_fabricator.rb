@@ -1,6 +1,7 @@
 Fabricator(:season) do
-  team { Team.first || Fabricate(:team) }
-  before_create do
-    Fabricate(:match, team: team) if Challenge.current.none?
+  channel { Channel.first || Fabricate(:channel) }
+  before_create do |instance|
+    instance.team ||= instance.channel.team
+    Fabricate(:match, channel: channel) if Challenge.current.none?
   end
 end

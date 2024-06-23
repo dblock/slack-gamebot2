@@ -46,7 +46,7 @@ describe SlackGamebot::App do
 
   context 'subscribed' do
     include_context 'stripe mock'
-    let(:plan) { stripe_helper.create_plan(id: 'slack-playplay-yearly', amount: 2999, name: 'Plan') }
+    let(:plan) { stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999, name: 'Plan') }
     let(:customer) { Stripe::Customer.create(source: stripe_helper.generate_card_token, plan: plan.id, email: 'foo@bar.com') }
     let!(:team) { Fabricate(:team, subscribed: true, stripe_customer_id: customer.id) }
 
@@ -60,14 +60,14 @@ describe SlackGamebot::App do
       it 'notifies past due subscription' do
         customer.subscriptions.data.first['status'] = 'past_due'
         expect(Stripe::Customer).to receive(:retrieve).and_return(customer)
-        expect_any_instance_of(Team).to receive(:inform_admin!).with("Your subscription to Plan ($29.99) is past due. #{team.update_cc_text}")
+        expect_any_instance_of(Team).to receive(:inform_admin!).with("Your subscription to Plan ($49.99) is past due. #{team.update_cc_text}")
         subject.send(:check_subscribed_teams!)
       end
 
       it 'notifies canceled subscription' do
         customer.subscriptions.data.first['status'] = 'canceled'
         expect(Stripe::Customer).to receive(:retrieve).and_return(customer)
-        expect_any_instance_of(Team).to receive(:inform_admin!).with('Your subscription to Plan ($29.99) was canceled and your team has been downgraded. Thank you for being a customer!')
+        expect_any_instance_of(Team).to receive(:inform_admin!).with('Your subscription to Plan ($49.99) was canceled and your team has been downgraded. Thank you for being a customer!')
         subject.send(:check_subscribed_teams!)
         expect(team.reload.subscribed?).to be false
       end

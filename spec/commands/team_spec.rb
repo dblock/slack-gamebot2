@@ -1,31 +1,23 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Team, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
-
-  context 'no users' do
-    it 'team' do
-      allow(User).to receive(:find_create_or_update_by_slack_id!)
-      expect(message: '@gamebot team').to respond_with_slack_message "Team _#{team.name}_ (#{team.team_id})."
-    end
-  end
+describe SlackGamebot::Commands::Team do
+  include_context 'channel'
 
   context 'with a captain' do
-    let!(:user) { Fabricate(:user, team: team, user_name: 'username', captain: true) }
+    let!(:user) { Fabricate(:user, channel: channel, user_name: 'username', captain: true) }
 
     it 'team' do
-      expect(message: '@gamebot team').to respond_with_slack_message "Team _#{team.name}_ (#{team.team_id}), captain username."
+      expect(message: '@gamebot team', channel: channel).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captain username."
     end
   end
 
   context 'with two captains' do
     before do
-      Array.new(2) { Fabricate(:user, team: team, captain: true) }
+      Array.new(2) { Fabricate(:user, channel: channel, captain: true) }
     end
 
     it 'team' do
-      expect(message: '@gamebot team').to respond_with_slack_message "Team _#{team.name}_ (#{team.team_id}), captains #{team.captains.map(&:display_name).and}."
+      expect(message: '@gamebot team', channel: channel).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captains #{channel.captains.map(&:display_name).and}."
     end
   end
 end

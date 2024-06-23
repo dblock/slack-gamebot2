@@ -5,10 +5,9 @@
     <script src='https://checkout.stripe.com/checkout.js'></script>
     <link rel='stylesheet' href='https://checkout.stripe.com/v3/checkout/button.css'></link>
     <%
-      game = Game.where(name: request['game']).first
-      team = game && game.teams.where(team_id: request['team_id']).first
+      team = Team.where(team_id: request['team_id']).first
       coupon = Stripe::Coupon.retrieve(request[:coupon]) if request[:coupon]
-      subscription_cents = 2999
+      subscription_cents = 4999
       subscription_dollars = subscription_cents.to_f / 100
       amount_cents = subscription_cents
       amount_cents -= coupon.amount_off if coupon
@@ -17,7 +16,7 @@
   </head>
   <body style='text-align: center'>
     <p style='margin: 50px;'>
-      <a href='/'><img src='img/<%= game ? game.name : 'pong' %>.png' width='120px'></a>
+      <a href='/'><img src='img/pong.png' width='120px'></a>
     </p>
     <p>
       <h3>PlayPlay.io: Subscribe</h3>
@@ -39,7 +38,6 @@
 
           var team = {
             id: <%= team ? "'#{team._id}'" : 'null' %>,
-            game: <%= game ? "'#{game.name}'" : 'null' %>,
             name: <%= team ? "'#{team.name}'" : 'null' %>,
             subscribed: <%= !!(team && team.subscribed) %>
           };
@@ -59,20 +57,20 @@
           };
 
           if (team.subscribed) {
-            PlayPlay.message('Team <b>' + team.name + '</b> is already subscribed to <b>' + team.game + '</b>, thank you.');
+            PlayPlay.message('Team <b>' + team.name + '</b> is already subscribed, thank you.');
             $('#subscribeButton').remove();
-          } else if (team.id && team.name && team.game && coupon.code) {
-            PlayPlay.message('Subscribe team <b>' + team.name + '</b> to <b>' + team.game + '</b> for $' + pay.dollars + ' for the first year and $' + subscription.dollars + ' thereafter with coupon <b>' + coupon.code + '!');
-          } else if (team.id && team.name && team.game) {
-            PlayPlay.message('Subscribe team <b>' + team.name + '</b> to <b>' + team.game + '</b> for $29.99 a year!');
+          } else if (team.id && team.name && coupon.code) {
+            PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $' + pay.dollars + ' for the first year and $' + subscription.dollars + ' thereafter with coupon <b>' + coupon.code + '!');
+          } else if (team.id && team.name) {
+            PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $49.99 a year!');
           } else {
             $('#subscribeButton').remove();
-            PlayPlay.message('Missing or invalid team ID and/or game.');
+            PlayPlay.message('Missing or invalid team ID.');
           }
 
           var handler = StripeCheckout.configure({
             key: '<%= ENV['STRIPE_API_PUBLISHABLE_KEY'] %>',
-            image: '/img/<%= game ? game.name : 'pong' %>.png',
+            image: '/img/pong.png',
             locale: 'auto',
             token: function(token) {
               data = {
@@ -91,7 +89,7 @@
                 url: '/api/subscriptions',
                 data: data,
                 success: function(data) {
-                  PlayPlay.message('Team <b>' + team.name + '</b> successfully subscribed to <b>' + team.game + '</b>.<br>Thank you!');
+                  PlayPlay.message('Team <b>' + team.name + '</b> successfully subscribed.<br>Thank you!');
                   $('#subscribeButton').remove();
                 },
                 error: PlayPlay.error

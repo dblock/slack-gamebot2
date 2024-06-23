@@ -6,7 +6,7 @@ module SlackGamebot
 
         included do
           rescue_from :all, backtrace: true do |e|
-            backtrace = e.backtrace[0..5].join("\n  ")
+            backtrace = e.backtrace[0..20].join("\n  ")
             Api::Middleware.logger.error "#{e.class.name}: #{e.message}\n  #{backtrace}"
             error = { type: 'other_error', message: e.message }
             error[:backtrace] = backtrace
@@ -14,18 +14,16 @@ module SlackGamebot
           end
           # rescue document validation errors into detail json
           rescue_from Mongoid::Errors::Validations do |e|
-            backtrace = e.backtrace[0..5].join("\n  ")
+            backtrace = e.backtrace[0..20].join("\n  ")
             Api::Middleware.logger.warn "#{e.class.name}: #{e.message}\n  #{backtrace}"
             rack_response({
               type: 'param_error',
               message: e.document.errors.full_messages.uniq.join(', ') + '.',
-              detail: e.document.errors.messages.each_with_object({}) do |(k, v), h|
-                h[k] = v.uniq
-              end
+              detail: e.document.errors.messages.transform_values(&:uniq)
             }.to_json, 400)
           end
           rescue_from Grape::Exceptions::Validation do |e|
-            backtrace = e.backtrace[0..5].join("\n  ")
+            backtrace = e.backtrace[0..20].join("\n  ")
             Api::Middleware.logger.warn "#{e.class.name}: #{e.message}\n  #{backtrace}"
             rack_response({
               type: 'param_error',
@@ -34,14 +32,14 @@ module SlackGamebot
             }.to_json, 400)
           end
           rescue_from Grape::Exceptions::ValidationErrors do |e|
-            backtrace = e.backtrace[0..5].join("\n  ")
+            backtrace = e.backtrace[0..20].join("\n  ")
             Api::Middleware.logger.warn "#{e.class.name}: #{e.message}\n  #{backtrace}"
             rack_response({
               type: 'param_error',
               message: 'Invalid parameters.',
-              detail: e.errors.each_with_object({}) do |(k, v), h|
+              detail: e.errors.transform_keys do |k|
                 # JSON does not permit having a key of type Array
-                h[k.count == 1 ? k.first : k.join(', ')] = v
+                k.count == 1 ? k.first : k.join(', ')
               end
             }.to_json, 400)
           end

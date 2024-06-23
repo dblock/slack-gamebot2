@@ -1,12 +1,11 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Draw, vcr: { cassette_name: 'user_info' } do
-  let!(:team) { Fabricate(:team) }
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
+describe SlackGamebot::Commands::Draw do
+  include_context 'channel'
 
   context 'with a challenge' do
-    let(:challenged) { Fabricate(:user, user_name: 'username') }
-    let!(:challenge) { Fabricate(:challenge, challenged: [challenged]) }
+    let(:challenged) { Fabricate(:user, user_name: 'username', channel: channel) }
+    let!(:challenge) { Fabricate(:challenge, challenged: [challenged], channel: channel) }
 
     before do
       challenge.accept!(challenged)
@@ -98,7 +97,7 @@ describe SlackGamebot::Commands::Draw, vcr: { cassette_name: 'user_info' } do
     it 'draw to' do
       expect do
         expect do
-          expect(message: "@gamebot draw to #{winner.user_name}", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot draw to #{winner.user_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
             "Match is a draw, waiting to hear from #{winner.user_name}."
           )
         end.to change(Challenge, :count).by(1)
@@ -111,7 +110,7 @@ describe SlackGamebot::Commands::Draw, vcr: { cassette_name: 'user_info' } do
     it 'draw with a score' do
       expect do
         expect do
-          expect(message: "@gamebot draw to #{winner.user_name} 2:2", user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+          expect(message: "@gamebot draw to #{winner.user_name} 2:2", user: loser.user_id, channel: channel).to respond_with_slack_message(
             "Match is a draw, waiting to hear from #{winner.user_name}. Recorded the score of 2:2."
           )
         end.to change(Challenge, :count).by(1)
@@ -124,28 +123,28 @@ describe SlackGamebot::Commands::Draw, vcr: { cassette_name: 'user_info' } do
     end
 
     context 'confirmation' do
-      before do
-        allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(nil)
-      end
-
       let!(:challenge) do
         Challenge.create!(
-          team: loser.team, channel: 'channel',
-          created_by: loser, updated_by: loser,
-          challengers: [loser], challenged: [winner],
-          draw: [loser], draw_scores: [],
+          team: loser.team,
+          channel: channel,
+          created_by: loser,
+          updated_by: loser,
+          challengers: [loser],
+          challenged: [winner],
+          draw: [loser],
+          draw_scores: [],
           state: ChallengeState::DRAWN
         )
       end
 
       it 'still waiting' do
-        expect(message: '@gamebot draw', user: loser.user_id, channel: 'channel').to respond_with_slack_message(
+        expect(message: '@gamebot draw', user: loser.user_id, channel: channel).to respond_with_slack_message(
           "Match is a draw, still waiting to hear from #{winner.user_name}."
         )
       end
 
       it 'confirmed' do
-        expect(message: '@gamebot draw', user: winner.user_id, channel: 'channel').to respond_with_slack_message(
+        expect(message: '@gamebot draw', user: winner.user_id, channel: channel).to respond_with_slack_message(
           "Match has been recorded! #{loser.user_name} tied with #{winner.user_name}."
         )
         challenge.reload
@@ -154,7 +153,7 @@ describe SlackGamebot::Commands::Draw, vcr: { cassette_name: 'user_info' } do
       end
 
       it 'with score' do
-        expect(message: '@gamebot draw 3:3', user: winner.user_id, channel: 'channel').to respond_with_slack_message(
+        expect(message: '@gamebot draw 3:3', user: winner.user_id, channel: channel).to respond_with_slack_message(
           "Match has been recorded! #{loser.user_name} tied with #{winner.user_name} with the score of 3:3."
         )
         challenge.reload
@@ -162,7 +161,7 @@ describe SlackGamebot::Commands::Draw, vcr: { cassette_name: 'user_info' } do
       end
 
       it 'with invalid score' do
-        expect(message: '@gamebot draw 21:15', user: winner.user_id, channel: 'channel').to respond_with_slack_message(
+        expect(message: '@gamebot draw 21:15', user: winner.user_id, channel: channel).to respond_with_slack_message(
           'In a tie both sides must score the same number of points.'
         )
       end

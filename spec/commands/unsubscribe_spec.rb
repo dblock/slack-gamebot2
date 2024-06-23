@@ -1,8 +1,6 @@
 require 'spec_helper'
 
-describe SlackGamebot::Commands::Unsubscribe, vcr: { cassette_name: 'user_info' } do
-  let(:client) { SlackGamebot::Web::Client.new(token: 'token', team: team) }
-
+describe SlackGamebot::Commands::Unsubscribe do
   shared_examples_for 'unsubscribe' do
     context 'on trial' do
       before do
@@ -10,7 +8,7 @@ describe SlackGamebot::Commands::Unsubscribe, vcr: { cassette_name: 'user_info' 
       end
 
       it 'displays all set message' do
-        expect(message: '@gamebot unsubscribe').to respond_with_slack_message "You don't have a paid subscription, all set."
+        expect(message: '@gamebot unsubscribe', channel: 'DM').to respond_with_slack_message "You don't have a paid subscription, all set."
       end
     end
 
@@ -20,21 +18,21 @@ describe SlackGamebot::Commands::Unsubscribe, vcr: { cassette_name: 'user_info' 
       end
 
       it 'displays subscription info' do
-        expect(message: '@gamebot unsubscribe').to respond_with_slack_message "You don't have a paid subscription, all set."
+        expect(message: '@gamebot unsubscribe', channel: 'DM').to respond_with_slack_message "You don't have a paid subscription, all set."
       end
     end
 
     context 'with a plan' do
       include_context 'stripe mock'
       before do
-        stripe_helper.create_plan(id: 'slack-playplay-yearly', amount: 2999, name: 'Plan')
+        stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999, name: 'Plan')
       end
 
       context 'a customer' do
         let!(:customer) do
           Stripe::Customer.create(
             source: stripe_helper.generate_card_token,
-            plan: 'slack-playplay-yearly',
+            plan: 'slack-gamebot2-yearly',
             email: 'foo@bar.com'
           )
         end
@@ -47,18 +45,18 @@ describe SlackGamebot::Commands::Unsubscribe, vcr: { cassette_name: 'user_info' 
 
         it 'displays subscription info' do
           customer_info = [
-            "Subscribed to Plan ($29.99), will auto-renew on #{current_period_end}.",
+            "Subscribed to Plan ($49.99), will auto-renew on #{current_period_end}.",
             "Send `unsubscribe #{active_subscription.id}` to unsubscribe."
           ].join("\n")
-          expect(message: '@gamebot unsubscribe').to respond_with_slack_message customer_info
+          expect(message: '@gamebot unsubscribe', channel: 'DM').to respond_with_slack_message customer_info
         end
 
         it 'cannot unsubscribe with an invalid subscription id' do
-          expect(message: '@gamebot unsubscribe xyz').to respond_with_slack_message 'Sorry, I cannot find a subscription with "xyz".'
+          expect(message: '@gamebot unsubscribe xyz', channel: 'DM').to respond_with_slack_message 'Sorry, I cannot find a subscription with "xyz".'
         end
 
         it 'unsubscribes' do
-          expect(message: "@gamebot unsubscribe #{active_subscription.id}").to respond_with_slack_message 'Successfully canceled auto-renew for Plan ($29.99).'
+          expect(message: "@gamebot unsubscribe #{active_subscription.id}", channel: 'DM').to respond_with_slack_message 'Successfully canceled auto-renew for Plan ($49.99).'
           team.reload
           expect(team.subscribed).to be true
           expect(team.stripe_customer_id).not_to be_nil
@@ -68,9 +66,10 @@ describe SlackGamebot::Commands::Unsubscribe, vcr: { cassette_name: 'user_info' 
   end
 
   context 'subscribed team' do
-    let!(:team) { Fabricate(:team, subscribed: true) }
+    include_context 'subscribed team'
 
     it_behaves_like 'unsubscribe'
+
     context 'with another team' do
       let!(:team2) { Fabricate(:team) }
 

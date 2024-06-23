@@ -4,7 +4,7 @@
     <meta name="description" content="Game bots for Slack teams. Ping pong bot, chess bot, pool bot and tic-tac-toe bot for Slack. Challenges and rankings.">
     <meta name="og:description" content="Game bots for Slack teams. Ping pong bot, chess bot, pool bot and tic-tac-toe bot for Slack. Challenges and rankings.">
     <meta name="keywords" content="slack,ping,pong,ping-pong,chess,pool,billiards,tic-tac-toe,slack,bot,leaderboard">
-    <title>PlayPlay.io - Ping Pong Bot, Chess Bot, Pool Bot and Tic Tac Toe Bot for Slack</title>
+    <title>PlayPlay.io - Leaderboard Bot for Slack</title>
     <%= partial 'public/partials/_head.html' %>
   </head>
   <body id="page-top" class="index">
@@ -61,7 +61,9 @@
           <div class="intro-lead-in">
             Keep your leaderboard and scores in Slack.
             <br><br>
-            <a href="#gotslack" class="page-scroll add-to-slack"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+            <a href="#gotslack" class="page-scroll add-to-slack">
+              <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+            </a>
           </div>
           <div>
             <img src='img/slack.png' width="75%">
@@ -74,49 +76,11 @@
       <div class="container">
         <div class="row">
           <div class="intro-text">
-            <h2 class="section-heading bg-light-sunny">Got Slack? Create your team!</h2>
             <h4 id="active_teams_count" class="intro-lead-in">&nbsp;</h4>
           </div>
           <div class="text-left">
-            <p class="text_muted">Invite our game bots to your slack account and add friends to build your team! Follow the links below to sign up or login to slack account, register and add the bots for your favorite games. </p>
+            <p class="text_muted">Invite the bot to a channel, then follow its lead.</p>
           </div>
-          <div id="games-pong" class="row text-center services-text-color">
-            <div class="intro-heading">
-              <p>
-                <img class="img-responsive img-centered" src="img/pong.png" alt="" height="120" width="120">
-              </p>
-              <p class='game'>
-                PONG
-              </p>
-              <p>
-                <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= Game.where(name: 'pong').first.try(:client_id) %>"><img alt="Add Pongbot to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
-              </p>
-            </div>
-            <div>
-              <h4><a id="games-toggle" href="#gotslack"><b>click here for Chess, Pool and Tic-Tac-Toe</b></a></h4>
-            </div>
-          </div>
-          <div id="games-all" style="display: none;" class= "row col-lg-12">
-            <% Game.all.each do |game| %>
-              <div class="col-md-3 text-center services-text-color">
-                <div class="intro-heading">
-                  <p>
-                    <img class="img-responsive img-centered" src="img/<%= game.name %>.png" alt="" height="120" width="120">
-                  </p>
-                  <p class='game'>
-                    <%= game.name.upcase %>
-                  </p>
-                  <p>
-                    <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= game.client_id %>"><img alt="Add <%= game.name %> to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
-                  </p>
-                </div>
-              </div>
-            <% end %>
-          </div>
-          <div class="row spacer"></div>
-          <h3 class="section-subheading text-muted text-center">
-          Follow our <a href="#howtouse" target="_blank">tutorial.</a>
-          </h3>
         </div>
       </div>
     </section>
@@ -125,7 +89,6 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
-            <h2 class="section-heading">Record games!</h2>
             <h3 class="section-subheading text-muted">3 easy steps</h3>
           </div>
         </div>
@@ -175,7 +138,7 @@
         </div>
         <div class="row spacer"></div>
         <h3 class="section-subheading text-muted text-center">
-          See <a href='https://github.com/dblock/slack-gamebot#usage' target="_blank">detailed usage</a> for other commands.
+          See <a href='https://github.com/dblock/slack-gamebot2#usage' target="_blank">detailed usage</a> for other commands.
         </h3>
       </div>
     </section>
@@ -183,21 +146,9 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
-            <h2 class="section-heading">Sponsors</h2>
-            <h3 class="section-subheading text-muted">
-              Playplay.io was made possible by sponsors and open-source contributors.<br><br>
-              <a class="sponsor" href="https://www.kickstarter.com/backing-and-hacking" target="_blank"><img src='img/sponsors/kickstarter.png' alt='Kickstarter'></a>
-              <a class="sponsor" href="https://twitter.com/artsyopensource" target="_blank"><img src='img/sponsors/artsy.jpg' alt='Artsy Open Source'></a>
-              <a class="sponsor" href="https://m.do.co/c/5b26011f9a9b" target="_blank"><img src='img/sponsors/do.png' alt='DigitalOcean'></a>
-              <br>
-              <a class="sponsor" href="https://365retailmarkets.com/" target="_blank"><img src='img/sponsors/365-retail-markets.gif' alt='365 Retail Markets'></a>
-              <a class="sponsor" href="https://alightanalytics.com/" target="_blank"><img src='img/sponsors/alightanalytics.png' alt='Alight Analytics'></a>
-              <br><br>
-              <img src='img/giphy.png'>
-            </h3>
             <h4>
               <small>
-                Free 2 week trial. Type "help" to get a link to subscribe your team for $29.99/yr.
+                Free 2 week trial. Type "help" to get a link to subscribe your team for $49.99/yr.
               </small>
             </h4>
           </div>
@@ -211,7 +162,7 @@
             <h3 class="section-heading">Open-Source</h3>
             <h3 class="section-subheading text-muted">The game bot service and the playplay.io website are open-source under the MIT license.</h3>
             <div><img src='img/github.png'></div>
-            <h3 class="section-subheading text-muted"><a href="https://github.com/playplayio" target="_blank">Fork us on Github</a></h3>
+            <h3 class="section-subheading text-muted"><a href="https://github.com/dblock/slack-gamebot2" target="_blank">Fork us on Github</a></h3>
           </div>
         </div>
       </div>
@@ -223,7 +174,7 @@
             <h3 class="setion-heading">Hypermedia API</h3>
             <h3 class="section-subheading text-muted">All public game data is available via a Hypermedia HAL API.</h3>
             <div><img src='img/api.png'></div>
-            <h3 class="section-subheading text-muted">Try <a href="<%= SlackRubyBotServer::Service.api_url %>" target="_blank">www.playplay.io/api</a>.</h3>
+            <h3 class="section-subheading text-muted">Try <a href="<%= SlackRubyBotServer::Service.api_url %>" target="_blank"><%= SlackRubyBotServer::Service.api_url %></a>.</h3>
           </div>
         </div>
       </div>
@@ -247,8 +198,8 @@
               <br><br>
             </div>
             <div>
-              <a href='https://github.com/dblock/slack-gamebot'>Fork me on Github</a>,
-              <a href='https://github.com/dblock/slack-gamebot/issues/new'>open an issue</a>,
+              <a href='https://github.com/dblock/slack-gamebot2'>Fork me on Github</a>,
+              <a href='https://github.com/dblock/slack-gamebot2/issues/new'>open an issue</a>,
               <a href='https://twitter.com/playplayio'>tweet at @playplayio</a>,
               or <a href='mailto:dblock[at]dblock[dot]org'>e-mail dblock[at]dblock[dot]org</a>.
               <br><br>

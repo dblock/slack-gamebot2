@@ -1,34 +1,11 @@
 require 'spec_helper'
 
 describe Team do
-  let!(:game) { Fabricate(:game) }
-
-  describe '#find_or_create_from_env!' do
-    before do
-      ENV['SLACK_API_TOKEN'] = 'token'
-    end
-
-    after do
-      ENV.delete 'SLACK_API_TOKEN'
-    end
-
-    context 'team', vcr: { cassette_name: 'team_info' } do
-      it 'creates a team' do
-        expect { Team.find_or_create_from_env! }.to change(Team, :count).by(1)
-        team = Team.first
-        expect(team.team_id).to eq 'T04KB5WQH'
-        expect(team.name).to eq 'dblock'
-        expect(team.domain).to eq 'dblockdotorg'
-        expect(team.token).to eq 'token'
-        expect(team.game).to eq game
-      end
-    end
-  end
-
   describe '#destroy' do
     let!(:team) { Fabricate(:team) }
-    let!(:match) { Fabricate(:match, team: team) }
-    let!(:season) { Fabricate(:season, team: team) }
+    let!(:channel) { Fabricate(:channel, team: team) }
+    let!(:match) { Fabricate(:match, channel: channel) }
+    let!(:season) { Fabricate(:season, channel: channel) }
 
     it 'destroys dependent records' do
       expect(Team.count).to eq 1
@@ -41,8 +18,10 @@ describe Team do
           expect do
             expect do
               expect do
-                team.destroy
-              end.to change(Team, :count).by(-1)
+                expect do
+                  team.destroy
+                end.to change(Team, :count).by(-1)
+              end.to change(Channel, :count).by(-1)
             end.to change(User, :count).by(-2)
           end.to change(Challenge, :count).by(-1)
         end.to change(Match, :count).by(-1)
@@ -81,6 +60,7 @@ describe Team do
 
     context 'team created three weeks ago' do
       let(:team) { Fabricate(:team, created_at: 3.weeks.ago) }
+      let(:channel) { Fabricate(:channel, team: team) }
 
       it 'dead=false' do
         expect(team.asleep?).to be true
@@ -88,7 +68,7 @@ describe Team do
       end
 
       context 'with a recent challenge' do
-        let!(:challenge) { Fabricate(:challenge, team: team) }
+        let!(:challenge) { Fabricate(:challenge, channel: channel) }
 
         it 'false' do
           expect(team.asleep?).to be false
@@ -97,7 +77,7 @@ describe Team do
       end
 
       context 'with a recent match' do
-        let!(:match) { Fabricate(:match, team: team) }
+        let!(:match) { Fabricate(:match, channel: channel) }
 
         it 'false' do
           expect(team.asleep?).to be false
@@ -106,7 +86,7 @@ describe Team do
       end
 
       context 'with a recent match lost to' do
-        let!(:match) { Fabricate(:match_lost_to, team: team) }
+        let!(:match) { Fabricate(:match_lost_to, channel: channel) }
 
         it 'false' do
           expect(team.asleep?).to be false
@@ -115,7 +95,7 @@ describe Team do
       end
 
       context 'with an old challenge' do
-        let!(:challenge) { Fabricate(:challenge, updated_at: 3.weeks.ago, team: team) }
+        let!(:challenge) { Fabricate(:challenge, updated_at: 3.weeks.ago, channel: channel) }
 
         it 'true' do
           expect(team.asleep?).to be true
@@ -126,13 +106,14 @@ describe Team do
 
     context 'team created over a month ago' do
       let(:team) { Fabricate(:team, created_at: 32.days.ago) }
+      let(:channel) { Fabricate(:channel, team: team) }
 
       it 'dead=true' do
         expect(team.dead?).to be true
       end
 
       context 'with a recent challenge' do
-        let!(:challenge) { Fabricate(:challenge, updated_at: 2.weeks.ago, team: team) }
+        let!(:challenge) { Fabricate(:challenge, updated_at: 2.weeks.ago, channel: channel) }
 
         it 'true' do
           expect(team.dead?).to be false
@@ -140,27 +121,10 @@ describe Team do
       end
 
       context 'with an old challenge' do
-        let!(:challenge) { Fabricate(:challenge, updated_at: 5.weeks.ago, team: team) }
+        let!(:challenge) { Fabricate(:challenge, updated_at: 5.weeks.ago, channel: channel) }
 
         it 'true' do
           expect(team.dead?).to be true
-        end
-      end
-    end
-  end
-
-  context 'gifs' do
-    let!(:team) { Fabricate(:team) }
-
-    context 'with a played challenge' do
-      let(:challenge) { Fabricate(:played_challenge) }
-
-      context 'with a new challenge' do
-        let!(:open_challenge) { Fabricate(:challenge, challengers: challenge.challengers, challenged: challenge.challenged) }
-
-        it 'can be set' do
-          expect(team.challenges.detect { |c| !c.valid? }).to be_nil
-          expect { team.update_attributes!(gifs: !team.gifs) }.not_to raise_error
         end
       end
     end
@@ -247,5 +211,222 @@ describe Team do
 
   describe '#activated' do
     pending 'DMs installing user when activated'
+  end
+
+  describe '#find_create_or_update_channel_by_channel_id!' do
+    let(:team) { Fabricate(:team) }
+
+    before do
+      allow(team.slack_client).to receive(:conversations_info)
+    end
+
+    it 'creates a new channel' do
+      expect do
+        channel = team.find_create_or_update_channel_by_channel_id!('C123', 'U123')
+        expect(channel.channel_id).to eq 'C123'
+        expect(channel.inviter_id).to eq 'U123'
+      end.to change(Channel, :count).by(1)
+    end
+
+    it 'does not create a new channel for DMs' do
+      expect do
+        channel = team.find_create_or_update_channel_by_channel_id!('D123', 'U123')
+        expect(channel).to be_nil
+      end.not_to change(Channel, :count)
+    end
+
+    it 'does not create a new IM channel' do
+      expect do
+        expect(team.slack_client).to receive(:conversations_info).and_return(
+          Hashie::Mash.new(
+            channel: {
+              is_im: true
+            }
+          )
+        )
+        channel = team.find_create_or_update_channel_by_channel_id!('C1234', 'U123')
+        expect(channel).to be_nil
+      end.not_to change(Channel, :count)
+    end
+
+    it 'does not create a new MPIM channel' do
+      expect do
+        expect(team.slack_client).to receive(:conversations_info).and_return(
+          Hashie::Mash.new(
+            channel: {
+              is_mpim: true
+            }
+          )
+        )
+        channel = team.find_create_or_update_channel_by_channel_id!('C1234', 'U123')
+        expect(channel).to be_nil
+      end.not_to change(Channel, :count)
+    end
+
+    context 'with an existing channel' do
+      let!(:channel) { Fabricate(:channel, team: team) }
+
+      it 'reuses an existing channel' do
+        expect do
+          existing_channel = team.find_create_or_update_channel_by_channel_id!(channel.channel_id, 'U123')
+          expect(existing_channel).to eq channel
+        end.not_to change(Channel, :count)
+      end
+    end
+  end
+
+  describe '#find_create_or_update_user_in_channel_by_slack_id!' do
+    let(:team) { Fabricate(:team) }
+
+    before do
+      allow(team.slack_client).to receive(:conversations_info)
+    end
+
+    it 'creates a new channel and user' do
+      expect do
+        expect do
+          user = team.find_create_or_update_user_in_channel_by_slack_id!('C123', 'U123')
+          expect(user.user_id).to eq 'U123'
+          expect(user.channel.channel_id).to eq 'C123'
+        end.to change(Channel, :count).by(1)
+      end.to change(User, :count).by(1)
+    end
+
+    it 'does not create a new channel or user for a DM' do
+      expect do
+        expect do
+          user_id = team.find_create_or_update_user_in_channel_by_slack_id!('D123', 'U123')
+          expect(user_id).to eq 'U123'
+        end.not_to change(Channel, :count)
+      end.not_to change(User, :count)
+    end
+
+    context 'with an existing channel' do
+      let!(:channel) { Fabricate(:channel, team: team) }
+
+      it 'reuses an existing team and creates a new user' do
+        expect do
+          expect do
+            user = team.find_create_or_update_user_in_channel_by_slack_id!(channel.channel_id, 'U123')
+            expect(user.user_id).to eq 'U123'
+          end.not_to change(Channel, :count)
+        end.to change(User, :count).by(1)
+      end
+
+      context 'with an existing team and user' do
+        let!(:user) { Fabricate(:user, channel: channel) }
+
+        it 'reuses an existing channel and creates a new user' do
+          expect do
+            expect do
+              found_user = team.find_create_or_update_user_in_channel_by_slack_id!(channel.channel_id, user.user_id)
+              expect(found_user.user_id).to eq user.user_id
+            end.not_to change(Channel, :count)
+          end.not_to change(User, :count)
+        end
+      end
+    end
+  end
+
+  describe '#join_channel!' do
+    let!(:team) { Fabricate(:team) }
+
+    it 'creates a new channel' do
+      expect do
+        channel = team.join_channel!('C123', 'U123')
+        expect(channel).not_to be_nil
+        expect(channel.channel_id).to eq 'C123'
+        expect(channel.inviter_id).to eq 'U123'
+      end.to change(Channel, :count).by(1)
+    end
+
+    context 'with a previously joined team' do
+      let(:channel) { team.join_channel!('C123', 'U123') }
+
+      context 'after leaving a team' do
+        before do
+          team.leave_channel!(channel.channel_id)
+        end
+
+        context 'after rejoining the channel' do
+          let!(:rejoined_channel) { team.join_channel!(channel.channel_id, 'U456') }
+
+          it 're-enables channel' do
+            rejoined_channel.reload
+            expect(rejoined_channel.enabled).to be true
+            expect(rejoined_channel.inviter_id).to eq 'U456'
+          end
+        end
+      end
+    end
+
+    context 'with an existing channel' do
+      let!(:channel) { Fabricate(:channel, team: team) }
+
+      it 'creates a new channel' do
+        expect do
+          channel = team.join_channel!('C123', 'U123')
+          expect(channel).not_to be_nil
+          expect(channel.channel_id).to eq 'C123'
+          expect(channel.inviter_id).to eq 'U123'
+        end.to change(Channel, :count).by(1)
+      end
+
+      it 'creates a new channel for a different team' do
+        expect do
+          team2 = Fabricate(:team)
+          channel2 = team2.join_channel!(channel.channel_id, 'U123')
+          expect(channel2).not_to be_nil
+          expect(channel2.team).to eq team2
+          expect(channel2.inviter_id).to eq 'U123'
+        end.to change(Channel, :count).by(1)
+      end
+
+      it 'updates an existing team' do
+        expect do
+          channel2 = team.join_channel!(channel.channel_id, 'U123')
+          expect(channel2).not_to be_nil
+          expect(channel2).to eq channel
+          expect(channel2.team).to eq team
+          expect(channel2.inviter_id).to eq 'U123'
+        end.not_to change(Channel, :count)
+      end
+    end
+  end
+
+  describe '#leave_channel!' do
+    let(:team) { Fabricate(:team) }
+
+    it 'ignores a team the bot is not a member of' do
+      expect do
+        expect(team.leave_channel!('C123')).to be false
+      end.not_to change(Channel, :count)
+    end
+
+    context 'with an existing team' do
+      let!(:channel) { Fabricate(:channel, team: team) }
+
+      context 'after leaving a team' do
+        before do
+          team.leave_channel!(channel.channel_id)
+        end
+
+        it 'disables channel' do
+          channel.reload
+          expect(channel.enabled).to be false
+        end
+      end
+
+      it 'can leave an existing team twice' do
+        expect do
+          2.times { expect(team.leave_channel!(channel.channel_id)).to eq channel }
+        end.not_to change(Channel, :count)
+      end
+
+      it 'does not leave team for the wrong team' do
+        team2 = Fabricate(:team)
+        expect(team2.leave_channel!(channel.channel_id)).to be false
+      end
+    end
   end
 end

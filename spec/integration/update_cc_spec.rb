@@ -11,13 +11,11 @@ describe 'Update cc', :js, type: :feature do
     end
 
     context 'a game' do
-      let!(:game) { Fabricate(:game, name: 'pong') }
-
       context 'a team with a stripe customer ID' do
-        let!(:team) { Fabricate(:team, game: game, stripe_customer_id: 'stripe_customer_id') }
+        let!(:team) { Fabricate(:team, stripe_customer_id: 'stripe_customer_id') }
 
         it 'updates cc' do
-          visit "/update_cc?team_id=#{team.team_id}&game=#{team.game.name}"
+          visit "/update_cc?team_id=#{team.team_id}"
           expect(find('h3')).to have_text('PLAYPLAY.IO: UPDATE CREDIT CARD INFO')
           customer = double
           expect(Stripe::Customer).to receive(:retrieve).and_return(customer)
@@ -34,15 +32,15 @@ describe 'Update cc', :js, type: :feature do
             find('button[type="submit"]').click
           end
           sleep 5
-          expect(find_by_id('messages')).to have_text("Successfully updated team #{team.name} credit card for #{team.game.name}.\nThank you!")
+          expect(find_by_id('messages')).to have_text("Successfully updated team #{team.name} credit card.\nThank you!")
         end
       end
 
       context 'a team without a stripe customer ID' do
-        let!(:team) { Fabricate(:team, game: game, stripe_customer_id: nil) }
+        let!(:team) { Fabricate(:team, stripe_customer_id: nil) }
 
         it 'displays error' do
-          visit "/update_cc?team_id=#{team.team_id}&game=#{team.game.name}"
+          visit "/update_cc?team_id=#{team.team_id}"
           expect(find('h3')).to have_text('PLAYPLAY.IO: UPDATE CREDIT CARD INFO')
           click_button 'Update Credit Card'
           sleep 1

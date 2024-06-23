@@ -5,6 +5,7 @@ class Match
   SORT_ORDERS = ['created_at', '-created_at'].freeze
 
   belongs_to :team, index: true
+  belongs_to :channel, index: true
   field :tied, type: Boolean, default: false
   field :resigned, type: Boolean, default: false
   field :scores, type: Array
@@ -16,8 +17,10 @@ class Match
   validate :validate_tied_scores, if: :tied?
   validate :validate_resigned_scores, if: :resigned?
   validate :validate_tied_resigned
+  validate :validate_channels
+  validates_presence_of :channel
   validates_presence_of :team
-  validate :validate_teams
+  validate :validate_team
 
   has_and_belongs_to_many :winners, class_name: 'User', inverse_of: nil
   has_and_belongs_to_many :losers, class_name: 'User', inverse_of: nil
@@ -62,7 +65,7 @@ class Match
     end
     winners.each(&:calculate_streaks!)
     losers.each(&:calculate_streaks!)
-    User.rank!(team)
+    User.rank!(channel)
   end
 
   def elo_s
@@ -78,11 +81,17 @@ class Match
 
   private
 
-  def validate_teams
-    teams = [team]
-    teams << challenge.team if challenge
-    teams.uniq!
-    errors.add(:team, 'Match can only be recorded for the same team.') if teams.count != 1
+  def validate_team
+    return if team == channel.team
+
+    errors.add(:team, 'Channel team must match.')
+  end
+
+  def validate_channels
+    channels = [channel]
+    channels << challenge.channel if challenge
+    channels.uniq!
+    errors.add(:channel, 'Match can only be recorded on the same channel.') if channels.count != 1
   end
 
   def validate_scores

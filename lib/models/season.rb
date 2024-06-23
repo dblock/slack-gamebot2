@@ -3,6 +3,7 @@ class Season
   include Mongoid::Timestamps::Created
 
   belongs_to :team, index: true
+  belongs_to :channel, index: true
   belongs_to :created_by, class_name: 'User', inverse_of: nil, index: true, optional: true
   has_many :challenges
   has_many :matches
@@ -12,8 +13,10 @@ class Season
   after_create :reset_users!
 
   validate :validate_challenges
-  validate :validate_teams
+  validate :validate_channels
+  validates_presence_of :channel
   validates_presence_of :team
+  validate :validate_team
 
   SORT_ORDERS = ['created_at', '-created_at'].freeze
 
@@ -25,7 +28,7 @@ class Season
   def to_s
     [
       "#{label}: #{winners ? winners.map(&:to_s).and : 'n/a'}",
-      "#{team.matches.count} match#{team.matches.count == 1 ? '' : 'es'}",
+      "#{channel.matches.count} match#{channel.matches.count == 1 ? '' : 'es'}",
       "#{players.count} player#{players.count == 1 ? '' : 's'}"
     ].join(', ')
   end
@@ -41,15 +44,21 @@ class Season
 
   private
 
-  def validate_teams
-    teams = [team]
-    teams.concat(challenges.map(&:team))
-    teams.uniq!
-    errors.add(:team, 'Season can only be recorded for one team.') if teams.count != 1
+  def validate_team
+    return if team == channel.team
+
+    errors.add(:team, 'Channel team must match.')
+  end
+
+  def validate_channels
+    channels = [channel]
+    channels.concat(challenges.map(&:channel))
+    channels.uniq!
+    errors.add(:channel, 'Season can only be recorded on one channel.') if channels.count != 1
   end
 
   def played_challenges
-    persisted? ? challenges.played : team.challenges.current.played
+    persisted? ? challenges.played : channel.challenges.current.played
   end
 
   def label
@@ -57,7 +66,7 @@ class Season
   end
 
   def validate_challenges
-    return if team.matches.current.any? || team.challenges.current.any?
+    return if channel.matches.current.any? || channel.challenges.current.any?
 
     errors.add(:challenges, 'No matches have been recorded.')
   end
@@ -65,13 +74,13 @@ class Season
   def create_user_ranks
     return if user_ranks.any?
 
-    team.users.ranked.asc(:rank).asc(:_id).each do |user|
+    channel.users.ranked.asc(:rank).asc(:_id).each do |user|
       user_ranks << UserRank.from_user(user)
     end
   end
 
   def archive_challenges!
-    team.challenges.where(
+    channel.challenges.where(
       :state.in => [
         ChallengeState::PROPOSED,
         ChallengeState::ACCEPTED,
@@ -81,11 +90,11 @@ class Season
       state: ChallengeState::CANCELED,
       updated_by_id: created_by&.id
     )
-    team.challenges.current.set(season_id: id)
-    team.matches.current.set(season_id: id)
+    channel.challenges.current.set(season_id: id)
+    channel.matches.current.set(season_id: id)
   end
 
   def reset_users!
-    User.reset_all!(team)
+    User.reset_all!(channel)
   end
 end

@@ -8,21 +8,21 @@ describe SlackGamebot::Api::Endpoints::StatusEndpoint do
   end
 
   context 'status' do
+    subject do
+      client.status
+    end
+
     it 'returns a status' do
-      status = client.status
-      expect(status.games_count).to eq 0
+      expect(subject.teams_count).to eq 0
+      expect(subject.channels_count).to eq 0
     end
 
     context 'with a team that is inactive' do
       let!(:team) { Fabricate(:team, api: true, active: false) }
 
       it 'returns a status' do
-        status = client.status
-        expect(status.games_count).to eq 1
-        game = status.games[team.game.name]
-        expect(game['teams_count']).to eq 1
-        expect(game['active_teams_count']).to eq 0
-        expect(game['api_teams_count']).to eq 1
+        expect(subject.teams_count).to eq 1
+        expect(subject.active_teams_count).to eq 0
       end
     end
 
@@ -34,12 +34,9 @@ describe SlackGamebot::Api::Endpoints::StatusEndpoint do
       end
 
       it 'returns a status and deactivates team' do
-        status = client.status
-        expect(status.games_count).to eq 1
-        game = status.games[team.game.name]
-        expect(game['teams_count']).to eq 1
-        expect(game['active_teams_count']).to eq 1
-        expect(game['api_teams_count']).to eq 1
+        expect(subject.teams_count).to eq 1
+        expect(subject.api_teams_count).to eq 1
+        expect(subject.active_teams_count).to eq 0
         expect(team.reload.active).to be false
       end
     end
@@ -48,11 +45,18 @@ describe SlackGamebot::Api::Endpoints::StatusEndpoint do
       let!(:team) { Fabricate(:team, api: false) }
 
       it 'returns total counts anyway' do
-        status = client.status
-        expect(status.games_count).to eq 1
-        game = status.games[team.game.name]
-        expect(game['teams_count']).to eq 1
-        expect(game['api_teams_count']).to eq 0
+        expect(subject.teams_count).to eq 1
+        expect(subject.api_teams_count).to eq 0
+      end
+    end
+
+    context 'with a channel with api off' do
+      let!(:channel) { Fabricate(:channel, api: false) }
+
+      it 'returns total counts anyway' do
+        expect(subject.teams_count).to eq 1
+        expect(subject.channels_count).to eq 1
+        expect(subject.api_channels_count).to eq 0
       end
     end
   end

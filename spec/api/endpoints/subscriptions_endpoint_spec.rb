@@ -40,9 +40,9 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
 
       context 'with an active subscription' do
         before do
-          allow(stripe_customer).to receive(:subscriptions).and_return([
-                                                                         double(Stripe::Subscription)
-                                                                       ])
+          allow(stripe_customer).to receive(:subscriptions).and_return(
+            [double(Stripe::Subscription)]
+          )
         end
 
         it 'fails to create a subscription' do
@@ -70,15 +70,14 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
             team.stripe_customer_id,
             {
               source: 'token',
-              plan: 'slack-playplay-yearly',
+              plan: 'slack-gamebot2-yearly',
               email: 'foo@bar.com',
               coupon: nil,
               metadata: {
                 id: team._id.to_s,
                 team_id: team.team_id,
                 name: team.name,
-                domain: team.domain,
-                game: team.game.name
+                domain: team.domain
               }
             }
           ).and_return('id' => 'customer_id')
@@ -104,7 +103,7 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
       context 'with a plan' do
         before do
           expect_any_instance_of(Team).to receive(:inform!).once
-          stripe_helper.create_plan(id: 'slack-playplay-yearly', amount: 2999)
+          stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999)
           client.subscriptions._post(
             team_id: team._id,
             stripe_token: stripe_helper.generate_card_token,
@@ -123,8 +122,7 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
             id: team._id.to_s,
             name: team.name,
             team_id: team.team_id,
-            domain: team.domain,
-            game: team.game.name
+            domain: team.domain
           )
           expect(customer.discount).to be_nil
           subscriptions = customer.subscriptions
@@ -135,14 +133,14 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
       context 'with a coupon' do
         before do
           expect_any_instance_of(Team).to receive(:inform!).once
-          stripe_helper.create_plan(id: 'slack-playplay-yearly', amount: 2999)
-          stripe_helper.create_coupon(id: 'slack-playplay-yearly-twenty-nine-ninety-nine', amount_off: 2999)
+          stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999)
+          stripe_helper.create_coupon(id: 'slack-gamebot2-yearly-twenty-nine-ninety-nine', amount_off: 4999)
           client.subscriptions._post(
             team_id: team._id,
             stripe_token: stripe_helper.generate_card_token,
             stripe_token_type: 'card',
             stripe_email: 'foo@bar.com',
-            stripe_coupon: 'slack-playplay-yearly-twenty-nine-ninety-nine'
+            stripe_coupon: 'slack-gamebot2-yearly-twenty-nine-ninety-nine'
           )
           team.reload
         end
@@ -155,7 +153,7 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
           subscriptions = customer.subscriptions
           expect(subscriptions.count).to eq 1
           discount = customer.discount
-          expect(discount.coupon.id).to eq 'slack-playplay-yearly-twenty-nine-ninety-nine'
+          expect(discount.coupon.id).to eq 'slack-gamebot2-yearly-twenty-nine-ninety-nine'
         end
       end
     end

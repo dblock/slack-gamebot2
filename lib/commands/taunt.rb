@@ -1,18 +1,17 @@
 module SlackGamebot
   module Commands
-    class Taunt < Base
-      include SlackGamebot::Commands::Mixins::Subscription
+    class Taunt < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
 
-      subscribed_command 'taunt' do |client, data, match|
-        taunter = ::User.find_create_or_update_by_slack_id!(client, data.user)
-        arguments = match['expression'] ? match['expression'].split.reject(&:blank?) : []
+      user_in_channel_command 'taunt' do |channel, taunter, data|
+        arguments = data.match['expression'] ? data.match['expression'].split.reject(&:blank?) : []
         if arguments.empty?
-          client.say(channel: data.channel, text: 'Please provide a user name to taunt.')
+          data.team.slack_client.say(channel: data.channel, text: 'Please provide a user name to taunt.')
         else
-          victim = ::User.find_many_by_slack_mention!(client, arguments)
+          victim = channel.find_or_create_many_by_mention!(arguments)
           taunt = "#{victim.map(&:display_name).and} #{victim.count == 1 ? 'sucks' : 'suck'} at this game!"
-          client.say(channel: data.channel, text: "#{taunter.user_name} says that #{taunt}")
-          logger.info "TAUNT: #{client.owner} - #{taunter.user_name}"
+          data.team.slack_client.say(channel: data.channel, text: "#{taunter.user_name} says that #{taunt}")
+          logger.info "TAUNT: #{channel} - #{taunter.user_name}"
         end
       end
     end

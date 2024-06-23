@@ -1,6 +1,8 @@
 module SlackGamebot
   module Commands
-    class Help < Base
+    class Help < SlackRubyBotServer::Events::AppMentions::Mention
+      include SlackGamebot::Commands::Mixins::User
+
       HELP = <<~EOS.freeze
         I am your friendly Gamebot, here to help.
 
@@ -57,13 +59,15 @@ module SlackGamebot
         unsubscribe: do not auto-renew subscription
         ```
       EOS
-      def self.call(client, data, _match)
-        client.say(channel: data.channel, text: [
+
+      user_command 'help' do |_channel, _user, data|
+        team = data.team
+        team.slack_client.say(channel: data.channel, text: [
           HELP,
-          client.owner.reload.subscribed? ? nil : client.owner.trial_message
+          team.reload.subscribed? ? nil : team.trial_message
         ].compact.join("\n"))
-        client.say(channel: data.channel, gif: 'help')
-        logger.info "HELP: #{client.owner} - #{data.user}"
+        team.slack_client.say(channel: data.channel, gif: 'help')
+        logger.info "HELP: #{team} - #{data.user}"
       end
     end
   end

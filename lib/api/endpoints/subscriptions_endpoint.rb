@@ -20,20 +20,19 @@ module SlackGamebot
             error!('Existing Subscription Already Active', 400) if team.stripe_customer_id && team.stripe_customer.subscriptions.any?
             data = {
               source: params[:stripe_token],
-              plan: 'slack-playplay-yearly',
+              plan: 'slack-gamebot2-yearly',
               email: params[:stripe_email],
               coupon: params[:stripe_coupon],
               metadata: {
                 id: team._id.to_s,
                 team_id: team.team_id,
                 name: team.name,
-                domain: team.domain,
-                game: team.game.name
+                domain: team.domain
               }
             }
             customer = team.stripe_customer_id ? Stripe::Customer.update(team.stripe_customer_id, data) : Stripe::Customer.create(data)
             Api::Middleware.logger.info "Subscription for team #{team} created, stripe_customer_id=#{customer['id']}."
-            team.update_attributes!(subscribed: true, stripe_customer_id: customer['id'])
+            team.update_attributes!(subscribed: true, subscribed_at: Time.now.utc, stripe_customer_id: customer['id'])
             present team, with: SlackGamebot::Api::Presenters::TeamPresenter
           end
         end
