@@ -4,7 +4,7 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'register' do |channel, user, data|
-        ts = Time.now.utc
+        ts = Time.now.utc - 1
         user.register! if user && !user.registered?
         user.promote! if user && !channel.captains.any?
         message = if user.created_at >= ts

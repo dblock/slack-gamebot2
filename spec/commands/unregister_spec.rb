@@ -1,8 +1,22 @@
 require 'spec_helper'
 
 describe SlackGamebot::Commands::Unregister do
-  include_context 'user'
+  include_context 'subscribed team'
 
+  let!(:channel) { Fabricate(:channel, channel_id: 'channel', team: team) }
+
+  before do
+    allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(
+      user: {
+        id: 'user_id',
+        name: 'user_name',
+        is_admin: false,
+        is_owner: false
+      }
+    )
+  end
+
+  let!(:user) { Fabricate(:user, channel: channel) }
   let(:another_user) { Fabricate(:user, captain: true, channel: channel) }
   let(:captain) { Fabricate(:user, captain: true, channel: channel) }
 
@@ -10,7 +24,7 @@ describe SlackGamebot::Commands::Unregister do
     expect(message: '@gamebot unregister someone', channel: channel, user: user).to respond_with_slack_message("You're not a captain, sorry.")
   end
 
-  pending 'registers, then unregisters a previously unknown user' do
+  it 'registers, then unregisters a previously unknown user' do
     expect do
       expect(message: '@gamebot unregister', channel: channel, user: 'user1').to respond_with_slack_message("I've removed <@user1> from the leaderboard.")
     end.to change(User, :count).by(1)
