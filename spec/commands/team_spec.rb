@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe SlackGamebot::Commands::Team do
-  include_context 'channel'
+  include_context 'user'
 
   context 'with a captain' do
     let!(:user) { Fabricate(:user, channel: channel, user_name: 'username', captain: true) }
 
     it 'team' do
-      expect(message: '@gamebot team', channel: channel).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captain username."
+      expect(message: '@gamebot team', channel: channel, user: user).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captain username."
     end
   end
 
@@ -17,7 +17,7 @@ describe SlackGamebot::Commands::Team do
     end
 
     it 'team' do
-      expect(message: '@gamebot team', channel: channel).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captains #{channel.captains.map(&:display_name).and}."
+      expect(message: '@gamebot team', channel: channel, user: user).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captains #{channel.captains.map(&:display_name).and}."
     end
   end
 end

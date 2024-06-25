@@ -127,7 +127,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       end
 
       it 'creates a team' do
-        expect_any_instance_of(Team).to receive(:inform!).with(Team::INSTALLED_TEXT, 'installed')
+        expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
         expect(SlackRubyBotServer::Service.instance).to receive(:start!)
         expect do
           team = client.teams._post(code: 'code')
@@ -141,7 +141,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       end
 
       it 'reactivates a deactivated team' do
-        expect_any_instance_of(Team).to receive(:inform!).with(Team::INSTALLED_TEXT, 'installed')
+        expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
         expect(SlackRubyBotServer::Service.instance).to receive(:start!)
         existing_team = Fabricate(:team, token: 'token', active: false)
         expect do
@@ -160,6 +160,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       it 'returns a useful error when team already exists' do
         existing_team = Fabricate(:team, token: 'token')
         allow_any_instance_of(Team).to receive(:inform!)
+        allow_any_instance_of(Team).to receive(:inform_admin!)
         allow_any_instance_of(Team).to receive(:ping_if_active!)
         expect { client.teams._post(code: 'code') }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
@@ -168,7 +169,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       end
 
       it 'reactivates a deactivated team with a different code' do
-        expect_any_instance_of(Team).to receive(:inform!).with(Team::INSTALLED_TEXT, 'installed')
+        expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
         expect(SlackRubyBotServer::Service.instance).to receive(:start!)
         existing_team = Fabricate(:team, api: true, token: 'old', team_id: 'team_id', active: false)
         expect do
@@ -203,7 +204,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
         let(:list) { double(Mailchimp::List, members: double(Mailchimp::List::Members)) }
 
         it 'subscribes to the mailing list' do
-          expect_any_instance_of(Team).to receive(:inform!).with(Team::INSTALLED_TEXT, 'installed')
+          expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
           expect(SlackRubyBotServer::Service.instance).to receive(:start!)
 
           allow_any_instance_of(Slack::Web::Client).to receive(:users_info).with(

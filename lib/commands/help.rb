@@ -53,7 +53,7 @@ module SlackGamebot
         demote me: demote you from captain
         set nickname <player> [name], unset nickname <player>: set/unset someone's nickname
         seasons: show all seasons
-        reset <team>: reset all stats, start a new season
+        reset <channel>: reset all stats, start a new season
         unregister <player>: remove a player from the leaderboard
         subscription: show subscription info (captains also see payment data)
         unsubscribe: do not auto-renew subscription

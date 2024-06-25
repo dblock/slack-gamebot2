@@ -36,7 +36,8 @@ describe 'Subscribe', :js, type: :feature do
       find_by_id('subscribeButton').click
       sleep 1
 
-      expect_any_instance_of(Team).to receive(:inform!).with(Team::SUBSCRIBED_TEXT, 'thanks')
+      expect_any_instance_of(Team).to receive(:inform!).with(Team::SUBSCRIBED_TEXT)
+      expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::SUBSCRIBED_TEXT)
 
       stripe_iframe = all('iframe[name=stripe_checkout_app]').last
       Capybara.within_frame stripe_iframe do
@@ -85,7 +86,8 @@ describe 'Subscribe', :js, type: :feature do
 
         expect(Stripe::Customer).to receive(:create).with(hash_including(coupon: 'coupon-id')).and_return('id' => 'customer_id')
 
-        expect_any_instance_of(Team).to receive(:inform!).with(Team::SUBSCRIBED_TEXT, 'thanks')
+        expect_any_instance_of(Team).to receive(:inform!).with(Team::SUBSCRIBED_TEXT)
+        expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::SUBSCRIBED_TEXT)
 
         find_by_id('subscribeButton').click
         sleep 1

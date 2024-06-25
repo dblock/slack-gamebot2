@@ -48,7 +48,7 @@ describe 'events/app_home_opened' do
 
     it 'welcomes user' do
       expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage).with(
-        channel: 'DM', text: /I currenly keep leaderboards in 1 channel/
+        channel: 'DM', text: /I keep leaderboards in 1 channel/
       )
 
       post '/api/slack/event', event_envelope

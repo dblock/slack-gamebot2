@@ -53,7 +53,7 @@ class User
   end
 
   def display_name
-    registered ? nickname || user_name : '<unregistered>'
+    registered ? nickname || user_name || slack_mention : '<unregistered>'
   end
 
   def anyone?

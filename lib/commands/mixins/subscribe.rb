@@ -15,6 +15,13 @@ module SlackGamebot
               else
                 yield data
               end
+            rescue Mongoid::Errors::Validations => e
+              errors = e.document.errors.messages.transform_values(&:uniq).values.join("\n")
+              data.team.slack_client.chat_postMessage channel: data.channel, text: errors
+              logger.warn "#{data.team}, user=#{data.user}, text=#{errors}"
+            rescue SlackGamebot::Error => e
+              data.team.slack_client.chat_postMessage channel: data.channel, text: e.message
+              logger.warn "#{data.team}, user=#{data.user}, text=#{e.message}"
             end
           end
         end

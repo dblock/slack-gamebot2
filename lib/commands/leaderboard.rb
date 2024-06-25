@@ -1,9 +1,9 @@
 module SlackGamebot
   module Commands
     class Leaderboard < SlackRubyBotServer::Events::AppMentions::Mention
-      include SlackGamebot::Commands::Mixins::Channel
+      include SlackGamebot::Commands::Mixins::User
 
-      channel_command 'leaderboard' do |channel, data, _match|
+      user_in_channel_command 'leaderboard' do |channel, _user, data|
         max = channel.leaderboard_max
         reverse = false
         arguments = data.match['expression'].split.reject(&:blank?) if data.match['expression']

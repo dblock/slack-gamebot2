@@ -98,9 +98,9 @@ class Team
     asleep?(dt)
   end
 
-  def dead!(message, gif = nil)
-    inform! message, gif
-    inform_admin! message, gif
+  def dead!(message)
+    inform! message
+    inform_admin! message
   ensure
     update_attributes!(dead_at: Time.now.utc)
   end
@@ -113,6 +113,10 @@ class Team
 
   def slack_client
     @slack_client ||= SlackGamebot::Web::Client.new(token: token)
+  end
+
+  def bot_mention
+    "<@#{bot_user_id}>" if bot_user_id
   end
 
   def slack_channels
@@ -129,19 +133,19 @@ class Team
     channels
   end
 
-  def inform!(message, gif_name = nil)
+  def inform!(message)
     slack_channels.each do |channel|
       logger.info "Sending '#{message}' to #{self} on ##{channel['name']}."
-      slack_client.chat_postMessage(text: make_message(message, gif_name), channel: channel['id'], as_user: true)
+      slack_client.chat_postMessage(text: message, channel: channel['id'], as_user: true)
     end
   end
 
-  def inform_admin!(message, gif_name = nil)
+  def inform_admin!(message)
     return unless activated_user_id
 
     channel = slack_client.conversations_open(users: activated_user_id.to_s)
     logger.info "Sending DM '#{message}' to #{activated_user_id}."
-    slack_client.chat_postMessage(text: make_message(message, gif_name), channel: channel.channel.id, as_user: true)
+    slack_client.chat_postMessage(text: message, channel: channel.channel.id, as_user: true)
   end
 
   def stripe_customer
@@ -225,11 +229,6 @@ class Team
     end
   end
 
-  def make_message(message, gif_name = nil)
-    gif = Giphy.random(gif_name) if gif_name && gifs?
-    [message, gif].compact.join("\n")
-  end
-
   def find_create_or_update_channel_by_channel_id!(channel_id, user_id)
     raise 'missing channel_id' unless channel_id
     return nil if channel_id[0] == 'D'
@@ -246,7 +245,7 @@ class Team
 
   def find_create_or_update_user_in_channel_by_slack_id!(channel_id, user_id)
     channel = find_create_or_update_channel_by_channel_id!(channel_id, user_id)
-    channel ? channel.find_or_create_user!(user_id) : user_id
+    channel ? channel.find_or_create_by_slack_id!(user_id) : user_id
   end
 
   def join_channel!(channel_id, inviter_id)
@@ -264,30 +263,32 @@ class Team
 
   private
 
-  INSTALLED_TEXT =
-    "Hi there! I'm your team's game bot. " \
-    "I don't play actual games, but I'll be keeping your leaderboards. " \
-    'Thanks for trying me out. ' \
-    'To start, invite me to a channel. ' \
-    'You can always DM me `help` for instructions.'.freeze
+  INSTALLED_TEXT = [
+    "Hi there! I'm your team's Leaderboard Gamebot.",
+    "I don't play actual games, but I'll be keeping your leaderboards.",
+    'Thanks for trying me out. To start, invite me to a channel.',
+    'You can always DM me `help` for instructions.'
+  ].join("\n")
 
-  SUBSCRIBED_TEXT =
-    "Hi there! I'm your team's game bot. " \
-    "I don't play actual games, but I'll be keeping your leaderboards. " \
-    'Your team has purchased a yearly subscription. ' \
-    'Follow us on Twitter at https://twitter.com/playplayio for news and updates. ' \
-    'Thanks for being a customer!'.freeze
+  SUBSCRIBED_TEXT = [
+    "Hi there! I'm your team's Leaderboard Gamebot.",
+    "I don't play actual games, but I keep your leaderboards.",
+    'Your team has purchased a yearly subscription.',
+    'Follow us on X at https://twitter.com/playplayio for news and updates.',
+    'Thanks for being a customer!'
+  ].join("\n")
 
   def subscribed!
     return unless subscribed? && subscribed_changed?
 
-    inform! SUBSCRIBED_TEXT, 'thanks'
+    inform_admin! SUBSCRIBED_TEXT
+    inform! SUBSCRIBED_TEXT
   end
 
   def activated!
     return unless active? && activated_user_id && bot_user_id
     return unless active_changed? || activated_user_id_changed?
 
-    inform! INSTALLED_TEXT, 'installed'
+    inform_admin! INSTALLED_TEXT
   end
 end

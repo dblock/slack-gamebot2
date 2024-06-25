@@ -8,7 +8,12 @@ end
 
 RSpec.shared_context 'channel' do
   include_context 'subscribed team'
+
   let!(:channel) { Fabricate(:channel, channel_id: 'channel', team: team) }
+
+  before do
+    allow_any_instance_of(Slack::Web::Client).to receive(:users_info)
+  end
 end
 
 RSpec.shared_context 'user' do

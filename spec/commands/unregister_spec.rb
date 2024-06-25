@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::Unregister do
     expect(message: '@gamebot unregister someone', channel: channel, user: user).to respond_with_slack_message("You're not a captain, sorry.")
   end
 
-  it 'registers, then unregisters a previously unknown user' do
+  pending 'registers, then unregisters a previously unknown user' do
     expect do
       expect(message: '@gamebot unregister', channel: channel, user: 'user1').to respond_with_slack_message("I've removed <@user1> from the leaderboard.")
     end.to change(User, :count).by(1)

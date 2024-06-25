@@ -82,6 +82,7 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
             }
           ).and_return('id' => 'customer_id')
           expect_any_instance_of(Team).to receive(:inform!).once
+          expect_any_instance_of(Team).to receive(:inform_admin!).once
           client.subscriptions._post(
             team_id: team._id,
             stripe_token: 'token',
@@ -103,6 +104,7 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
       context 'with a plan' do
         before do
           expect_any_instance_of(Team).to receive(:inform!).once
+          expect_any_instance_of(Team).to receive(:inform_admin!).once
           stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999)
           client.subscriptions._post(
             team_id: team._id,
@@ -133,6 +135,7 @@ describe SlackGamebot::Api::Endpoints::SubscriptionsEndpoint do
       context 'with a coupon' do
         before do
           expect_any_instance_of(Team).to receive(:inform!).once
+          expect_any_instance_of(Team).to receive(:inform_admin!).once
           stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999)
           stripe_helper.create_coupon(id: 'slack-gamebot2-yearly-twenty-nine-ninety-nine', amount_off: 4999)
           client.subscriptions._post(

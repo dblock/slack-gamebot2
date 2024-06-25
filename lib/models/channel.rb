@@ -54,11 +54,6 @@ class Channel
     slack_client.conversations_info(channel: channel_id)
   end
 
-  def find_or_create_user!(user_id)
-    user = users.where(user_id: user_id).first
-    user || users.create!(team: team, channel: self, user_id: user_id, registered: true, captain: !captains.any?)
-  end
-
   def find_or_create_by_slack_id!(slack_id)
     instance = users.where(user_id: slack_id).first
     users_info = begin
@@ -82,16 +77,13 @@ class Channel
         user_id: slack_id,
         user_name: instance_info.name,
         registered: true,
+        captain: !captains.any?,
         is_owner: instance_info.is_owner,
         is_admin: instance_info.is_admin
       )
     end
-    if instance
-      instance.register! unless instance.registered?
-      instance.promote! unless instance.captain? || captains.count.positive?
-    end
 
-    raise SlackGamebot::Error, "I don't know who #{user_name} is!" unless instance
+    raise SlackGamebot::Error, "I don't know who <@#{slack_id}> is!" unless instance
 
     instance
   end

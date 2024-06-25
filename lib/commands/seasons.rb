@@ -3,7 +3,7 @@ module SlackGamebot
     class Seasons < SlackRubyBotServer::Events::AppMentions::Mention
       include SlackGamebot::Commands::Mixins::Channel
 
-      channel_command 'seasons' do |channel, data, _match|
+      channel_command 'seasons' do |channel, data|
         current_season = ::Season.new(team: channel.team, channel: channel)
         if current_season.valid?
           message = [current_season, channel.seasons.desc(:_id)].flatten.map(&:to_s).join("\n")

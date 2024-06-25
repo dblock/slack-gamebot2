@@ -90,7 +90,7 @@ describe Channel do
       expect(channel.find_or_create_by_mention!(user.user_name.capitalize)).to eq user
     end
 
-    it 'creates a new user when ID is known', vcr: { cassette_name: 'user_info' } do
+    it 'creates a new user when ID is known', vcr: { cassette_name: 'users_info' } do
       expect do
         channel.find_or_create_by_mention!('<@nobody>')
       end.to change(User, :count).by(1)
@@ -128,7 +128,7 @@ describe Channel do
     end
   end
 
-  describe '#find_or_create_by_slack_id!', vcr: { cassette_name: 'user_info' } do
+  describe '#find_or_create_by_slack_id!', vcr: { cassette_name: 'users_info' } do
     context 'without a user' do
       it 'creates a user' do
         expect do

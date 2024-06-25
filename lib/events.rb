@@ -22,10 +22,12 @@ SlackRubyBotServer::Events.configure do |config|
     channel = data.team.join_channel!(data.channel, data.inviter)
 
     text = [
-      "Hi there! I'm your team's Leaderboard Gamebot. I don't know how to play any games myself, but I will keep a leaderboard for you in this channel.",
-      'Start by challenging someone to a game with `@gamebot challenge @user`.',
-      'Type `@gamebot help` for instructions and `@gamebot leaderboard` for current status.'
-    ].join(' ')
+      "Hi there! I'm your team's Leaderboard Gamebot.",
+      "I don't know how to play any games myself, but I will keep a leaderboard for you in this channel.",
+      "Start by challenging someone to a game, for example `#{data.team.bot_mention} challenge <@#{data.inviter}>`.",
+      "Accept with `#{data.team.bot_mention} accept` and have the loser record their loss with `#{data.team.bot_mention} lost`.",
+      "Use `#{data.team.bot_mention} leaderboard` for current rankings and `#{data.team.bot_mention} help` for more commands."
+    ].join("\n")
 
     data.team.slack_client.chat_postMessage(channel: data.channel, text: text)
 
@@ -54,12 +56,33 @@ SlackRubyBotServer::Events.configure do |config|
 
     text = [
       "Hi there! I'm your team's Leaderboard Gamebot. I don't know how to play any games myself, but I keep leaderboards for your team.",
-      data.team.channels.enabled.count > 0 ? "I currenly keep leaderboards in #{pluralize(data.team.channels.enabled.count, 'channel')}#{' (' + data.team.channels.enabled.map(&:slack_mention).and + ')'}." : 'Invite me to a channel to start a new leaderboard.',
-      'Type `@gamebot help` for more options.'
-    ].join(' ')
+      data.team.channels.enabled.count > 0 ? "I keep leaderboards in #{pluralize(data.team.channels.enabled.count, 'channel')}#{' (' + data.team.channels.enabled.map(&:slack_mention).and + ')'}." : 'Invite me to a channel to start a new leaderboard.',
+      "Type `#{data.team.bot_mention} help` for more options."
+    ].join("\n")
 
     SlackGamebot::Api::Middleware.logger.info "#{data.team.name}: user opened bot home ##{data.channel}."
     data.team.slack_client.chat_postMessage(channel: data.channel, text: text)
+
+    { ok: true }
+  end
+
+  config.on :event, 'event_callback', 'message' do |event|
+    data = event['event']
+    next { ok: true } unless data && data['text'] && data['channel']
+
+    team = Team.where(team_id: event['team_id']).first
+    next { ok: true } unless team
+
+    channel = team.channels.where(channel_id: data['channel']).first
+    next { ok: true } unless channel && channel.aliases.any?
+
+    bot_aliases_regexp = Regexp.new("^(#{channel.aliases.join('|')})[[:space:]]*")
+    text = data['text'].gsub(bot_aliases_regexp, '')
+
+    next { ok: true } unless text && data['text'] != text
+
+    data = Slack::Messages::Message.new(data).merge(text: text, team: team)
+    SlackRubyBotServer::Events::AppMentions.config.handlers.detect { |c| c.invoke(data) }
 
     { ok: true }
   end

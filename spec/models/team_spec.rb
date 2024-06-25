@@ -275,7 +275,7 @@ describe Team do
     end
   end
 
-  describe '#find_create_or_update_user_in_channel_by_slack_id!' do
+  describe '#find_create_or_update_user_in_channel_by_slack_id!', vcr: { cassette_name: 'users_info' } do
     let(:team) { Fabricate(:team) }
 
     before do
@@ -426,6 +426,29 @@ describe Team do
       it 'does not leave team for the wrong team' do
         team2 = Fabricate(:team)
         expect(team2.leave_channel!(channel.channel_id)).to be false
+      end
+    end
+  end
+
+  describe 'bot_mention' do
+    context 'without bot_user_id' do
+      let(:team) { Fabricate(:team, bot_user_id: nil) }
+
+      it 'is a slack mention' do
+        expect(team.bot_mention).to be_nil
+      end
+    end
+
+    context 'with bot_user_id' do
+      let(:team) { Fabricate(:team, bot_user_id: 'bot_id') }
+
+      before do
+        allow_any_instance_of(Team).to receive(:inform!)
+        allow_any_instance_of(Team).to receive(:inform_admin!)
+      end
+
+      it 'is a slack mention' do
+        expect(team.bot_mention).to eq '<@bot_id>'
       end
     end
   end

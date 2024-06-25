@@ -37,8 +37,8 @@ describe SlackGamebot::App do
         expect(active_team_one_week_ago.reload.active).to be true
         expect(active_team_four_weeks_ago.reload.active).to be false
         expect(subscribed_team_a_month_ago.reload.active).to be true
-        expect_any_instance_of(Team).to receive(:inform!).with(SlackGamebot::App::DEAD_MESSAGE, 'dead').once
-        expect_any_instance_of(Team).to receive(:inform_admin!).with(SlackGamebot::App::DEAD_MESSAGE, 'dead').once
+        expect_any_instance_of(Team).to receive(:inform!).with(SlackGamebot::App::DEAD_MESSAGE).once
+        expect_any_instance_of(Team).to receive(:inform_admin!).with(SlackGamebot::App::DEAD_MESSAGE).once
         subject.send(:inform_dead_teams!)
       end
     end

@@ -6,7 +6,7 @@ describe SlackGamebot::Commands::Season do
   shared_examples_for 'season' do
     context 'no seasons' do
       it 'seasons' do
-        expect(message: '@gamebot season').to respond_with_slack_message "There're no seasons."
+        expect(message: '@gamebot season', user: user).to respond_with_slack_message "There're no seasons."
       end
     end
 
@@ -17,7 +17,7 @@ describe SlackGamebot::Commands::Season do
 
       it 'returns current season' do
         current_season = Season.new(team: team, channel: channel)
-        expect(message: '@gamebot season').to respond_with_slack_message current_season.to_s
+        expect(message: '@gamebot season', user: user).to respond_with_slack_message current_season.to_s
       end
 
       context 'after reset' do
@@ -26,7 +26,7 @@ describe SlackGamebot::Commands::Season do
         end
 
         it 'returns current season' do
-          expect(message: '@gamebot season').to respond_with_slack_message 'No matches have been recorded.'
+          expect(message: '@gamebot season', user: user).to respond_with_slack_message 'No matches have been recorded.'
         end
       end
     end

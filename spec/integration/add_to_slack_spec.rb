@@ -38,7 +38,7 @@ describe 'Add to Slack', :js, type: :feature do
         'id' => 'C1'
       }
     )
-    expect_any_instance_of(Team).to receive(:inform!).with(Team::INSTALLED_TEXT, 'installed')
+    expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
     expect do
       visit '/?code=code'
       expect(page.find_by_id('messages')).to have_content 'Team successfully registered!'

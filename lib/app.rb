@@ -31,7 +31,7 @@ module SlackGamebot
         next if team.dead_at
 
         begin
-          team.dead! DEAD_MESSAGE, 'dead'
+          team.dead! DEAD_MESSAGE
         rescue StandardError => e
           logger.warn "Error informing dead team #{team}, #{e.message}."
         end
