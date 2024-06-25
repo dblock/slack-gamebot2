@@ -1,3 +1,4 @@
+require_relative 'models/mixins'
 require_relative 'models/team'
 require_relative 'models/channel'
 require_relative 'models/elo'

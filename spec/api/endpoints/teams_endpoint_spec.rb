@@ -227,7 +227,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
             merge_fields: {
               'FNAME' => 'First',
               'LNAME' => 'Last',
-              'BOT' => 'GameBot'
+              'BOT' => 'Gamebot'
             },
             status: 'pending',
             name: nil,

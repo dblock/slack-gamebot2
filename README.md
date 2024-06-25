@@ -20,7 +20,7 @@ Start talking to your bot!
 
 #### gamebot
 
-Shows GameBot version and links.
+Shows Gamebot version and links.
 
 #### gamebot hi
 

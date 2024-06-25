@@ -5,7 +5,7 @@ RSpec.shared_context 'event' do
     SlackRubyBotServer::Api::Middleware.instance
   end
 
-  let!(:team) { Fabricate(:team, bot_user_id: 'bot_user_id') }
+  let(:team) { Fabricate(:team, bot_user_id: 'bot_user_id') }
   let(:event) { {} }
   let(:event_envelope) do
     {
@@ -23,6 +23,7 @@ RSpec.shared_context 'event' do
   end
 
   before do
+    allow_any_instance_of(Team).to receive(:inform!)
     allow_any_instance_of(Slack::Events::Request).to receive(:verify!)
   end
 end
