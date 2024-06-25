@@ -4,6 +4,8 @@ describe SlackGamebot::Commands::Register do
   include_context 'subscribed team'
 
   let!(:channel) { Fabricate(:channel, channel_id: 'channel', team: team) }
+  let(:team2) { Fabricate(:team) }
+  let(:channel2) { Fabricate(:channel, team: team2) }
 
   before do
     allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(
@@ -15,9 +17,6 @@ describe SlackGamebot::Commands::Register do
       }
     )
   end
-
-  let(:team2) { Fabricate(:team) }
-  let(:channel2) { Fabricate(:channel, team: team2) }
 
   it 'registers a new user and promotes them to captain' do
     Fabricate(:user, team: team2, channel: channel2) # another user in another team

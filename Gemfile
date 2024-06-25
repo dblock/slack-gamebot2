@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '3.0.5'
+ruby '3.3.3'
 
 gem 'faraday_middleware'
 gem 'hashie', '3.4.6'

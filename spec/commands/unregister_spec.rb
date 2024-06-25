@@ -4,6 +4,9 @@ describe SlackGamebot::Commands::Unregister do
   include_context 'subscribed team'
 
   let!(:channel) { Fabricate(:channel, channel_id: 'channel', team: team) }
+  let!(:user) { Fabricate(:user, channel: channel) }
+  let(:another_user) { Fabricate(:user, captain: true, channel: channel) }
+  let(:captain) { Fabricate(:user, captain: true, channel: channel) }
 
   before do
     allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(
@@ -15,10 +18,6 @@ describe SlackGamebot::Commands::Unregister do
       }
     )
   end
-
-  let!(:user) { Fabricate(:user, channel: channel) }
-  let(:another_user) { Fabricate(:user, captain: true, channel: channel) }
-  let(:captain) { Fabricate(:user, captain: true, channel: channel) }
 
   it 'requires a captain to unregister someone' do
     expect(message: '@gamebot unregister someone', channel: channel, user: user).to respond_with_slack_message("You're not a captain, sorry.")
