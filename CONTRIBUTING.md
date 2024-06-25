@@ -13,8 +13,8 @@ In the examples below, substitute your Github username for `contributor` in URLs
 Fork the [project on Githubo](https://github.com/dblock/slack-gamebot2) and check out your copy.
 
 ```
-git clone https://github.com/contributor/slack-gamebot.git
-cd slack-gamebot
+git clone https://github.com/contributor/slack-gamebot2.git
+cd slack-gamebot2
 git remote add upstream https://github.com/dblock/slack-gamebot2.git
 ```
 
@@ -23,8 +23,8 @@ git remote add upstream https://github.com/dblock/slack-gamebot2.git
 Make sure your fork is up-to-date and create a topic branch for your feature or bug fix.
 
 ```
-git checkout master
-git pull upstream master
+git checkout main
+git pull upstream main
 git checkout -b my-feature-branch
 ```
 
@@ -94,11 +94,11 @@ Click the 'Pull Request' button and fill out the form. Pull requests are usually
 
 ## Rebase
 
-If you've been working on a change for a while, rebase with upstream/master.
+If you've been working on a change for a while, rebase with upstream/main.
 
 ```
 git fetch upstream
-git rebase upstream/master
+git rebase upstream/main
 git push origin my-feature-branch -f
 ```
 

@@ -6,21 +6,19 @@ Before deploying, consider using and sponsoring [a free game bot service](https:
 
 [![Add to Slack](https://platform.slack-edge.com/img/add_to_slack@2x.png)](https://gamebot.playplay.io)
 
-## Deploy Your Own Slack-Gamebot
+## Deploy Your Own
 
 ### Environment
 
-#### SLACK_CLIENT_ID
+See [.env.sample](.env.sample) for environment variables. 
 
-Slack app client ID.
+#### Slack Keys
 
-#### SLACK_CLIENT_SECRET
-
-Slack app client secret.
+Create a Slack app and get `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET`, and `SLACK_VERIFICATION_TOKEN` from it.
 
 #### GIPHY_API_KEY
 
-Slack-Gamebot replies with animated GIFs. Obtain and set `GIPHY_API_KEY` from [developers.giphy.com](https://developers.giphy.com).
+Gamebot replies with animated GIFs. Obtain and set `GIPHY_API_KEY` from [developers.giphy.com](https://developers.giphy.com).
 
 #### URL
 

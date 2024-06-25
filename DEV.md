@@ -1,16 +1,14 @@
 ## Development Environment
 
-You may want to watch [Your First Slack Bot Service video](http://code.dblock.org/2016/03/11/your-first-slack-bot-service-video.html) first.
-
 ### Prerequisites
 
 Ensure that you can build the project and run tests. You will need these.
 
+- [Ruby](https://www.ruby-lang.org/en/)
 - [MongoDB](https://docs.mongodb.com/manual/installation/)
 - [Firefox](https://www.mozilla.org/firefox/new/)
-- [Geckodriver](https://github.com/mozilla/geckodriver), download, `tar vfxz` and move to `/usr/local/bin`
-- Ruby 2.3.1
-
+- [Geckodriver](https://github.com/mozilla/geckodriver)
+ 
 ```
 bundle install
 bundle exec rake
@@ -22,17 +20,24 @@ Create a Slack team [here](https://slack.com/create).
 
 ### Slack App
 
-Create a test app [here](https://api.slack.com/apps). This gives you a client ID and a client secret.
+Create a test app [here](https://api.slack.com/apps).
 
-Under _Features/OAuth & Permissions_, configure the redirect URL to `http://localhost:5000`.
+Use [ngrok](https://ngrok.com/) to tunnel to `localhost:5000`.
 
-Add the following Permission Scope.
+* Choose _Allow users to send Slash commands and messages from the messages tab_ under `App Home`.
+* Use `https://....ngrok.io/api/slack/action` for _Interactivity and Shortcuts_.
+* Use `https://....ngrok.io` for _Redirect Urls_ in _OAuth & Permissions_.
+* Use `https://....ngrok.io/api/slack/event` in _Event Subscriptions_.
 
-- TODO
+Subscribe to the following events: `app_home_opened`, `app_mention`, `member_joined_channel`, `member_left_channel`, `message.channels`, `message.groups`, `message.im`, and `message.mpim`.
+
+### Slack Keys
+
+Copy [.env.sample](.env.sample) to `.env` and set environment variables. You will need at least `SLACK_*` ones.
 
 ### Stripe Keys
 
-If you want to test subscriptions and payment-related functions you need a [Stripe](https://www.stripe.com) account and test keys. Create a `.env` file.
+If you want to test paid features or payment-related functions you need a [Stripe](https://www.stripe.com) account and test keys. Add to `.env` file.
 
 ```
 STRIPE_API_PUBLISHABLE_KEY=pk_test_key
@@ -48,10 +53,13 @@ $ foreman start
 08:54:08 web.1  | I, [2017-08-04T08:54:08.138999 #32503]  INFO -- : listening on addr=0.0.0.0:5000 fd=11
 ```
 
-Navigate to [localhost:5000](http://localhost:5000). Don't add to Slack from that page, the links contain the hardcoded Playplay.io IDs.
+Navigate to [localhost:5000](http://localhost:5000).
 
 
+### Start Ngrok
 
+```
+$ ngrok http 5000
+```
 
-
-
+Navigate to the forwarding app, e.g. `https://xyz.ngrok-free.app`.
