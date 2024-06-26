@@ -13,6 +13,7 @@ class Team
   scope :subscribed, -> { where(subscribed: true) }
 
   has_many :channels, dependent: :destroy
+  has_many :admins, dependent: :destroy
 
   has_many :users
   has_many :seasons
@@ -227,6 +228,37 @@ class Team
     when 'account_inactive', 'invalid_auth'
       deactivate!
     end
+  end
+
+  def find_create_or_updae_admin_by_slack_id!(slack_id)
+    instance = admins.where(user_id: slack_id).first
+    users_info = begin
+      slack_client.users_info(user: slack_id)
+    rescue Slack::Web::Api::Errors::SlackError => e
+      raise e unless e.message == 'user_not_found'
+    end
+    instance_info = Hashie::Mash.new(users_info).user if users_info
+    if users_info && instance
+      if instance.user_name != instance_info.name || instance.is_admin != instance_info.is_admin || instance.is_owner != instance_info.is_owner
+        instance.update_attributes!(
+          user_name: instance_info.name,
+          is_owner: instance_info.is_owner,
+          is_admin: instance_info.is_admin
+        )
+      end
+    elsif !instance && instance_info
+      instance = admins.create!(
+        team: self,
+        user_id: slack_id,
+        user_name: instance_info.name,
+        is_owner: instance_info.is_owner,
+        is_admin: instance_info.is_admin
+      )
+    end
+
+    raise SlackGamebot::Error, "I don't know who <@#{slack_id}> is!" unless instance
+
+    instance
   end
 
   def find_create_or_update_channel_by_channel_id!(channel_id, user_id)

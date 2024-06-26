@@ -3,14 +3,13 @@ require 'slack-ruby-client'
 module SlackGamebot
   module Web
     class Client < Slack::Web::Client
-      attr_accessor :send_gifs, :aliases
+      attr_accessor :send_gifs
       attr_reader :owner
 
       def initialize(options = {})
         super
         @owner = options[:team] if options && options.key?(:team)
         @send_gifs = options[:send_gifs]
-        @aliases = options[:aliases]
       end
 
       def send_gifs?

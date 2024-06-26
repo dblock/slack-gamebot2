@@ -17,12 +17,9 @@ shared_examples_for 'a channel token api' do |model|
       end
     end
 
-    context 'with a channel api token' do
-      before do
-        instance.channel.update_attributes!(api_token: 'token')
-      end
-
-      it 'is not returned without a channel api token' do
+    context 'with a team api token' do
+      it 'is not returned without a token' do
+        client.headers.delete('X-Access-Token')
         expect { client.send(model_s, id: instance.id.to_s).id }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
           expect(json['error']).to eq 'Access Denied'
@@ -38,7 +35,7 @@ shared_examples_for 'a channel token api' do |model|
       end
 
       it 'is returned with the correct channel api token' do
-        client.headers.update('X-Access-Token' => 'token')
+        client.headers.update('X-Access-Token' => instance.channel.team.api_token)
         returned_intance = client.send(model_s, id: instance.id.to_s)
         expect(returned_intance.id).to eq instance.id.to_s
       end
@@ -65,12 +62,9 @@ shared_examples_for 'a channel token api' do |model|
       end
     end
 
-    context 'with a channel api token' do
-      before do
-        channel.update_attributes!(api_token: 'token')
-      end
-
+    context 'with a team api token' do
       it 'is not returned without a channel api token' do
+        client.headers.delete('X-Access-Token')
         expect { client.send(model_ps, cursor_params).id }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
           expect(json['error']).to eq 'Access Denied'
@@ -86,7 +80,7 @@ shared_examples_for 'a channel token api' do |model|
       end
 
       it 'is returned with the correct channel api token' do
-        client.headers.update('X-Access-Token' => 'token')
+        client.headers.update('X-Access-Token' => channel.team.api_token)
         returned_intances = client.send(model_ps, cursor_params)
         expect(returned_intances.count).to eq 2
       end

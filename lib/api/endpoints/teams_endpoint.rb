@@ -26,11 +26,8 @@ module SlackGamebot
           end
           sort Team::SORT_ORDERS
           get do
-            teams = if headers['X-Access-Token']
-                      Team.where(api_token: headers['X-Access-Token'])
-                    else
-                      Team.where(api: true, api_token: nil)
-                    end
+            error!('Access Denied', 401) unless headers['X-Access-Token']
+            teams = Team.where(api_token: headers['X-Access-Token'])
             teams = teams.active if params[:active]
             teams = paginate_and_sort_by_cursor(teams, default_sort_order: '-_id')
             present teams, with: Api::Presenters::TeamsPresenter

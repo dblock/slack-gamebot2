@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SlackGamebot::Api::Endpoints::UsersEndpoint do
   include Api::Test::EndpointTest
 
-  let!(:team) { Fabricate(:team, api: true) }
+  let!(:team) { Fabricate(:team, api: true, api_token: 'token') }
   let!(:channel) { Fabricate(:channel, team: team, api: true) }
 
   before do

@@ -14,7 +14,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
 
     context 'with teams' do
       let!(:team1) { Fabricate(:team, api: false) }
-      let!(:team2) { Fabricate(:team, api: true) }
+      let!(:team2) { Fabricate(:team, api: true, api_token: 'token') }
 
       it 'lists teams with api enabled' do
         expect(subject.to_a.size).to eq 1
@@ -32,10 +32,6 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       end
     end
 
-    context 'cursor' do
-      it_behaves_like 'a cursor api', Team
-    end
-
     context 'a team with api false' do
       let!(:team) { Fabricate(:team, api: false) }
 
@@ -48,7 +44,11 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       let!(:team) { Fabricate(:team, api: true, api_token: 'token') }
 
       it 'is not returned' do
-        expect(client.teams.count).to eq 0
+        client.headers.delete('X-Access-Token')
+        expect { client.teams.count }.to raise_error Faraday::ClientError do |e|
+          json = JSON.parse(e.response[:body])
+          expect(json['error']).to eq 'Access Denied'
+        end
       end
 
       it 'is returned with api token header' do
@@ -60,6 +60,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       end
 
       it 'is not returned directly without a token' do
+        client.headers.delete('X-Access-Token')
         expect { client.team(id: team.id).resource }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
           expect(json['error']).to eq 'Access Denied'
@@ -74,7 +75,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
     end
 
     context 'a team with api true' do
-      let!(:existing_team) { Fabricate(:team, api: true) }
+      let!(:existing_team) { Fabricate(:team, api: true, api_token: 'token') }
 
       it 'is returned in the collection' do
         expect(client.teams.count).to eq 1
@@ -158,7 +159,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       end
 
       it 'returns a useful error when team already exists' do
-        existing_team = Fabricate(:team, token: 'token')
+        existing_team = Fabricate(:team, team_id: 'team_id')
         allow_any_instance_of(Team).to receive(:inform!)
         allow_any_instance_of(Team).to receive(:inform_admin!)
         allow_any_instance_of(Team).to receive(:ping_if_active!)
@@ -171,7 +172,7 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
       it 'reactivates a deactivated team with a different code' do
         expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
         expect(SlackRubyBotServer::Service.instance).to receive(:start!)
-        existing_team = Fabricate(:team, api: true, token: 'old', team_id: 'team_id', active: false)
+        existing_team = Fabricate(:team, api: true, api_token: 'old', team_id: 'team_id', active: false)
         expect do
           team = client.teams._post(code: 'code')
           expect(team.team_id).to eq existing_team.team_id

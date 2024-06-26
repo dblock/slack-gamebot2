@@ -9,11 +9,10 @@ class Channel
   field :unbalanced, type: Boolean, default: false
   field :leaderboard_max, type: Integer
   field :gifs, type: Boolean, default: true
-  field :aliases, type: Array, default: []
+  field :aliases, type: Array, default: %w[pongbot]
 
   scope :api, -> { where(api: true) }
   field :api, type: Boolean, default: false
-  field :api_token, type: String
 
   belongs_to :team
   validates_presence_of :team
@@ -32,6 +31,10 @@ class Channel
     return unless api?
 
     "#{SlackRubyBotServer::Service.api_url}/channels/#{id}"
+  end
+
+  def aliases_s
+    aliases.map { |a| "`#{a}`" }.and if aliases&.any?
   end
 
   def api_s

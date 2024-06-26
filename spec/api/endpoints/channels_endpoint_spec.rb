@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SlackGamebot::Api::Endpoints::ChannelsEndpoint do
   include Api::Test::EndpointTest
 
-  let!(:team) { Fabricate(:team, api: true) }
+  let!(:team) { Fabricate(:team, api: true, api_token: 'token') }
 
   before do
     @cursor_params = { team_id: team.id.to_s }
@@ -26,6 +26,41 @@ describe SlackGamebot::Api::Endpoints::ChannelsEndpoint do
       expect(channel._links.seasons._url).to eq "http://example.org/api/seasons?channel_id=#{existing_channel.id}"
     end
 
+    context 'a channel with a team api without a token' do
+      before do
+        team.update_attributes!(api: true, api_token: nil)
+      end
+
+      it 'is not returned without an X-Access-Token header' do
+        expect { client.channel(id: existing_channel.id).id }.to raise_error Faraday::ClientError do |e|
+          json = JSON.parse(e.response[:body])
+          expect(json['error']).to eq 'Access Denied'
+        end
+      end
+
+      it 'is not returned with X-Access-Token header' do
+        client.headers.update('X-Access-Token' => 'token')
+        expect { client.channel(id: existing_channel.id).id }.to raise_error Faraday::ClientError do |e|
+          json = JSON.parse(e.response[:body])
+          expect(json['error']).to eq 'Access Denied'
+        end
+      end
+    end
+
+    context 'a channel with a team api set to false' do
+      before do
+        team.update_attributes!(api: false, api_token: 'token')
+        client.headers.update('X-Access-Token' => team.api_token)
+      end
+
+      it 'is not returned' do
+        expect { client.channel(id: existing_channel.id).id }.to raise_error Faraday::ClientError do |e|
+          json = JSON.parse(e.response[:body])
+          expect(json['error']).to eq 'Access Denied'
+        end
+      end
+    end
+
     context 'a channel with api set to false' do
       before do
         existing_channel.update_attributes!(api: false)
@@ -37,18 +72,6 @@ describe SlackGamebot::Api::Endpoints::ChannelsEndpoint do
           expect(json['error']).to eq 'Access Denied'
         end
       end
-
-      context 'with a team api token' do
-        before do
-          team.update_attributes!(api: true, api_token: 'token')
-          client.headers.update('X-Access-Token' => team.api_token)
-        end
-
-        it 'returns a channel using a team API token' do
-          channel = client.channel(id: existing_channel.id)
-          expect(channel.id).to eq existing_channel.id.to_s
-        end
-      end
     end
   end
 
@@ -58,7 +81,7 @@ describe SlackGamebot::Api::Endpoints::ChannelsEndpoint do
 
     context 'with team api enabled' do
       before do
-        team.update_attributes!(api: true, api_token: nil)
+        team.update_attributes!(api: true, api_token: 'token')
       end
 
       it 'returns channels' do
@@ -86,6 +109,7 @@ describe SlackGamebot::Api::Endpoints::ChannelsEndpoint do
       end
 
       it 'is not returned without a team api token' do
+        client.headers.delete('X-Access-Token')
         expect { client.send(:channels, @cursor_params).resource }.to raise_error Faraday::ClientError do |e|
           json = JSON.parse(e.response[:body])
           expect(json['error']).to eq 'Access Denied'

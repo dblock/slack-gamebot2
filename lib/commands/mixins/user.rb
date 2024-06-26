@@ -3,7 +3,7 @@ module SlackGamebot
     module Mixins
       module User
         extend ActiveSupport::Concern
-        include SlackGamebot::Commands::Mixins::Channel
+        include SlackGamebot::Commands::Mixins::Subscribe
 
         module ClassMethods
           def user_command(*values, &_block)

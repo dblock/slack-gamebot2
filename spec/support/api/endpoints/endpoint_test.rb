@@ -9,7 +9,8 @@ module Api
           Hyperclient.new('http://example.org/api/') do |client|
             client.headers = {
               'Content-Type' => 'application/json',
-              'Accept' => 'application/json,application/hal+json'
+              'Accept' => 'application/json,application/hal+json',
+              'X-Access-Token' => 'token'
             }
             client.connection(default: false) do |conn|
               conn.request :json
