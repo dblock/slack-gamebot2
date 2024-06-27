@@ -160,13 +160,13 @@ describe Channel do
 
   describe '#api_url' do
     it 'sets the API url' do
-      expect(channel.api_url).to eq "https://gamebot.playplay.io/api/channels/#{channel._id}"
+      expect(channel.api_url).to eq "https://gamebot2.playplay.io/api/channels/#{channel._id}"
     end
   end
 
   describe '#aliases' do
     it 'defaults to pongbot' do
-      expect(channel.aliases).to eq ['pongbot']
+      expect(channel.aliases).to eq %w[gamebot pongbot pp]
     end
   end
 end

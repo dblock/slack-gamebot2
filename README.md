@@ -1,12 +1,12 @@
 Slack-Gamebot
 =============
 
-[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack@2x.png)](https://gamebot.playplay.io)
+[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack.png)](https://gamebot2.playplay.io)
 
 [![Tests](https://github.com/dblock/slack-gamebot2/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/slack-gamebot2/actions/workflows/test.yml)
 [![Code Climate](https://codeclimate.com/github/dblock/slack-gamebot/badges/gpa.svg)](https://codeclimate.com/github/dblock/slack-gamebot)
 
-A generic game bot for slack. Works for ping-pong (2, 4 or more players), chess, etc. Inspired by [slack-pongbot](https://github.com/andrewvy/slack-pongbot), but more robust, generic and easier to improve and contribute to.
+A leaderboard game bot for Slack. Works for ping-pong (2, 4 or more players), chess, etc. This is a fork of [slack-gamebot](https://github.com/dblock/slack-gamebot) that supports leaderboards per channel. Inspired by [slack-pongbot](https://github.com/andrewvy/slack-pongbot), but more robust, generic and easier to improve and contribute to.
 
 ![](screenshots/game.gif)
 
@@ -54,7 +54,7 @@ gamebot register
 Welcome back Victor Barna! I've updated your registration.
 ```
 
-You can also remove yourself from the leaderboard with `gamebot unregister me` and re-register youself again with `gamebot register`.
+You can also remove yourself from the leaderboard with `gamebot unregister me` and re-register yourself again with `gamebot register`.
 The data is not removed, but the user will no longer appear in the leaderboards and cannot participate in challenges.
 
 #### gamebot challenge &lt;opponent&gt; ... [with &lt;teammate&gt; ...]
@@ -153,7 +153,7 @@ Match has been recorded! Wang Hoe and Zhang Jike defeated Victor Barna and Deng 
 
 #### gamebot draw [score ...]
 
-Draws a challenge, records a tie. All other players will also have to draw to record a match.
+Draws a challenge, and records a tie. All other players will also have to draw to record a match.
 
 ```
 gamebot draw
@@ -245,7 +245,7 @@ The leaderboard contains players ranked by [Elo](http://en.wikipedia.org/wiki/El
 
 The leaderboard also shows the longest winning (lws) and losing (lls) streaks of at least 3.
 
-In case you want to see leaderboard in reverse order (which would be totally wrong but motivational for people at the bottom of leaderboard), specify a negative number or `-infinity`:
+In case you want to see the leaderboard in reverse order (which would be totally wrong but motivational for people at the bottom of the leaderboard), specify a negative number or `-infinity`:
 
 ```
 gamebot leaderboard -5
@@ -275,7 +275,7 @@ Victor Barna defeated Wang Hoe 5 times
 Wang Hoe defeated Deng Yaping twice
 ```
 
-Use _matches 3_ to see top 3 matches o _matches inifinity_ to see all matches in the season.
+Use _matches 3_ to see top 3 matches or _matches inifinity_ to see all matches in the season.
 
 #### gamebot challenges
 
@@ -334,7 +334,7 @@ Welcome to the new season!
 
 #### gamebot season
 
-Display current season's leader and game totals.
+Display the current season's leader and game totals.
 
 ```
 gamebot season
@@ -344,7 +344,7 @@ Current: Deng Yaping: 1 win, 0 losses (elo: 48), 1 game, 2 players
 
 #### gamebot seasons
 
-Display current season's leader, past seasons' winners and game totals.
+Display the current season's leader, past seasons' winners and game totals.
 
 ```
 gamebot seasons
@@ -407,7 +407,7 @@ Using `unset gifs` is equivalent to `set gifs off`.
 
 #### gamebot set leaderboard max [number|infinity]
 
-Set and resets the leaderboard max. Default is inifinity, ie. to show the entire leaderboard.
+Set and reset the leaderboard max. The default is infinity, ie. to show the entire leaderboard.
 
 ```
 gamebot set leaderboard max 5
@@ -423,7 +423,7 @@ gamebot unset leaderboard max
 
 #### gamebot set elo [number]
 
-Set and resets the base elo for new seasons. Default is 0.
+Set and reset the base elo for new seasons. The default is 0.
 
 ```
 gamebot set elo 1000
@@ -449,13 +449,13 @@ Remove all aliases with `unset aliases`.
 
 #### gamebot set api on|off
 
-Enable/disable team data in the public API for your team and displays team API URL.
+Enable/disable team data in the public API for your team and display team API URL.
 
 ```
 gamebot set api on
 
 API for team China is on!
-http://www.playplay.io/api/teams/57224e65bc526eac95bfe316
+https://gamebot2.playplay.io/api/teams/57224e65bc526eac95bfe316
 ```
 
 ```
@@ -464,9 +464,11 @@ gamebot unset api
 API for team China is off.
 ```
 
+You will need a token to use the API, DM the bot `set token xyz`, then pass `X-Api-Token: xyz` in a header to the API.
+
 #### gamebot set unbalanced on|off
 
-Allow unbalanced challenges with different number of opponents.
+Allow unbalanced challenges with different numbers of opponents.
 
 ```
 gamebot set unbalanced on
@@ -484,7 +486,7 @@ subscription
 Your trial subscription expires in 13 days. Subscribe your team for $49.99 a year at ... .
 ```
 
-Captains are able to see credit card info.
+Captains can see credit card info.
 
 ```
 subscription
@@ -515,9 +517,9 @@ Successfully canceled auto-renew for Slack PlayPlay (Yearly) ($49.99).
 
 ## API
 
-Slack-gamebot implements a Hypermedia API. Navigate to the application root to browse through available objects and methods. PlayPlay.io's Gamebot is [here](http://www.playplay.io/api), you can see [dblock's current ping-pong elo here](http://www.playplay.io/api/users/5543f64d6237640003000000).
+Slack-gamebot implements a Hypermedia API. Navigate to the application root to browse through available objects and methods. PlayPlay.io's Gamebot is [here](https://gamebot2.playplay.io/api).
 
-A team captain must opt-in serving data via the API with `set api on`. The data served by the API includes team's Slack IDs, usernames and game stats.
+A team captain must opt-in to serve data via the API with `set api on`. The data served by the API includes the team's Slack IDs, usernames and game stats.
 
 ![](screenshots/api.png)
 
@@ -529,6 +531,6 @@ This bot is built with [slack-ruby-bot-server](https://github.com/dblock/slack-r
 
 ## Copyright and License
 
-Copyright (c) 2015-2019, Daniel Doubrovkine, Vestris LLC, Artsy and [Contributors](CHANGELOG.md).
+Copyright (c) 2015-2024, Daniel Doubrovkine, Vestris LLC, Artsy and [Contributors](CHANGELOG.md).
 
 This project is licensed under the [MIT License](LICENSE.md).

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta name="description" content="Game bots for Slack teams. Ping pong bot, chess bot, pool bot and tic-tac-toe bot for Slack. Challenges and rankings.">
-    <meta name="og:description" content="Game bots for Slack teams. Ping pong bot, chess bot, pool bot and tic-tac-toe bot for Slack. Challenges and rankings.">
+    <meta name="description" content="A leaderboard bot for Slack. Challenge a colleague to a game, then track your scores and rankings.">
+    <meta name="og:description" content="A leaderboard bot for Slack. Challenge a colleague to a game, then track your scores and rankings.">
     <meta name="keywords" content="slack,ping,pong,ping-pong,chess,pool,billiards,tic-tac-toe,slack,bot,leaderboard">
     <title>PlayPlay.io - Leaderboard Bot for Slack</title>
     <%= partial 'public/partials/_head.html' %>
@@ -201,7 +201,7 @@
               <a href='https://github.com/dblock/slack-gamebot2'>Fork me on Github</a>,
               <a href='https://github.com/dblock/slack-gamebot2/issues/new'>open an issue</a>,
               <a href='https://twitter.com/playplayio'>tweet at @playplayio</a>,
-              or <a href='mailto:dblock[at]dblock[dot]org'>e-mail dblock[at]dblock[dot]org</a>.
+              or <a href='mailto:dblock[at]vestris[dot]com'>e-mail dblock[at]vestris[dot]com</a>.
               <br><br>
               Follow Us or DM <a href='https://twitter.com/playplayio' target="_blank">@playplayio on Twitter</a> and show us some love on <a href='https://www.producthunt.com/tech/playplay-io' target='_blank'>ProductHunt</a>.
               <br><br>
@@ -233,9 +233,7 @@
                 <p class="item-intro text-muted">Invite the gamebot</p>
                 <img class="img-responsive img-centered" src="img/portfolio/welcome.gif" alt="">
                 <p>
-                  It's easy to join. Create a slack channel (#pong, #chess, #pool or #tictactoe) and invite the bot (@pongbot, @chessbot, @poolbot or @tictactoebot) to it. Then, from your slack account, invite friends to join your team.
-                  <br><br>
-                  You should address your bot as @pongbot, @chessbot, @poolbot or @tictactoebot. In this tutorial, we will address your bot as @bot for the sake of simplicity.
+                  It's easy to join. Create a Slack channel (#pong, #chess, #pool or #tictactoe) and invite the bot (@gamebot) to it.
                 </p>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
               </div>
@@ -258,9 +256,9 @@
             <div class="col-lg-8 col-lg-offset-2">
               <div class="modal-body">
                 <h2>Step 2: Invite friends for a challenge</h2>
-                <p class="item-intro text-muted">Challenges a member of your team by sending: @bot challenge @opponent</p>
+                <p class="item-intro text-muted">Challenges a member of your team by sending: @gamebot challenge @opponent</p>
                 <img class="img-responsive img-centered" src="img/portfolio/gamechallenge.gif" alt="">
-                <p class="item-intro text-muted">Accept the challenge with: @bot accept</p>
+                <p class="item-intro text-muted">Accept the challenge with: @gamebot accept</p>
                 <img class="img-responsive img-centered" src="img/portfolio/gameaccept.gif" alt="">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
               </div>
@@ -283,9 +281,9 @@
             <div class="col-lg-8 col-lg-offset-2">
               <div class="modal-body">
                 <h2>Results</h2>
-                <p class="item-intro text-muted">Lost the game? Send: @bot lost, in a draw both say @bot draw</p>
+                <p class="item-intro text-muted">Lost the game? Send: @gamebot lost, in a draw both say @gamebot draw</p>
                 <img class="img-responsive img-centered" src="img/portfolio/gameresult.gif" alt="">
-                <p class="item-intro text-muted">Check your rankings with: @bot leaderboard 10 or @bot rank.</p>
+                <p class="item-intro text-muted">Check your rankings with: @gamebot leaderboard 10 or @gamebot rank.</p>
                 <img class="img-responsive img-centered" src="img/portfolio/teamrankings.png" alt="">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
               </div>

@@ -9,7 +9,7 @@ class Channel
   field :unbalanced, type: Boolean, default: false
   field :leaderboard_max, type: Integer
   field :gifs, type: Boolean, default: true
-  field :aliases, type: Array, default: %w[pongbot]
+  field :aliases, type: Array, default: %w[gamebot pongbot pp]
 
   scope :api, -> { where(api: true) }
   field :api, type: Boolean, default: false

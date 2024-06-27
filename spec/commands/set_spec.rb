@@ -431,7 +431,7 @@ describe SlackGamebot::Commands::Set do
 
         it 'can see aliases' do
           expect(message: '@gamebot set aliases', user: user).to respond_with_slack_message(
-            "Bot alias for #{channel.slack_mention} is `pongbot`."
+            "Bot aliases for #{channel.slack_mention} are `gamebot`, `pongbot` and `pp`."
           )
         end
       end

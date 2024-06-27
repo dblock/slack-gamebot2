@@ -11,7 +11,7 @@ describe SlackRubyBotServer::Service do
     end
 
     it 'defaults to playplay.io in production' do
-      expect(SlackRubyBotServer::Service.url).to eq 'https://gamebot.playplay.io'
+      expect(SlackRubyBotServer::Service.url).to eq 'https://gamebot2.playplay.io'
     end
 
     context 'in development' do
@@ -41,7 +41,7 @@ describe SlackRubyBotServer::Service do
 
   describe '#api_url' do
     it 'defaults to playplay.io in production' do
-      expect(SlackRubyBotServer::Service.api_url).to eq 'https://gamebot.playplay.io/api'
+      expect(SlackRubyBotServer::Service.api_url).to eq 'https://gamebot2.playplay.io/api'
     end
 
     context 'when set' do

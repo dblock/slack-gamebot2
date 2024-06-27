@@ -16,7 +16,7 @@
   </head>
   <body style='text-align: center'>
     <p style='margin: 50px;'>
-      <a href='/'><img src='img/pong.png' width='120px'></a>
+      <a href='/'><img src='img/game.png' width='120px'></a>
     </p>
     <p>
       <h3>PlayPlay.io: Subscribe</h3>
@@ -29,7 +29,7 @@
       <p>
         <img src='/img/stripe.png' width='119' height='26'></img>
         <div class='small'>
-          Questions? Contact dblock[at]dblock[dot]org or DM <a href='https://twitter.com/playplayio'>@playplayio</a>.
+          Questions? Contact dblock[at]vestris[dot]com or DM <a href='https://twitter.com/playplayio'>@playplayio</a>.
         </div>
       </p>
       <%= partial 'public/partials/_scripts.html' %>
@@ -70,7 +70,7 @@
 
           var handler = StripeCheckout.configure({
             key: '<%= ENV['STRIPE_API_PUBLISHABLE_KEY'] %>',
-            image: '/img/pong.png',
+            image: '/img/game.png',
             locale: 'auto',
             token: function(token) {
               data = {

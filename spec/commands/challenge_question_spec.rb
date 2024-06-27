@@ -47,7 +47,7 @@ describe SlackGamebot::Commands::ChallengeQuestion do
 
     it 'prevents new challenge questions' do
       expect(message: "@gamebot challenge? <@#{opponent.user_id}>", user: user, channel: channel).to respond_with_slack_message(
-        "Your trial subscription has expired. Subscribe your team for $49.99 a year at https://gamebot.playplay.io/subscribe?team_id=#{team.team_id}."
+        "Your trial subscription has expired. Subscribe your team for $49.99 a year at https://gamebot2.playplay.io/subscribe?team_id=#{team.team_id}."
       )
     end
   end

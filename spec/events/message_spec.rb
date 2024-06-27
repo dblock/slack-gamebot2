@@ -15,7 +15,7 @@ describe 'events/message' do
       team: team.team_id,
       user: user.user_id,
       channel: channel.channel_id,
-      text: 'pp team'
+      text: 'chess team'
     }
   end
 
@@ -41,7 +41,7 @@ describe 'events/message' do
 
   context 'with a matching alias' do
     before do
-      channel.update_attributes!(aliases: %w[pp xy])
+      channel.update_attributes!(aliases: %w[chess xy])
     end
 
     it 'matches message' do
