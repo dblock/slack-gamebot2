@@ -56,4 +56,18 @@ describe 'events/app_home_opened' do
       expect(JSON.parse(last_response.body)).to eq('ok' => true)
     end
   end
+
+  context 'with an activated user' do
+    before do
+      team.update_attributes!(activated_user_id: 'user_id')
+    end
+
+    it 'does not double-welcome the user that installed the bot' do
+      expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
+
+      post '/api/slack/event', event_envelope
+      expect(last_response.status).to eq 201
+      expect(JSON.parse(last_response.body)).to eq('ok' => true)
+    end
+  end
 end
