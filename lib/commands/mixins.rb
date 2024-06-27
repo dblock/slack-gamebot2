@@ -1,3 +1,4 @@
+require_relative 'mixins/rescue'
 require_relative 'mixins/subscribe'
 require_relative 'mixins/channel'
 require_relative 'mixins/user'

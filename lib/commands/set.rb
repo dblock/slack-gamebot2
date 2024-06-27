@@ -15,10 +15,10 @@ module SlackGamebot
           end
           target_user.update_attributes!(nickname: v) unless v.nil?
           if target_user.nickname.blank?
-            data.team.slack_client.say(channel: data.channel, text: "You don't have a nickname set, #{target_user.user_name}.", gif: 'anonymous')
+            channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set, #{target_user.user_name}.", gif: 'anonymous')
             logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : ' for ' + target_user.user_name}is not set"
           else
-            data.team.slack_client.say(channel: data.channel, text: "Your nickname is #{v.nil? ? '' : 'now '}*#{target_user.nickname}*, #{target_user.slack_mention}.", gif: 'name')
+            channel.slack_client.say(channel: data.channel, text: "Your nickname is #{v.nil? ? '' : 'now '}*#{target_user.nickname}*, #{target_user.slack_mention}.", gif: 'name')
             logger.info "SET: #{channel} - #{user.user_name} nickname #{target_user == user ? '' : ' for ' + target_user.user_name}is #{target_user.nickname}"
           end
         end
@@ -33,7 +33,7 @@ module SlackGamebot
           end
           old_nickname = target_user.nickname
           target_user.update_attributes!(nickname: nil)
-          data.team.slack_client.say(channel: data.channel, text: "You don't have a nickname set#{old_nickname.blank? ? '' : ' anymore'}, #{target_user.slack_mention}.", gif: 'anonymous')
+          channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set#{old_nickname.blank? ? '' : ' anymore'}, #{target_user.slack_mention}.", gif: 'anonymous')
           logger.info "UNSET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : ' for ' + target_user.user_name} was #{old_nickname.blank? ? 'not ' : 'un'}set"
         end
 
@@ -42,9 +42,9 @@ module SlackGamebot
 
           unless v.nil?
             channel.update_attributes!(gifs: v.to_b)
-            data.team.slack_client.send_gifs = channel.gifs
+            channel.slack_client.gifs = channel.gifs
           end
-          data.team.slack_client.say(channel: data.channel, text: "GIFs for #{channel.slack_mention} are #{channel.gifs? ? 'on!' : 'off.'}", gif: 'fun')
+          channel.slack_client.say(channel: data.channel, text: "GIFs for #{channel.slack_mention} are #{channel.gifs? ? 'on!' : 'off.'}", gif: 'fun')
           logger.info "SET: #{channel} - #{user.user_name} GIFs are #{channel.gifs? ? 'on' : 'off'}"
         end
 
@@ -52,8 +52,8 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
 
           channel.update_attributes!(gifs: false)
-          data.team.slack_client.send_gifs = channel.gifs
-          data.team.slack_client.say(channel: data.channel, text: "GIFs for #{channel.slack_mention} are off.", gif: 'fun')
+          channel.slack_client.gifs = channel.gifs
+          channel.slack_client.say(channel: data.channel, text: "GIFs for #{channel.slack_mention} are off.", gif: 'fun')
           logger.info "UNSET: #{channel} - #{user.user_name} GIFs are off"
         end
 
@@ -61,7 +61,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
 
           channel.update_attributes!(unbalanced: v.to_b) unless v.nil?
-          data.team.slack_client.say(channel: data.channel, text: "Unbalanced challenges for #{channel.slack_mention} are #{channel.unbalanced? ? 'on!' : 'off.'}", gif: 'balance')
+          channel.slack_client.say(channel: data.channel, text: "Unbalanced challenges for #{channel.slack_mention} are #{channel.unbalanced? ? 'on!' : 'off.'}", gif: 'balance')
           logger.info "SET: #{channel} - #{user.user_name} unbalanced challenges are #{channel.unbalanced? ? 'on' : 'off'}"
         end
 
@@ -69,7 +69,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
 
           channel.update_attributes!(unbalanced: false)
-          data.team.slack_client.say(channel: data.channel, text: "Unbalanced challenges for #{channel.slack_mention} are off.", gif: 'balance')
+          channel.slack_client.say(channel: data.channel, text: "Unbalanced challenges for #{channel.slack_mention} are off.", gif: 'balance')
           logger.info "UNSET: #{channel} - #{user.user_name} unbalanced challenges are off"
         end
 
@@ -84,7 +84,7 @@ module SlackGamebot
                     else
                       "API for #{channel.slack_mention} is off."
                     end
-          data.team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
+          channel.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
           logger.info "SET: #{channel} - #{user.user_name} API is #{channel.api? ? 'on' : 'off'}"
         end
 
@@ -92,7 +92,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
 
           channel.update_attributes!(api: false)
-          data.team.slack_client.say(channel: data.channel, text: "API for #{channel.slack_mention} is off.", gif: 'programmer')
+          channel.slack_client.say(channel: data.channel, text: "API for #{channel.slack_mention} is off.", gif: 'programmer')
           logger.info "UNSET: #{channel} - #{user.user_name} API is off"
         end
 
@@ -108,7 +108,7 @@ module SlackGamebot
                       "API for team #{team.team_id} is off."
                     end
 
-          data.team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
+          team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
           logger.info "SET: #{team} - #{admin.user_name} API is #{team.api? ? 'on' : 'off'}"
         end
 
@@ -116,7 +116,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a team admin, sorry." unless admin.team_admin?
 
           team.update_attributes!(api: false)
-          data.team.slack_client.say(channel: data.channel, text: "API for team #{team.team_id} is off.", gif: 'programmer')
+          team.slack_client.say(channel: data.channel, text: "API for team #{team.team_id} is off.", gif: 'programmer')
           logger.info "UNSET: #{team} - #{admin.user_name} API is off"
         end
 
@@ -133,7 +133,7 @@ module SlackGamebot
                     else
                       "API token for team #{team.team_id} is not set, and the API is off. Set it on with _set api on_ and set a token with _set token xyz_."
                     end
-          data.team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
+          team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
           logger.info "SET: #{team} - #{admin.user_name} API token is #{team.api_token.blank? ? 'not set' : 'set'}"
         end
 
@@ -141,7 +141,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a team admin, sorry." unless admin.team_admin?
 
           team.update_attributes!(api_token: nil)
-          data.team.slack_client.say(channel: data.channel, text: "API token for team #{team.team_id} is not set.", gif: 'programmer')
+          team.slack_client.say(channel: data.channel, text: "API token for team #{team.team_id} is not set.", gif: 'programmer')
           logger.info "UNSET: #{team} - #{admin.user_name} API token is not set"
         end
 
@@ -150,7 +150,7 @@ module SlackGamebot
 
           channel.update_attributes!(elo: parse_int(v)) unless v.nil?
           message = "Base elo for #{channel.slack_mention} is #{channel.elo}."
-          data.team.slack_client.say(channel: data.channel, text: message, gif: 'score')
+          channel.slack_client.say(channel: data.channel, text: message, gif: 'score')
           logger.info "SET: #{channel} - #{user.user_name} ELO is #{channel.elo}"
         end
 
@@ -158,7 +158,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
 
           channel.update_attributes!(elo: 0)
-          data.team.slack_client.say(channel: data.channel, text: "Base elo for #{channel.slack_mention} has been unset.", gif: 'score')
+          channel.slack_client.say(channel: data.channel, text: "Base elo for #{channel.slack_mention} has been unset.", gif: 'score')
           logger.info "UNSET: #{channel} - #{user.user_name} ELO has been unset"
         end
 
@@ -170,7 +170,7 @@ module SlackGamebot
             channel.update_attributes!(leaderboard_max: v && v != 0 ? v : nil)
           end
           message = "Leaderboard max for #{channel.slack_mention} is #{channel.leaderboard_max || 'not set'}."
-          data.team.slack_client.say(channel: data.channel, text: message, gif: 'count')
+          channel.slack_client.say(channel: data.channel, text: message, gif: 'count')
           logger.info "SET: #{channel} - #{user.user_name} LEADERBOARD MAX is #{channel.leaderboard_max}"
         end
 
@@ -178,7 +178,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
 
           channel.update_attributes!(leaderboard_max: nil)
-          data.team.slack_client.say(channel: data.channel, text: "Leaderboard max for #{channel.slack_mention} has been unset.", gif: 'score')
+          channel.slack_client.say(channel: data.channel, text: "Leaderboard max for #{channel.slack_mention} has been unset.", gif: 'score')
           logger.info "UNSET: #{channel} - #{user.user_name} LEADERBOARD MAX has been unset"
         end
 
@@ -190,13 +190,13 @@ module SlackGamebot
             channel.aliases = channel.aliases
           end
           if channel.aliases.length == 1
-            data.team.slack_client.say(channel: data.channel, text: "Bot alias for #{channel.slack_mention} is #{channel.aliases_s}.", gif: 'name')
+            channel.slack_client.say(channel: data.channel, text: "Bot alias for #{channel.slack_mention} is #{channel.aliases_s}.", gif: 'name')
             logger.info "SET: #{channel} - #{user.user_name} Bot alias is #{channel.aliases.and}"
           elsif channel.aliases.any?
-            data.team.slack_client.say(channel: data.channel, text: "Bot aliases for #{channel.slack_mention} are #{channel.aliases_s}.", gif: 'name')
+            channel.slack_client.say(channel: data.channel, text: "Bot aliases for #{channel.slack_mention} are #{channel.aliases_s}.", gif: 'name')
             logger.info "SET: #{channel} - #{user.user_name} Bot aliases are #{channel.aliases.and}"
           else
-            data.team.slack_client.say(channel: data.channel, text: "#{channel.slack_mention} does not have any bot aliases.", gif: 'name')
+            channel.slack_client.say(channel: data.channel, text: "#{channel.slack_mention} does not have any bot aliases.", gif: 'name')
             logger.info "SET: #{channel} - #{user.user_name}, does not have any bot aliases"
           end
         end
@@ -206,7 +206,7 @@ module SlackGamebot
 
           channel.update_attributes!(aliases: [])
           channel.aliases = []
-          data.team.slack_client.say(channel: data.channel, text: "#{channel.slack_mention} no longer has bot aliases.", gif: 'name')
+          channel.slack_client.say(channel: data.channel, text: "#{channel.slack_mention} no longer has bot aliases.", gif: 'name')
           logger.info "UNSET: #{channel} - #{user.user_name} no longer has bot aliases"
         end
 
@@ -305,7 +305,7 @@ module SlackGamebot
             unset_team data.team, data, user, k, v
           end
         else
-          data.team.slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _unset api_.', gif: 'help')
+          (channel || data.team).slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _unset api_.', gif: 'help')
           logger.info "UNSET: #{channel || 'DM'} - #{user.user_name}, failed, missing setting"
         end
       end
@@ -319,7 +319,7 @@ module SlackGamebot
             set_team data.team, data, user, k, v
           end
         else
-          data.team.slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _set api off_.', gif: 'help')
+          (channel || data.team).slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _set api off_.', gif: 'help')
           logger.info "SET: #{channel || 'DM'} - #{user.user_name}, failed, missing setting"
         end
       end

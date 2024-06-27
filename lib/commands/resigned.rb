@@ -37,18 +37,18 @@ module SlackGamebot
         challenge = ::Challenge.find_by_user(challenger, [ChallengeState::PROPOSED, ChallengeState::ACCEPTED])
 
         if scores&.any?
-          data.team.slack_client.say(channel: data.channel, text: 'Cannot score when resigning.', gif: 'idiot')
+          channel.slack_client.say(channel: data.channel, text: 'Cannot score when resigning.', gif: 'idiot')
           logger.info "RESIGNED: #{channel} - #{data.user}, cannot score."
         elsif opponents.any? && (challenge.nil? || (challenge.challengers != opponents && challenge.challenged != opponents))
           match = ::Match.resign!(team: channel.team, channel: channel, winners: opponents, losers: teammates)
-          data.team.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
+          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
           logger.info "RESIGNED TO: #{channel} - #{match}"
         elsif challenge
           challenge.resign!(challenger)
-          data.team.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
+          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
           logger.info "RESIGNED: #{channel} - #{challenge}"
         else
-          data.team.slack_client.say(channel: data.channel, text: 'No challenge to resign!')
+          channel.slack_client.say(channel: data.channel, text: 'No challenge to resign!')
           logger.info "RESIGNED: #{channel} - #{data.user}, N/A"
         end
       end

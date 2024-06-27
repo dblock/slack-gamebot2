@@ -5,17 +5,17 @@ module SlackGamebot
 
       user_in_channel_command 'reset' do |channel, user, data|
         if !user.captain?
-          data.team.slack_client.say(channel: data.channel, text: "You're not a captain, sorry.", gif: 'sorry')
+          channel.slack_client.say(channel: data.channel, text: "You're not a captain, sorry.", gif: 'sorry')
           logger.info "RESET: #{channel} - #{user.user_name}, failed, not captain"
         elsif !data.match['expression']
-          data.team.slack_client.say(channel: data.channel, text: "Missing channel, confirm with _reset #{channel.slack_mention}_.", gif: 'help')
+          channel.slack_client.say(channel: data.channel, text: "Missing channel, confirm with _reset #{channel.slack_mention}_.", gif: 'help')
           logger.info "RESET: #{channel} - #{user.user_name}, failed, missing channel"
         elsif data.match['expression'] != channel.channel_id && data.match['expression'] != channel.slack_mention
-          data.team.slack_client.say(channel: data.channel, text: "Invalid channel, confirm with _reset #{channel.slack_mention}_.", gif: 'help')
+          channel.slack_client.say(channel: data.channel, text: "Invalid channel, confirm with _reset #{channel.slack_mention}_.", gif: 'help')
           logger.info "RESET: #{channel} - #{user.user_name}, failed, invalid channel '#{data.match['expression']}'"
         else
           ::Season.create!(team: user.team, channel: channel, created_by: user)
-          data.team.slack_client.say(channel: data.channel, text: 'Welcome to the new season!', gif: 'season')
+          channel.slack_client.say(channel: data.channel, text: 'Welcome to the new season!', gif: 'season')
           logger.info "RESET: #{channel} - #{data.user}"
         end
       end

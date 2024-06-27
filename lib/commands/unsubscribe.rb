@@ -3,7 +3,7 @@ module SlackGamebot
     class Unsubscribe < SlackRubyBotServer::Events::AppMentions::Mention
       include SlackGamebot::Commands::Mixins::User
 
-      user_command 'unsubscribe' do |_channel, _user, data|
+      user_command 'unsubscribe' do |channel, _user, data|
         team = data.team
         if !team.stripe_customer_id
           data.team.slack_client.say(channel: data.channel, text: "You don't have a paid subscription, all set.")
@@ -22,11 +22,11 @@ module SlackGamebot
           else
             subscription_info.concat(team.stripe_customer_subscriptions_info(true))
           end
-          data.team.slack_client.say(channel: data.channel, text: subscription_info.compact.join("\n"))
-          logger.info "UNSUBSCRIBE: #{team} - #{data.user}"
+          (channel || team).slack_client.say(channel: data.channel, text: subscription_info.compact.join("\n"))
+          logger.info "UNSUBSCRIBE: #{channel || team} - #{data.user}"
         else
-          data.team.slack_client.say(channel: data.channel, text: 'There are no active subscriptions.', gif: 'sorry')
-          logger.info "UNSUBSCRIBE: #{team} - #{data.user}, NONE"
+          (channel || team).slack_client.say(channel: data.channel, text: 'There are no active subscriptions.', gif: 'sorry')
+          logger.info "UNSUBSCRIBE: #{channel || team} - #{data.user}, NONE"
         end
       end
     end

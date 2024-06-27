@@ -6,7 +6,7 @@ describe SlackGamebot::Commands::Seasons do
   shared_examples_for 'seasons' do
     context 'no seasons' do
       it 'seasons' do
-        expect(message: '@gamebot seasons').to respond_with_slack_message "There're no seasons."
+        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message "There're no seasons."
       end
     end
 
@@ -20,7 +20,7 @@ describe SlackGamebot::Commands::Seasons do
       let!(:season) { Fabricate(:season, channel: channel, team: team) }
 
       it 'seasons' do
-        expect(message: '@gamebot seasons').to respond_with_slack_message season.to_s
+        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message season.to_s
       end
     end
 
@@ -36,7 +36,7 @@ describe SlackGamebot::Commands::Seasons do
       end
 
       it 'returns past seasons and current season' do
-        expect(message: '@gamebot seasons').to respond_with_slack_message seasons.reverse.map(&:to_s).join("\n")
+        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message seasons.reverse.map(&:to_s).join("\n")
       end
     end
 

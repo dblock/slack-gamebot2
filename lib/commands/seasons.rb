@@ -7,12 +7,12 @@ module SlackGamebot
         current_season = ::Season.new(team: channel.team, channel: channel)
         if current_season.valid?
           message = [current_season, channel.seasons.desc(:_id)].flatten.map(&:to_s).join("\n")
-          data.team.slack_client.say(channel: data.channel, text: message)
+          channel.slack_client.say(channel: data.channel, text: message)
         elsif ::Season.where(channel: channel).any? # don't use channel.seasons, would include current_season
           message = channel.seasons.desc(:_id).map(&:to_s).join("\n")
-          data.team.slack_client.say(channel: data.channel, text: message)
+          channel.slack_client.say(channel: data.channel, text: message)
         else
-          data.team.slack_client.say(channel: data.channel, text: "There're no seasons.", gif: %w[winter summer fall spring].sample)
+          channel.slack_client.say(channel: data.channel, text: "There're no seasons.", gif: %w[winter summer fall spring].sample)
         end
         logger.info "SEASONS: #{channel} - #{data.user}"
       end

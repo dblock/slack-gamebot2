@@ -23,7 +23,7 @@ describe SlackGamebot::Commands::Accept do
 
     it 'accepts an open challenge' do
       allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(nil)
-      expect(message: '@gamebot accept', user: acceptor.user_id).to respond_with_slack_message(
+      expect(message: '@gamebot accept', user: acceptor.user_id, channel: channel).to respond_with_slack_message(
         "#{acceptor.display_name} accepted #{challenge.challengers.map(&:display_name).and}'s challenge."
       )
       challenge.reload
@@ -33,7 +33,7 @@ describe SlackGamebot::Commands::Accept do
 
     it 'cannot accept an open challenge with themselves' do
       allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(nil)
-      expect(message: '@gamebot accept', user: user.user_id).to respond_with_slack_message(
+      expect(message: '@gamebot accept', user: user.user_id, channel: channel).to respond_with_slack_message(
         "Player #{user.user_name} cannot play against themselves."
       )
       challenge.reload

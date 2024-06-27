@@ -42,7 +42,7 @@ module SlackGamebot
                                              ])
 
         if !(teammates & opponents).empty?
-          data.team.slack_client.say(channel: data.channel, text: 'You cannot draw to yourself!', gif: 'loser')
+          channel.slack_client.say(channel: data.channel, text: 'You cannot draw to yourself!', gif: 'loser')
           logger.info "Cannot draw to yourself: #{channel} - #{match}"
         elsif opponents.any? && (challenge.nil? || (challenge.challengers != opponents && challenge.challenged != opponents))
           challenge = ::Challenge.create!(
@@ -60,7 +60,7 @@ module SlackGamebot
             "Match is a draw, waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",
             challenge.draw_scores? ? "Recorded #{Score.scores_to_string(challenge.draw_scores)}." : nil
           ].compact
-          data.team.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
+          channel.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
           logger.info "DRAW TO: #{channel} - #{challenge}"
         elsif challenge
           if challenge.draw.include?(challenger)
@@ -69,17 +69,17 @@ module SlackGamebot
               "Match is a draw, still waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",
               challenge.draw_scores? ? "Recorded #{Score.scores_to_string(challenge.draw_scores)}." : nil
             ].compact
-            data.team.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
+            channel.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
           else
             challenge.draw!(challenger, scores)
             if challenge.state == ChallengeState::PLAYED
-              data.team.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'tie')
+              channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'tie')
             else
               messages = [
                 "Match is a draw, waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",
                 challenge.draw_scores? ? "Recorded #{Score.scores_to_string(challenge.draw_scores)}." : nil
               ].compact
-              data.team.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
+              channel.slack_client.say(channel: data.channel, text: messages.join(' '), gif: 'tie')
             end
           end
           logger.info "DRAW: #{channel} - #{challenge}"
@@ -87,10 +87,10 @@ module SlackGamebot
           match = ::Match.any_of({ winner_ids: challenger.id }, loser_ids: challenger.id).desc(:id).first
           if match&.tied?
             match.update_attributes!(scores: scores)
-            data.team.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
+            channel.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
             logger.info "SCORED: #{channel} - #{match}"
           else
-            data.team.slack_client.say(channel: data.channel, text: 'No challenge to draw!')
+            channel.slack_client.say(channel: data.channel, text: 'No challenge to draw!')
             logger.info "DRAW: #{channel} - #{data.user}, N/A"
           end
         end

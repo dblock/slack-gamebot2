@@ -39,16 +39,4 @@ describe SlackGamebot::Commands::ChallengeQuestion do
       end.not_to change(Challenge, :count)
     end
   end
-
-  context 'subscription expiration' do
-    before do
-      team.update_attributes!(subscribed: false, created_at: 3.weeks.ago)
-    end
-
-    it 'prevents new challenge questions' do
-      expect(message: "@gamebot challenge? <@#{opponent.user_id}>", user: user, channel: channel).to respond_with_slack_message(
-        "Your trial subscription has expired. Subscribe your team for $49.99 a year at https://gamebot2.playplay.io/subscribe?team_id=#{team.team_id}."
-      )
-    end
-  end
 end

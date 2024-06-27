@@ -28,9 +28,9 @@ module SlackGamebot
           message = ranked_players.each_with_index.map do |user, index|
             "#{reverse ? index + 1 : user.rank}. #{user}"
           end.join("\n")
-          data.team.slack_client.say(channel: data.channel, text: message)
+          channel.slack_client.say(channel: data.channel, text: message)
         else
-          data.team.slack_client.say(channel: data.channel, text: "There're no ranked players.", gif: 'empty')
+          channel.slack_client.say(channel: data.channel, text: "There're no ranked players.", gif: 'empty')
         end
         logger.info "LEADERBOARD #{max || '∞'}: #{channel} - #{data.user}"
       end

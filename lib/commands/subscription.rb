@@ -3,7 +3,7 @@ module SlackGamebot
     class Subscription < SlackRubyBotServer::Events::AppMentions::Mention
       include SlackGamebot::Commands::Mixins::User
 
-      user_command 'subscription' do |_channel, _user, data|
+      user_command 'subscription' do |channel, _user, data|
         subscription_info = []
         team = data.team
         if team.stripe_subcriptions&.any?
@@ -18,8 +18,8 @@ module SlackGamebot
         else
           subscription_info << team.trial_message
         end
-        data.team.slack_client.say(channel: data.channel, text: subscription_info.compact.join("\n"))
-        logger.info "SUBSCRIPTION: #{team} - #{data.user}"
+        (channel || team).slack_client.say(channel: data.channel, text: subscription_info.compact.join("\n"))
+        logger.info "SUBSCRIPTION: #{channel || team} - #{data.user}"
       end
     end
   end

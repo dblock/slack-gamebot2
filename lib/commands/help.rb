@@ -60,9 +60,9 @@ module SlackGamebot
         ```
       EOS
 
-      user_command 'help' do |_channel, _user, data|
+      user_command 'help' do |channel, _user, data|
         team = data.team
-        team.slack_client.say(channel: data.channel, text: [
+        (channel || team).slack_client.say(channel: data.channel, text: [
           HELP,
           team.reload.subscribed? ? nil : team.trial_message
         ].compact.join("\n"), gif: 'help')

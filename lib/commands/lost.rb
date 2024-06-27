@@ -37,24 +37,24 @@ module SlackGamebot
         challenge = ::Challenge.find_by_user(challenger, [ChallengeState::PROPOSED, ChallengeState::ACCEPTED])
 
         if !(teammates & opponents).empty?
-          data.team.slack_client.say(channel: data.channel, text: 'You cannot lose to yourself!', gif: 'loser')
+          channel.slack_client.say(channel: data.channel, text: 'You cannot lose to yourself!', gif: 'loser')
           logger.info "LOST TO: #{channel} - SELF"
         elsif opponents.any? && (challenge.nil? || (challenge.challengers != opponents && challenge.challenged != opponents))
           match = ::Match.lose!(team: channel.team, channel: channel, winners: opponents, losers: teammates, scores: scores)
-          data.team.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
+          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
           logger.info "LOST TO: #{channel} - #{match}"
         elsif challenge
           challenge.lose!(challenger, scores)
-          data.team.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
+          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
           logger.info "LOST: #{channel} - #{challenge}"
         else
           match = ::Match.where(loser_ids: challenger.id).desc(:_id).first
           if match
             match.update_attributes!(scores: scores)
-            data.team.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
+            channel.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
             logger.info "SCORED: #{channel} - #{match}"
           else
-            data.team.slack_client.say(channel: data.channel, text: 'No challenge to lose!')
+            channel.slack_client.say(channel: data.channel, text: 'No challenge to lose!')
             logger.info "LOST: #{channel} - #{data.user}, N/A"
           end
         end

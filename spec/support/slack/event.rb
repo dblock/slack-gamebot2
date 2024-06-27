@@ -42,13 +42,19 @@ RSpec::Matchers.define :respond_with_slack_message do |expected|
 
     allow(Team).to receive(:where).with(team_id: team.team_id).and_return([team])
 
-    allow(team.slack_client).to receive(:chat_postMessage) do |options|
+    user_id = user.is_a?(User) ? user.user_id : user || 'user_id'
+    channel_id = channel.is_a?(Channel) ? channel.channel_id : channel || 'channel_id'
+
+    allow(team).to receive(:find_create_or_update_channel_by_channel_id!).with(channel_id, user_id).and_return(channel) if channel.is_a?(Channel)
+    allow(team).to receive(:find_create_or_update_user_in_channel_by_slack_id!).with(channel_id, user_id).and_return(user) if user.is_a?(User)
+    allow(user).to receive(:channel).and_return(channel) if user.is_a?(User) && channel.is_a?(Channel) && user.channel == channel
+
+    slack_client = channel.is_a?(Channel) ? channel.slack_client : team.slack_client
+
+    allow(slack_client).to receive(:chat_postMessage) do |options|
       @messages ||= []
       @messages.push options
     end
-
-    user_id = user.is_a?(User) ? user.user_id : user || 'user_id'
-    channel_id = channel.is_a?(Channel) ? channel.channel_id : channel || 'channel_id'
 
     begin
       SlackRubyBotServer::Events.config.run_callbacks(
@@ -76,9 +82,9 @@ RSpec::Matchers.define :respond_with_slack_message do |expected|
     end
 
     matcher = have_received(:chat_postMessage).once
-    matcher = matcher.with(hash_including(channel: channel_id, text: expected)) if channel && expected
+    matcher = matcher.with(expected.is_a?(Hash) ? expected : hash_including(channel: channel_id, text: expected)) if channel && expected
 
-    expect(team.slack_client).to matcher
+    expect(slack_client).to matcher
 
     true
   end

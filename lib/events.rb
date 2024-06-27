@@ -29,7 +29,7 @@ SlackRubyBotServer::Events.configure do |config|
       "Use `#{data.team.bot_mention} leaderboard` for current rankings and `#{data.team.bot_mention} help` for more commands."
     ].join("\n")
 
-    data.team.slack_client.chat_postMessage(channel: data.channel, text: text)
+    channel.slack_client.say(channel: data.channel, text: text)
 
     { ok: true }
   end
@@ -63,7 +63,7 @@ SlackRubyBotServer::Events.configure do |config|
     ].join("\n")
 
     SlackGamebot::Api::Middleware.logger.info "#{data.team.name}: user opened bot home ##{data.channel}."
-    data.team.slack_client.chat_postMessage(channel: data.channel, text: text)
+    channel.slack_client.say(channel: data.channel, text: text)
 
     { ok: true }
   end

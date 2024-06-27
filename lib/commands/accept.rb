@@ -9,10 +9,10 @@ module SlackGamebot
 
         if challenge
           challenge.accept!(user)
-          data.team.slack_client.say(channel: data.channel, text: "#{challenge.challenged.map(&:display_name).and} accepted #{challenge.challengers.map(&:display_name).and}'s challenge.", gif: 'game')
+          channel.slack_client.say(channel: data.channel, text: "#{challenge.challenged.map(&:display_name).and} accepted #{challenge.challengers.map(&:display_name).and}'s challenge.", gif: 'game')
           logger.info "ACCEPT: #{user} - #{challenge}"
         else
-          data.team.slack_client.say(channel: data.channel, text: 'No challenge to accept!')
+          channel.slack_client.say(channel: data.channel, text: 'No challenge to accept!')
           logger.info "ACCEPT: #{user} - N/A"
         end
       end

@@ -46,7 +46,7 @@ class Channel
   end
 
   def slack_client
-    team.slack_client
+    @slack_client ||= SlackGamebot::Web::Client.new(token: team.token, gifs: gifs)
   end
 
   def token
@@ -60,7 +60,7 @@ class Channel
   def find_or_create_by_slack_id!(slack_id)
     instance = users.where(user_id: slack_id).first
     users_info = begin
-      team.slack_client.users_info(user: slack_id)
+      slack_client.users_info(user: slack_id)
     rescue Slack::Web::Api::Errors::SlackError => e
       raise e unless e.message == 'user_not_found'
     end
@@ -140,6 +140,6 @@ class Channel
   end
 
   def inform!(message)
-    team.slack_client.chat_postMessage(text: message, channel: channel_id, as_user: true)
+    slack_client.chat_postMessage(text: message, channel: channel_id, as_user: true)
   end
 end

@@ -20,6 +20,7 @@ describe SlackGamebot::Commands::Register do
 
   it 'registers a new user and promotes them to captain' do
     Fabricate(:user, team: team2, channel: channel2) # another user in another team
+    allow_any_instance_of(User).to receive(:channel).and_return(channel)
     expect do
       expect(message: '@gamebot register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play. You're also team captain.")
     end.to change(User, :count).by(1)
@@ -27,6 +28,7 @@ describe SlackGamebot::Commands::Register do
 
   it 'registers a new user' do
     Fabricate(:user, team: team, channel: channel, registered: true, captain: false) # an existing user in the same team
+    allow_any_instance_of(User).to receive(:channel).and_return(channel)
     expect do
       expect(message: '@gamebot register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play. You're also team captain.")
     end.to change(User, :count).by(1)
@@ -34,6 +36,7 @@ describe SlackGamebot::Commands::Register do
 
   it 'registers a new user' do
     Fabricate(:user, team: team, channel: channel, registered: true, captain: true) # an existing captain in the same team
+    allow_any_instance_of(User).to receive(:channel).and_return(channel)
     expect do
       expect(message: '@gamebot register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play.")
     end.to change(User, :count).by(1)

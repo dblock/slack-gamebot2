@@ -5,17 +5,17 @@ module SlackGamebot
 
       user_in_channel_command 'demote' do |channel, user, data|
         if !data.match['expression'] || data.match['expression'] != 'me'
-          data.team.slack_client.say(channel: data.channel, text: 'You can only demote yourself, try _demote me_.', gif: 'help')
+          channel.slack_client.say(channel: data.channel, text: 'You can only demote yourself, try _demote me_.', gif: 'help')
           logger.info "DEMOTE: #{channel} - #{user.user_name}, failed, not me"
         elsif !user.captain?
-          data.team.slack_client.say(channel: data.channel, text: "You're not a captain, sorry.", gif: 'sorry')
+          channel.slack_client.say(channel: data.channel, text: "You're not a captain, sorry.", gif: 'sorry')
           logger.info "DEMOTE: #{channel} - #{user.user_name}, failed, not captain"
         elsif channel.captains.count == 1
-          data.team.slack_client.say(channel: data.channel, text: "You cannot demote yourself, you're the last captain. Promote someone else first.", gif: 'sorry')
+          channel.slack_client.say(channel: data.channel, text: "You cannot demote yourself, you're the last captain. Promote someone else first.", gif: 'sorry')
           logger.info "DEMOTE: #{channel} - #{user.user_name}, failed, last captain"
         else
           user.demote!
-          data.team.slack_client.say(channel: data.channel, text: "#{user.user_name} is no longer captain.")
+          channel.slack_client.say(channel: data.channel, text: "#{user.user_name} is no longer captain.")
           logger.info "DEMOTED: #{channel} - #{user.user_name}"
         end
       end

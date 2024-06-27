@@ -44,7 +44,7 @@ module SlackGamebot
             "#{s} #{count} times"
           end
         end.join("\n")
-        data.team.slack_client.say(channel: data.channel, text: message.empty? ? 'No matches.' : message)
+        channel.slack_client.say(channel: data.channel, text: message.empty? ? 'No matches.' : message)
         logger.info "MATCHES: #{channel} - #{data.user}"
       end
     end

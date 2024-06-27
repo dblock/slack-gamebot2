@@ -113,7 +113,7 @@ class Team
   end
 
   def slack_client
-    @slack_client ||= SlackGamebot::Web::Client.new(token: token)
+    @slack_client ||= SlackGamebot::Web::Client.new(token: token, gifs: false)
   end
 
   def bot_mention
