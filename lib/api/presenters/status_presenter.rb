@@ -7,7 +7,7 @@ module SlackGamebot
         include Grape::Roar::Representer
 
         link :self do |opts|
-          "#{base_url(opts)}/status"
+          "#{base_url(opts)}/api/status"
         end
 
         property :ping

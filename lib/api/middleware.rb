@@ -26,7 +26,7 @@ module SlackGamebot
 
           use Rack::ServerPages
 
-          run Api::Middleware.new
+          run SlackGamebot::Api::Middleware.new
         end.to_app
       end
 

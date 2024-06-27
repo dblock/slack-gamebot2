@@ -4,7 +4,7 @@ require_relative 'app'
 
 NewRelic::Agent.manual_start
 
-SlackRubyBotServer::App.instance.prepare!
+SlackGamebot::App.instance.prepare!
 SlackRubyBotServer::Service.start!
 
-run SlackRubyBotServer::Api::Middleware.instance
+run SlackGamebot::Api::Middleware.instance
