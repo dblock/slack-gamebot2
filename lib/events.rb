@@ -67,6 +67,8 @@ SlackRubyBotServer::Events.configure do |config|
   end
 
   config.on :event, 'event_callback', 'message' do |event|
+    SlackGamebot::Api::Middleware.logger.info(event)
+
     data = event['event']
     next { ok: true } unless data && data['text'] && data['channel']
 
