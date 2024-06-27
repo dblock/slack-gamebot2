@@ -22,6 +22,8 @@ oauth_config:
       - mpim:read
       - mpim:write
       - users:read
+      - channels:history
+      - groups:history
 settings:
   event_subscriptions:
     request_url: https://gamebot2.playplay.io/api/slack/event
@@ -30,6 +32,8 @@ settings:
       - app_mention
       - member_joined_channel
       - member_left_channel
+      - message.channels
+      - message.groups
       - message.im
       - message.mpim
   interactivity:
