@@ -67,15 +67,13 @@ SlackRubyBotServer::Events.configure do |config|
   end
 
   config.on :event, 'event_callback', 'message' do |event|
-    SlackGamebot::Api::Middleware.logger.info(event)
-
     data = event['event']
-    next { ok: true } unless data && data['text'] && data['channel']
+    next { ok: true } unless data && data['text'] && data['channel'] && data['subtype'].nil?
 
-    team = Team.where(team_id: event['team_id']).first
+    team = Team.where(team_id: event['team_id']).first if event['team_id']
     next { ok: true } unless team
 
-    channel = team.channels.where(channel_id: data['channel']).first
+    channel = team.channels.where(channel_id: data['channel']).first if data && data['channel']
     next { ok: true } unless channel && channel.aliases.any?
 
     bot_aliases_regexp = Regexp.new("^(#{channel.aliases.join('|')})[[:space:]]*")

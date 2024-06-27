@@ -65,8 +65,7 @@ module SlackGamebot
         team.slack_client.say(channel: data.channel, text: [
           HELP,
           team.reload.subscribed? ? nil : team.trial_message
-        ].compact.join("\n"))
-        team.slack_client.say(channel: data.channel, gif: 'help')
+        ].compact.join("\n"), gif: 'help')
         logger.info "HELP: #{team} - #{data.user}"
       end
     end
