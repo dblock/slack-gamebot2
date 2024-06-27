@@ -305,7 +305,7 @@ module SlackGamebot
             unset_team data.team, data, user, k, v
           end
         else
-          data.team.slack_client.say(channel: data.channel, text: 'Missing setting, eg. _unset gifs_.', gif: 'help')
+          data.team.slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _unset api_.', gif: 'help')
           logger.info "UNSET: #{channel || 'DM'} - #{user.user_name}, failed, missing setting"
         end
       end
@@ -319,7 +319,7 @@ module SlackGamebot
             set_team data.team, data, user, k, v
           end
         else
-          data.team.slack_client.say(channel: data.channel, text: 'Missing setting, eg. _set gifs off_.', gif: 'help')
+          data.team.slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _set api off_.', gif: 'help')
           logger.info "SET: #{channel || 'DM'} - #{user.user_name}, failed, missing setting"
         end
       end

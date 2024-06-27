@@ -34,7 +34,7 @@ module SlackGamebot
 
         Stats
         -----
-        leaderboard [number|infinity]: show the leaderboard, eg. leaderboard 10
+        leaderboard [number|infinity]: show the leaderboard, e.g. leaderboard 10
         season: show current season
 
         Settings

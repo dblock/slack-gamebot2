@@ -13,7 +13,7 @@ describe SlackGamebot::Commands::Set do
 
       it 'gives help' do
         expect(message: '@gamebot set', user: captain).to respond_with_slack_message(
-          'Missing setting, eg. _set gifs off_.'
+          'Missing setting, e.g. _set api off_.'
         )
       end
 
