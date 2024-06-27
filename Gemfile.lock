@@ -119,8 +119,6 @@ GEM
       kaminari-core (~> 1.0)
     kgio (2.11.4)
     language_server-protocol (3.17.0.3)
-    mailchimp_api_v3 (0.2.18)
-      rest-client (~> 2)
     matrix (0.4.2)
     mime-types (3.5.2)
       mime-types-data (~> 3.2015)
@@ -259,9 +257,6 @@ GEM
       slack-ruby-bot-server (>= 0.12.0)
     slack-ruby-bot-server-events-app-mentions (0.1.1)
       slack-ruby-bot-server-events
-    slack-ruby-bot-server-mailchimp (0.3.0)
-      mailchimp_api_v3
-      slack-ruby-bot-server (>= 2.0.1)
     slack-ruby-client (2.3.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -317,7 +312,6 @@ DEPENDENCIES
   irb
   json
   kaminari-grape
-  mailchimp_api_v3
   mongo (~> 2.15.1)
   mongoid
   mongoid-scroll
@@ -341,7 +335,6 @@ DEPENDENCIES
   slack-ruby-bot-server
   slack-ruby-bot-server-events
   slack-ruby-bot-server-events-app-mentions
-  slack-ruby-bot-server-mailchimp
   slack-ruby-client
   stripe (= 1.58.0)
   stripe-ruby-mock (~> 2.4.1)

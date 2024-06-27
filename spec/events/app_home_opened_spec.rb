@@ -63,7 +63,7 @@ describe 'events/app_home_opened' do
     end
 
     it 'does not double-welcome the user that installed the bot' do
-      expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
+      expect_any_instance_of(Slack::Web::Client).not_to receive(:chat_postMessage)
 
       post '/api/slack/event', event_envelope
       expect(last_response.status).to eq 201

@@ -185,61 +185,6 @@ describe SlackGamebot::Api::Endpoints::TeamsEndpoint do
           expect(team.activated_user_id).to eq 'activated_user_id'
         end.not_to change(Team, :count)
       end
-
-      context 'with mailchimp settings' do
-        before do
-          SlackRubyBotServer::Mailchimp.configure do |config|
-            config.mailchimp_api_key = 'api-key'
-            config.mailchimp_list_id = 'list-id'
-          end
-        end
-
-        after do
-          SlackRubyBotServer::Mailchimp.config.reset!
-          ENV.delete('MAILCHIMP_API_KEY')
-          ENV.delete('MAILCHIMP_LIST_ID')
-          ENV.delete('MAILCHIMP_API_KEY')
-          ENV.delete('MAILCHIMP_LIST_ID')
-        end
-
-        let(:list) { double(Mailchimp::List, members: double(Mailchimp::List::Members)) }
-
-        it 'subscribes to the mailing list' do
-          expect_any_instance_of(Team).to receive(:inform_admin!).with(Team::INSTALLED_TEXT)
-          expect(SlackRubyBotServer::Service.instance).to receive(:start!)
-
-          allow_any_instance_of(Slack::Web::Client).to receive(:users_info).with(
-            user: 'activated_user_id'
-          ).and_return(
-            user: {
-              profile: {
-                email: 'user@example.com',
-                first_name: 'First',
-                last_name: 'Last'
-              }
-            }
-          )
-
-          allow_any_instance_of(Mailchimp::Client).to receive(:lists).with('list-id').and_return(list)
-
-          expect(list.members).to receive(:where).with(email_address: 'user@example.com').and_return([])
-
-          expect(list.members).to receive(:create_or_update).with(
-            email_address: 'user@example.com',
-            merge_fields: {
-              'FNAME' => 'First',
-              'LNAME' => 'Last',
-              'BOT' => 'Gamebot'
-            },
-            status: 'pending',
-            name: nil,
-            tags: %w[gamebot trial],
-            unique_email_id: 'team_id-activated_user_id'
-          )
-
-          client.teams._post(code: 'code')
-        end
-      end
     end
   end
 end
