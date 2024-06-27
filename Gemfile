@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 ruby '3.3.3'
 
-gem 'faraday_middleware'
+gem 'faraday', '~> 2.9.2'
 gem 'hashie', '3.4.6'
 gem 'irb'
 gem 'json'
@@ -49,6 +49,7 @@ group :test do
   gem 'excon'
   gem 'fabrication'
   gem 'faker'
+  gem 'faraday-rack'
   gem 'hyperclient'
   gem 'rack-test'
   gem 'rspec'
