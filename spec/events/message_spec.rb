@@ -54,6 +54,19 @@ describe 'events/message' do
         expect(JSON.parse(last_response.body)).to eq('ok' => true)
       end
     end
+
+    context 'with a partially matching alias' do
+      before do
+        channel.update_attributes!(aliases: %w[ches xy])
+      end
+
+      it 'does not match message' do
+        expect_any_instance_of(Slack::Web::Client).not_to receive(:chat_postMessage)
+        post '/api/slack/event', event_envelope
+        expect(last_response.status).to eq 201
+        expect(JSON.parse(last_response.body)).to eq('ok' => true)
+      end
+    end
   end
 
   context 'message with subtype' do

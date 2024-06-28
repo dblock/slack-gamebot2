@@ -78,7 +78,7 @@ SlackRubyBotServer::Events.configure do |config|
     channel = team.channels.where(channel_id: data['channel']).first if data && data['channel']
     next { ok: true } unless channel && channel.aliases.any?
 
-    bot_aliases_regexp = Regexp.new("^(#{channel.aliases.join('|')})[[:space:]]*")
+    bot_aliases_regexp = Regexp.new("^(#{channel.aliases.map { |a| "#{a}[[:space:]]" }.join('|')})")
     text = data['text'].gsub(bot_aliases_regexp, '')
 
     next { ok: true } unless text && data['text'] != text
