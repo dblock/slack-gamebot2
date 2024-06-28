@@ -464,7 +464,7 @@ gamebot unset api
 API for team China is off.
 ```
 
-You will need a token to use the API, DM the bot `set token xyz`, then pass `X-Api-Token: xyz` in a header to the API.
+You will need a token to use the API, DM the bot `set token xyz`, then pass `X-Access-Token: xyz` in a header to the API.
 
 #### gamebot set unbalanced on|off
 

@@ -18,7 +18,7 @@ module SlackGamebot
             channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set, #{target_user.user_name}.", gif: 'anonymous')
             logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : ' for ' + target_user.user_name}is not set"
           else
-            channel.slack_client.say(channel: data.channel, text: "Your nickname is #{v.nil? ? '' : 'now '}*#{target_user.nickname}*, #{target_user.slack_mention}.", gif: 'name')
+            channel.slack_client.say(channel: data.channel, text: "Your nickname is #{v.nil? ? '' : 'now '}_#{target_user.nickname}_, #{target_user.slack_mention}.", gif: 'name')
             logger.info "SET: #{channel} - #{user.user_name} nickname #{target_user == user ? '' : ' for ' + target_user.user_name}is #{target_user.nickname}"
           end
         end
@@ -78,7 +78,7 @@ module SlackGamebot
 
           channel.update_attributes!(api: v.to_b) unless v.nil?
           message = if channel.team.api && channel.api
-                      "API for #{channel.slack_mention} is on!\nDM the bot for an API token to pass as an `X-Api-Token` header to #{channel.api_url}."
+                      "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
                     elsif !channel.team.api && channel.api
                       "API for team #{channel.team.team_id} is off. DM the bot to turn it on."
                     else
@@ -101,11 +101,11 @@ module SlackGamebot
 
           team.update_attributes!(api: v.to_b) unless v.nil?
           message = if team.api && !team.api_token.blank?
-                      "API for team #{team.team_id} is on, and the API token is set to `#{team.api_token}`.\nPass it in with an `X-Api-Token` header to #{team.api_url}."
+                      "API for team #{team.team_id} is #{v.nil? ? '' : 'now '}on, and the API token is set to `#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
                     elsif team.api
-                      "API for team #{team.team_id} is on, set an API token with _set token xyz_."
+                      "API for team #{team.team_id} is #{v.nil? ? '' : 'now '}on, set an API token with _set token xyz_."
                     else
-                      "API for team #{team.team_id} is off."
+                      "API for team #{team.team_id} is #{v.nil? ? '' : 'now '}off."
                     end
 
           team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
@@ -116,7 +116,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a team admin, sorry." unless admin.team_admin?
 
           team.update_attributes!(api: false)
-          team.slack_client.say(channel: data.channel, text: "API for team #{team.team_id} is off.", gif: 'programmer')
+          team.slack_client.say(channel: data.channel, text: "API for team #{team.team_id} is now off.", gif: 'programmer')
           logger.info "UNSET: #{team} - #{admin.user_name} API is off"
         end
 
@@ -125,11 +125,11 @@ module SlackGamebot
 
           team.update_attributes!(api_token: v.to_s) unless v.nil?
           message = if team.api && !team.api_token.blank?
-                      "API for team #{team.team_id} is on, and the API token is `#{team.api_token}`.\nPass it in with an `X-Api-Token` header to #{team.api_url}."
+                      "API for team #{team.team_id} is on, and the API token is #{v.nil? ? '' : 'now '}`#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
                     elsif team.api && team.api_token.blank?
                       "API for team #{team.team_id} is on, set an API token with _set token xyz_."
                     elsif !team.api && !team.api_token.blank?
-                      "API token for team #{team.team_id} is `#{team.api_token}`, but the API is off. Set it on with _set api on_."
+                      "API token for team #{team.team_id} is #{v.nil? ? '' : 'now '}`#{team.api_token}`, but the API is off. Set it on with _set api on_."
                     else
                       "API token for team #{team.team_id} is not set, and the API is off. Set it on with _set api on_ and set a token with _set token xyz_."
                     end
@@ -141,7 +141,7 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a team admin, sorry." unless admin.team_admin?
 
           team.update_attributes!(api_token: nil)
-          team.slack_client.say(channel: data.channel, text: "API token for team #{team.team_id} is not set.", gif: 'programmer')
+          team.slack_client.say(channel: data.channel, text: "API token for team #{team.team_id} has been unset.", gif: 'programmer')
           logger.info "UNSET: #{team} - #{admin.user_name} API token is not set"
         end
 

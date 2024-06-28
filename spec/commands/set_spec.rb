@@ -126,7 +126,7 @@ describe SlackGamebot::Commands::Set do
           team.update_attributes!(api: true)
           channel.update_attributes!(api: true)
           expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
-            "API for #{channel.slack_mention} is on!\nDM the bot for an API token to pass as an `X-Api-Token` header to #{channel.api_url}."
+            "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
           )
         end
 
@@ -148,7 +148,7 @@ describe SlackGamebot::Commands::Set do
         it 'shows current value of API on' do
           channel.update_attributes!(api: true)
           expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
-            "API for #{channel.slack_mention} is on!\nDM the bot for an API token to pass as an `X-Api-Token` header to #{channel.api_url}."
+            "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
           )
         end
 
@@ -161,7 +161,7 @@ describe SlackGamebot::Commands::Set do
 
         it 'enables API' do
           expect(message: '@gamebot set api on', user: captain, channel: channel).to respond_with_slack_message(
-            "API for #{channel.slack_mention} is on!\nDM the bot for an API token to pass as an `X-Api-Token` header to #{channel.api_url}."
+            "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
           )
           expect(channel.reload.api).to be true
         end
@@ -194,7 +194,7 @@ describe SlackGamebot::Commands::Set do
           it 'shows current value of API on with API URL' do
             channel.update_attributes!(api: true)
             expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
-              "API for #{channel.slack_mention} is on!\nDM the bot for an API token to pass as an `X-Api-Token` header to http://local.api/channels/#{channel.id}."
+              "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to http://local.api/channels/#{channel.id}."
             )
           end
 
@@ -403,7 +403,7 @@ describe SlackGamebot::Commands::Set do
 
         it 'can see api' do
           expect(message: '@gamebot set api', user: user, channel: channel).to respond_with_slack_message(
-            "API for #{channel.slack_mention} is on!\nDM the bot for an API token to pass as an `X-Api-Token` header to #{channel.api_url}."
+            "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
           )
         end
       end
@@ -479,7 +479,7 @@ describe SlackGamebot::Commands::Set do
       context 'without a nickname set' do
         it 'sets nickname' do
           expect(message: '@gamebot set nickname john doe', user: user, channel: channel).to respond_with_slack_message(
-            "Your nickname is now *john doe*, #{user.slack_mention}."
+            "Your nickname is now _john doe_, #{user.slack_mention}."
           )
           expect(user.reload.nickname).to eq 'john doe'
         end
@@ -493,7 +493,7 @@ describe SlackGamebot::Commands::Set do
 
         it 'sets emoji nickname' do
           expect(message: '@gamebot set nickname :dancer:', user: user, channel: channel).to respond_with_slack_message(
-            "Your nickname is now *:dancer:*, #{user.slack_mention}."
+            "Your nickname is now _:dancer:_, #{user.slack_mention}."
           )
           expect(user.reload.nickname).to eq ':dancer:'
         end
@@ -506,13 +506,13 @@ describe SlackGamebot::Commands::Set do
 
         it 'shows current value of nickname' do
           expect(message: '@gamebot set nickname', user: user, channel: channel).to respond_with_slack_message(
-            "Your nickname is *bob*, #{user.slack_mention}."
+            "Your nickname is _bob_, #{user.slack_mention}."
           )
         end
 
         it 'sets nickname' do
           expect(message: '@gamebot set nickname john doe', user: user, channel: channel).to respond_with_slack_message(
-            "Your nickname is now *john doe*, #{user.slack_mention}."
+            "Your nickname is now _john doe_, #{user.slack_mention}."
           )
           expect(user.reload.nickname).to eq 'john doe'
         end
@@ -533,7 +533,7 @@ describe SlackGamebot::Commands::Set do
         it 'sets nickname for another user' do
           captain = Fabricate(:user, channel: channel, captain: true)
           expect(message: "@gamebot set nickname #{user.slack_mention} john doe", user: captain, channel: channel).to respond_with_slack_message(
-            "Your nickname is now *john doe*, #{user.slack_mention}."
+            "Your nickname is now _john doe_, #{user.slack_mention}."
           )
           expect(user.reload.nickname).to eq 'john doe'
         end
@@ -610,7 +610,7 @@ describe SlackGamebot::Commands::Set do
       it 'shows current value of API on with token' do
         team.update_attributes!(api: true, api_token: 'token')
         expect(message: '@gamebot set api', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API for team #{team.team_id} is on, and the API token is set to `token`.\nPass it in with an `X-Api-Token` header to #{team.api_url}."
+          "API for team #{team.team_id} is on, and the API token is set to `token`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
         )
       end
 
@@ -623,7 +623,7 @@ describe SlackGamebot::Commands::Set do
 
       it 'enables API' do
         expect(message: '@gamebot set api on', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API for team #{team.team_id} is on, set an API token with _set token xyz_."
+          "API for team #{team.team_id} is now on, set an API token with _set token xyz_."
         )
         expect(team.reload.api).to be true
       end
@@ -631,7 +631,7 @@ describe SlackGamebot::Commands::Set do
       it 'disables API with set' do
         team.update_attributes!(api: true)
         expect(message: '@gamebot set api off', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API for team #{team.team_id} is off."
+          "API for team #{team.team_id} is now off."
         )
         expect(team.reload.api).to be false
       end
@@ -639,7 +639,7 @@ describe SlackGamebot::Commands::Set do
       it 'disables API with unset' do
         team.update_attributes!(api: true)
         expect(message: '@gamebot unset api', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API for team #{team.team_id} is off."
+          "API for team #{team.team_id} is now off."
         )
         expect(team.reload.api).to be false
       end
@@ -649,7 +649,7 @@ describe SlackGamebot::Commands::Set do
       it 'shows current value of API token' do
         team.update_attributes!(api: true, api_token: 'token')
         expect(message: '@gamebot set token', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API for team #{team.team_id} is on, and the API token is `#{team.api_token}`.\nPass it in with an `X-Api-Token` header to #{team.api_url}."
+          "API for team #{team.team_id} is on, and the API token is `#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
         )
       end
 
@@ -662,7 +662,7 @@ describe SlackGamebot::Commands::Set do
 
       it 'sets API token with set' do
         expect(message: '@gamebot set token xyz', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API for team #{team.team_id} is on, and the API token is `xyz`.\nPass it in with an `X-Api-Token` header to #{team.api_url}."
+          "API for team #{team.team_id} is on, and the API token is now `xyz`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
         )
         expect(team.reload.api_token).to eq 'xyz'
       end
@@ -670,7 +670,7 @@ describe SlackGamebot::Commands::Set do
       it 'removes API token with unset' do
         team.update_attributes!(api_token: 'xyz')
         expect(message: '@gamebot unset token', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
-          "API token for team #{team.team_id} is not set."
+          "API token for team #{team.team_id} has been unset."
         )
         expect(team.reload.api_token).to be_nil
       end
