@@ -20,6 +20,7 @@ class Team
   has_many :matches
   has_many :challenges
 
+  before_save :update_subscribed_at
   after_update :subscribed!
   after_save :activated!
 
@@ -160,9 +161,7 @@ class Team
   end
 
   def subscriber_text
-    return unless subscribed_at
-
-    "Subscriber since #{subscribed_at.strftime('%B %d, %Y')}."
+    subscribed_at ? "Subscriber since #{subscribed_at.strftime('%B %d, %Y')}." : 'Team is subscribed.'
   end
 
   def stripe_subcriptions
@@ -322,5 +321,15 @@ class Team
     return unless active_changed? || activated_user_id_changed?
 
     inform_admin! INSTALLED_TEXT
+  end
+
+  def update_subscribed_at
+    return unless subscribed_changed?
+
+    if subscribed
+      self.subscribed_at ||= Time.now.utc
+    else
+      self.subscribed_at = nil
+    end
   end
 end

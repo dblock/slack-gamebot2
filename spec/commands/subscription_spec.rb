@@ -14,6 +14,28 @@ describe SlackGamebot::Commands::Subscription do
       end
     end
 
+    context 'without subscribed_at' do
+      before do
+        team.update_attributes!(subscribed: true, subscribed_at: nil)
+      end
+
+      it 'displays subscription info' do
+        customer_info = 'Team is subscribed.'
+        expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+      end
+    end
+
+    context 'with automatically set subscribed_at' do
+      before do
+        team.update_attributes!(subscribed: true)
+      end
+
+      it 'displays subscription info' do
+        customer_info = "Subscriber since #{team.subscribed_at.strftime('%B %d, %Y')}."
+        expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+      end
+    end
+
     context 'with subscribed_at' do
       before do
         team.update_attributes!(subscribed: true, subscribed_at: 2.weeks.ago)

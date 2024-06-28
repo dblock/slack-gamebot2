@@ -130,6 +130,14 @@ describe Team do
     end
   end
 
+  context 'subscribed_at' do
+    let(:subscribed_team) { Fabricate(:team, subscribed: true) }
+
+    it 'is set when subscribed is set' do
+      expect(subscribed_team.subscribed_at).not_to be_nil
+    end
+  end
+
   context 'subscribed states' do
     let(:today) { DateTime.parse('2018/7/15 12:42pm') }
     let(:subscribed_team) { Fabricate(:team, subscribed: true) }

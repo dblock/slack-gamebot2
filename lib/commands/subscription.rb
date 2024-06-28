@@ -13,7 +13,7 @@ module SlackGamebot
           subscription_info.concat(team.stripe_customer_invoices_info)
           subscription_info.concat(team.stripe_customer_sources_info)
           subscription_info << team.update_cc_text
-        elsif team.subscribed && team.subscribed_at
+        elsif team.subscribed
           subscription_info << team.subscriber_text
         else
           subscription_info << team.trial_message
