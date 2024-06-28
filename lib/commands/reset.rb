@@ -10,7 +10,7 @@ module SlackGamebot
         elsif !data.match['expression']
           channel.slack_client.say(channel: data.channel, text: "Missing channel, confirm with _reset #{channel.slack_mention}_.", gif: 'help')
           logger.info "RESET: #{channel} - #{user.user_name}, failed, missing channel"
-        elsif data.match['expression'] != channel.channel_id && data.match['expression'] != channel.slack_mention
+        elsif data.match['expression'] != channel.channel_id && Channel.slack_mention?(data.match['expression']) != channel.channel_id
           channel.slack_client.say(channel: data.channel, text: "Invalid channel, confirm with _reset #{channel.slack_mention}_.", gif: 'help')
           logger.info "RESET: #{channel} - #{user.user_name}, failed, invalid channel '#{data.match['expression']}'"
         else

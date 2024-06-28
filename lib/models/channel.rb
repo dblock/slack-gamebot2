@@ -45,6 +45,12 @@ class Channel
     "<##{channel_id}>"
   end
 
+  def self.slack_mention?(channel_name)
+    slack_match = channel_name.match(/^<#(.*)\|(.*)>$/) || channel_name.match(/^<#(.*)>$/)
+    slack_id = slack_match[1] if slack_match
+    slack_id
+  end
+
   def slack_client
     @slack_client ||= SlackGamebot::Web::Client.new(token: team.token, gifs: gifs)
   end

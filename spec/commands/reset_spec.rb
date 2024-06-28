@@ -62,6 +62,23 @@ describe SlackGamebot::Commands::Reset do
     expect(user.elo).to eq 0
   end
 
+  context 'channel name' do
+    let(:channel) { Fabricate(:channel, channel_id: 'channel_id', team: team) }
+
+    ['channel_id', '<#channel_id>', '<#channel_id|name>'].each do |channel_ref|
+      context channel_ref do
+        before do
+          Fabricate(:match, channel: channel)
+          Fabricate(:user, channel: channel, elo: 48, losses: 1, wins: 2, tau: 0.5)
+        end
+
+        it 'resets user stats' do
+          expect(message: "@gamebot reset #{channel_ref}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+        end
+      end
+    end
+  end
+
   it 'resets user stats for the right channel' do
     Fabricate(:match, channel: channel)
     user1 = Fabricate(:user, channel: channel, elo: 48, losses: 1, wins: 2, tau: 0.5, ties: 3)

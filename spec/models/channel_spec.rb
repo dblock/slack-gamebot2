@@ -169,4 +169,11 @@ describe Channel do
       expect(channel.aliases).to eq %w[gamebot pongbot pp]
     end
   end
+
+  describe 'slack_mention?' do
+    it 'extracts slack id' do
+      expect(described_class.slack_mention?('<#C07A7FS5AJY|pong>')).to eq 'C07A7FS5AJY'
+      expect(described_class.slack_mention?('<#C07A7FS5AJY>')).to eq 'C07A7FS5AJY'
+    end
+  end
 end
