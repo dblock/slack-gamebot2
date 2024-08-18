@@ -4,7 +4,7 @@ Before deploying, consider using and sponsoring [a free game bot service](https:
 
 ### PlayPlay.io
 
-[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack@2x.png)](https://gamebot2.playplay.io)
+Install [here](https://gamebot2.playplay.io).
 
 ## Deploy Your Own
 

@@ -1,12 +1,10 @@
 Slack-Gamebot
 =============
 
-[![Add to Slack](https://platform.slack-edge.com/img/add_to_slack.png)](https://gamebot2.playplay.io)
-
 [![Tests](https://github.com/dblock/slack-gamebot2/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/slack-gamebot2/actions/workflows/test.yml)
 [![Code Climate](https://codeclimate.com/github/dblock/slack-gamebot/badges/gpa.svg)](https://codeclimate.com/github/dblock/slack-gamebot)
 
-A leaderboard game bot for Slack. Works for ping-pong (2, 4 or more players), chess, etc. This is a fork of [slack-gamebot](https://github.com/dblock/slack-gamebot) that supports leaderboards per channel. Inspired by [slack-pongbot](https://github.com/andrewvy/slack-pongbot), but more robust, generic and easier to improve and contribute to.
+A leaderboard game bot for Slack. Install [here](https://gamebot2.playplay.io). Works for ping-pong (2, 4 or more players), chess, etc. This is a fork of [slack-gamebot](https://github.com/dblock/slack-gamebot) that supports leaderboards per channel. Inspired by [slack-pongbot](https://github.com/andrewvy/slack-pongbot), but more robust, generic and easier to improve and contribute to.
 
 ![](screenshots/game.gif)
 
