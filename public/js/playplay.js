@@ -9,6 +9,13 @@ $(document).ready(function() {
     });
   };
 
+  PlayPlay.errorMessage = function(text) {
+    $('#messages').addClass('has-error');
+    $('#messages').fadeOut('slow', function() {
+      $('#messages').fadeIn('slow').html(text)
+    });
+  };
+
   PlayPlay.register = function(text) {
     $('.navbar').fadeOut('slow');
     $('header').fadeOut('slow');
@@ -32,7 +39,6 @@ $(document).ready(function() {
       }
     }
 
-    PlayPlay.message(message || xhr.statusText || xhr.responseText || 'Unexpected Error');
-    $('#messages').addClass('has-error');
+    PlayPlay.errorMessage(message || xhr.statusText || xhr.responseText || 'Unexpected Error');
   };
 });

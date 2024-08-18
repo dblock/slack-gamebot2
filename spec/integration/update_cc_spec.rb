@@ -42,6 +42,7 @@ describe 'Update cc', :js, type: :feature do
         it 'displays error' do
           visit "/update_cc?team_id=#{team.team_id}"
           expect(find('h3')).to have_text('PLAYPLAY.IO: UPDATE CREDIT CARD INFO')
+          expect(find_by_id('messages')).to have_text("Click button to update the credit card for team #{team.name}.")
           click_button 'Update Credit Card'
           sleep 1
           stripe_iframe = all('iframe[name=stripe_checkout_app]').last
@@ -54,6 +55,14 @@ describe 'Update cc', :js, type: :feature do
           end
           sleep 5
           expect(find_by_id('messages')).to have_text('Not a Subscriber')
+        end
+      end
+
+      context 'without a team ID' do
+        it 'displays error' do
+          visit '/update_cc'
+          expect(find('h3')).to have_text('PLAYPLAY.IO: UPDATE CREDIT CARD INFO')
+          expect(find_by_id('messages')).to have_text('Team not found.')
         end
       end
     end
