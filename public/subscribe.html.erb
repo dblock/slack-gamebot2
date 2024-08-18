@@ -65,7 +65,7 @@
             PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $49.99 a year!');
           } else {
             $('#subscribeButton').remove();
-            PlayPlay.message('Missing or invalid team ID.');
+            PlayPlay.errorMessage('Missing or invalid team ID.');
           }
 
           var handler = StripeCheckout.configure({
