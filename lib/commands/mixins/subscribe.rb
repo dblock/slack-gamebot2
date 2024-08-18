@@ -8,6 +8,7 @@ module SlackGamebot
         module ClassMethods
           def subscribe_command(*values, &_block)
             mention(*values) do |data|
+              # logger.debug "type=#{data.type}, user=#{data.user}, channel=#{data.channel}, text=#{data.text}"
               next if data.user == data.team.bot_user_id
 
               if Stripe.api_key && data.team.reload.subscription_expired?

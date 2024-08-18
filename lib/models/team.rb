@@ -267,9 +267,9 @@ class Team
     channel = channels.where(channel_id: channel_id).first
     return channel if channel
 
-    # multi user DM
+    # do not support direct message channels for all commands
     channel_info = slack_client.conversations_info(channel: channel_id)
-    return nil if channel_info && (channel_info.channel.is_im || channel_info.channel.is_mpim)
+    return nil if channel_info&.channel&.is_im
 
     channels.create!(channel_id: channel_id, enabled: true, inviter_id: user_id)
   end

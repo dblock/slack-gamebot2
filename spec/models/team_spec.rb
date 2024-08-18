@@ -257,7 +257,7 @@ describe Team do
       end.not_to change(Channel, :count)
     end
 
-    it 'does not create a new MPIM channel' do
+    it 'create a new MPIM channel' do
       expect do
         expect(team.slack_client).to receive(:conversations_info).and_return(
           Hashie::Mash.new(
@@ -267,8 +267,8 @@ describe Team do
           )
         )
         channel = team.find_create_or_update_channel_by_channel_id!('C1234', 'U123')
-        expect(channel).to be_nil
-      end.not_to change(Channel, :count)
+        expect(channel).not_to be_nil
+      end.to change(Channel, :count).by(1)
     end
 
     context 'with an existing channel' do
