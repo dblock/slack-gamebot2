@@ -17,7 +17,6 @@ oauth_config:
       - chat:write
       - groups:read
       - im:history
-      - im:write
       - mpim:history
       - mpim:read
       - mpim:write
