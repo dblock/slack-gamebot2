@@ -10,6 +10,12 @@ class Team
   field :api, type: Boolean, default: false
   field :api_token, type: String
 
+  field :elo, type: Integer, default: 0
+  field :unbalanced, type: Boolean, default: false
+  field :leaderboard_max, type: Integer
+  field :gifs, type: Boolean, default: true
+  field :aliases, type: Array, default: %w[gamebot pongbot pp]
+
   scope :subscribed, -> { where(subscribed: true) }
 
   has_many :channels, dependent: :destroy
@@ -105,6 +111,10 @@ class Team
     inform_admin! message
   ensure
     update_attributes!(dead_at: Time.now.utc)
+  end
+
+  def aliases_s
+    aliases.map { |a| "`#{a}`" }.and if aliases&.any?
   end
 
   def api_url
@@ -271,7 +281,7 @@ class Team
     channel_info = slack_client.conversations_info(channel: channel_id)
     return nil if channel_info&.channel&.is_im
 
-    channels.create!(channel_id: channel_id, enabled: true, inviter_id: user_id)
+    create_channel!(channel_id, user_id)
   end
 
   def find_create_or_update_user_in_channel_by_slack_id!(channel_id, user_id)
@@ -281,8 +291,11 @@ class Team
 
   def join_channel!(channel_id, inviter_id)
     channel = channels.where(channel_id: channel_id).first
-    channel ||= channels.create!(channel_id: channel_id)
-    channel.update_attributes!(enabled: true, inviter_id: inviter_id)
+    if channel
+      channel.update_attributes!(enabled: true, inviter_id: inviter_id)
+    else
+      channel = create_channel!(channel_id, inviter_id)
+    end
     channel
   end
 
@@ -331,5 +344,23 @@ class Team
     else
       self.subscribed_at = nil
     end
+  end
+
+  def channel_inherited_fields
+    {
+      elo: elo,
+      aliases: aliases,
+      gifs: gifs,
+      unbalanced: unbalanced,
+      leaderboard_max: leaderboard_max
+    }
+  end
+
+  def create_channel!(channel_id, inviter_id)
+    channels.create!(
+      channel_inherited_fields.merge(
+        channel_id: channel_id, enabled: true, inviter_id: inviter_id
+      )
+    )
   end
 end

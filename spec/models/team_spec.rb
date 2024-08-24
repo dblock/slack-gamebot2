@@ -236,6 +236,29 @@ describe Team do
       end.to change(Channel, :count).by(1)
     end
 
+    {
+      elo: 10,
+      unbalanced: true,
+      leaderboard_max: 5,
+      gifs: false,
+      aliases: %w[ping pong]
+    }.each_pair do |k, v|
+      context "with #{k}=#{v}" do
+        before do
+          team.update_attributes!(k => v)
+        end
+
+        it "inherits #{v}" do
+          expect do
+            channel = team.find_create_or_update_channel_by_channel_id!('C123', 'U123')
+            expect(channel.channel_id).to eq 'C123'
+            expect(channel.inviter_id).to eq 'U123'
+            expect(channel.send(k)).to eq v
+          end.to change(Channel, :count).by(1)
+        end
+      end
+    end
+
     it 'does not create a new channel for DMs' do
       expect do
         channel = team.find_create_or_update_channel_by_channel_id!('D123', 'U123')
