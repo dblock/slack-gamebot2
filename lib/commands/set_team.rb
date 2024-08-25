@@ -1,6 +1,22 @@
 module SlackGamebot
   module Commands
     module SetTeam
+      def set_team_info(team, data, admin)
+        team.slack_client.say(
+          channel: data.channel,
+          text: [
+            "API for team #{team.team_id} is #{team.api_s}, and the API token is #{team.api_token.blank? ? 'not set' : 'set'}.",
+            "Aliases are #{team.aliases_s}.",
+            "GIFs are #{team.gifs_s} by default.",
+            "Default elo is #{team.elo}.",
+            "Default leaderboard max is #{team.leaderboard_max_s}.",
+            "Unbalanced challenges are #{team.unbalanced_s} by default."
+          ].join("\n"),
+          gif: 'settings'
+        )
+        logger.info "SET: #{team} - #{admin.user_name}: show current values"
+      end
+
       def set_team_gifs(team, data, admin, v)
         raise SlackGamebot::Error, "You're not a team admin, sorry." unless v.nil? || admin.team_admin?
 
@@ -145,16 +161,6 @@ module SlackGamebot
         logger.info "UNSET: #{team} - #{admin.user_name}: default bot aliases unset"
       end
 
-      def parse_int_with_inifinity(v)
-        v == 'infinity' ? nil : parse_int(v)
-      end
-
-      def parse_int(v)
-        Integer(v)
-      rescue StandardError
-        raise SlackGamebot::Error, "Sorry, #{v} is not a valid number."
-      end
-
       def set_team(team, data, admin, k, v)
         case k
         when 'token'
@@ -177,6 +183,8 @@ module SlackGamebot
           set_team_elo team, data, admin, v
         when 'aliases'
           set_team_aliases team, data, admin, v
+        when nil
+          set_team_info team, data, admin
         else
           raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _api on|off_, _set token xyz_, _leaderboard max_, _elo_ and _aliases_."
         end
@@ -203,6 +211,8 @@ module SlackGamebot
           unset_team_elo team, data, admin
         when 'aliases'
           unset_team_aliases team, data, admin
+        when nil
+          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _unbalanced_, _api_, _token_, _leaderboard max_, _elo_ and _aliases_.'
         else
           raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unbalanced_, _api_, _token_, _leaderboard max_, _elo_ and _aliases_."
         end

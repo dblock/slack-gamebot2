@@ -5,31 +5,33 @@ module SlackGamebot
       extend SlackGamebot::Commands::SetTeam
       extend SlackGamebot::Commands::SetChannel
 
+      class << self
+        def parse_int_with_inifinity(v)
+          v == 'infinity' ? nil : parse_int(v)
+        end
+
+        def parse_int(v)
+          Integer(v)
+        rescue StandardError
+          raise SlackGamebot::Error, "Sorry, #{v} is not a valid number."
+        end
+      end
+
       user_in_channel_or_dm_command 'unset' do |channel, user, data|
-        if data.match['expression']
-          k, v = data.match['expression'].split(/\s+/, 2)
-          if channel
-            unset_channel channel, data, user, k, v
-          else
-            unset_team data.team, data, user, k, v
-          end
+        k, v = data.match['expression'].split(/\s+/, 2) if data.match['expression']
+        if channel
+          unset_channel channel, data, user, k, v
         else
-          (channel || data.team).slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _unset api_.', gif: 'help')
-          logger.info "UNSET: #{channel || 'DM'} - #{user.user_name}, failed, missing setting"
+          unset_team data.team, data, user, k, v
         end
       end
 
       user_in_channel_or_dm_command 'set' do |channel, user, data|
-        if data.match['expression']
-          k, v = data.match['expression'].split(/\s+/, 2)
-          if channel
-            set_channel channel, data, user, k, v
-          else
-            set_team data.team, data, user, k, v
-          end
+        k, v = data.match['expression'].split(/\s+/, 2) if data.match['expression']
+        if channel
+          set_channel channel, data, user, k, v
         else
-          (channel || data.team).slack_client.say(channel: data.channel, text: 'Missing setting, e.g. _set api off_.', gif: 'help')
-          logger.info "SET: #{channel || 'DM'} - #{user.user_name}, failed, missing setting"
+          set_team data.team, data, user, k, v
         end
       end
     end

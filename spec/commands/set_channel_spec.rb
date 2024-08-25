@@ -10,12 +10,6 @@ describe SlackGamebot::Commands::SetChannel do
       user.update_attributes!(captain: true)
     end
 
-    it 'gives help' do
-      expect(message: '@gamebot set', user: captain, channel: channel).to respond_with_slack_message(
-        'Missing setting, e.g. _set api off_.'
-      )
-    end
-
     context 'gifs' do
       it 'shows current value of GIFs on' do
         expect(message: '@gamebot set gifs', user: captain, channel: channel).to respond_with_slack_message(
@@ -326,6 +320,25 @@ describe SlackGamebot::Commands::SetChannel do
   end
 
   context 'not captain' do
+    context 'without arguments' do
+      it 'shows default settings' do
+        expect(message: '@gamebot set', user: captain, channel: channel).to respond_with_slack_message([
+          'API for channel <#channel> is on, and the team API token is not set.',
+          'Aliases are `gamebot`, `pongbot` and `pp`.',
+          'GIFs are on.',
+          'Elo is 0.',
+          'Leaderboard max is not set.',
+          'Unbalanced challenges are off by default.'
+        ].join("\n"))
+      end
+
+      it 'errors on unset' do
+        expect(message: '@gamebot unset', user: captain, channel: channel).to respond_with_slack_message(
+          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
+        )
+      end
+    end
+
     context 'api' do
       it 'cannot set api' do
         expect(message: '@gamebot set api true', user: user, channel: channel).to respond_with_slack_message(

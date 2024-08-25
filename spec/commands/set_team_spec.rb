@@ -6,6 +6,25 @@ describe SlackGamebot::Commands::SetTeam do
   let(:admin) { Fabricate(:admin, is_owner: true, is_admin: true) }
   let(:user) { Fabricate(:admin, is_owner: false, is_admin: false, user_id: 'some_user_id') }
 
+  context 'without arguments' do
+    it 'shows default settings' do
+      expect(message: '@gamebot set', user: user.user_id, channel: 'DM').to respond_with_slack_message([
+        "API for team #{user.team.team_id} is on, and the API token is not set.",
+        'Aliases are `gamebot`, `pongbot` and `pp`.',
+        'GIFs are on by default.',
+        'Default elo is 0.',
+        'Default leaderboard max is not set.',
+        'Unbalanced challenges are off by default.'
+      ].join("\n"))
+    end
+
+    it 'errors on unset' do
+      expect(message: '@gamebot unset', user: user.user_id, channel: 'DM').to respond_with_slack_message(
+        'Missing setting, you can _unset gifs_, _unbalanced_, _api_, _token_, _leaderboard max_, _elo_ and _aliases_.'
+      )
+    end
+  end
+
   context 'invalid' do
     it 'errors set' do
       expect(message: '@gamebot set invalid on', user: user.user_id, channel: 'DM').to respond_with_slack_message(

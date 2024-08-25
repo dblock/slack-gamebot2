@@ -34,11 +34,23 @@ class Channel
   end
 
   def aliases_s
-    aliases.map { |a| "`#{a}`" }.and if aliases&.any?
+    aliases&.any? ? aliases.map { |a| "`#{a}`" }.and : 'not set'
   end
 
   def api_s
     api? ? 'on' : 'off'
+  end
+
+  def gifs_s
+    gifs? ? 'on' : 'off'
+  end
+
+  def unbalanced_s
+    unbalanced? ? 'on' : 'off'
+  end
+
+  def leaderboard_max_s
+    leaderboard_max || 'not set'
   end
 
   def slack_mention
