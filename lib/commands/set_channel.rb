@@ -6,7 +6,7 @@ module SlackGamebot
           channel: data.channel,
           text: [
             "API for channel #{channel.slack_mention} is #{channel.api_s}, and the team API token is #{channel.team.api_token.blank? ? 'not set' : 'set'}.",
-            channel.is_group ? nil : "Aliases are #{channel.aliases_s}.",
+            channel.is_group ? nil : "Bot aliases are #{channel.aliases_s}.",
             "GIFs are #{channel.gifs_s}.",
             "Elo is #{channel.elo}.",
             "Leaderboard max is #{channel.leaderboard_max_s}.",
@@ -148,7 +148,7 @@ module SlackGamebot
 
       def set_aliases(channel, data, user, v)
         raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
-        raise SlackGamebot::Error, 'Aliases are not supported in private channels, sorry.' if channel.is_group?
+        raise SlackGamebot::Error, 'Bot aliases are not supported in private channels, sorry.' if channel.is_group?
 
         unless v.nil?
           channel.update_attributes!(aliases: v.split(/[\s,;]+/))
@@ -168,7 +168,7 @@ module SlackGamebot
 
       def unset_aliases(channel, data, user)
         raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
-        raise SlackGamebot::Error, 'Aliases are not supported in private channels, sorry.' if channel.is_group?
+        raise SlackGamebot::Error, 'Bot aliases are not supported in private channels, sorry.' if channel.is_group?
 
         channel.update_attributes!(aliases: [])
         channel.aliases = []

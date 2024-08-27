@@ -210,7 +210,7 @@ describe Channel do
 
     describe '#aliases_s' do
       it 'is not supported' do
-        expect { channel.aliases_s }.to raise_error 'Aliases are not supported in private channels.'
+        expect { channel.aliases_s }.to raise_error 'Bot aliases are not supported in private channels.'
       end
     end
   end

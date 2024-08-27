@@ -35,7 +35,7 @@ class Channel
   end
 
   def aliases_s
-    raise 'Aliases are not supported in private channels.' if is_group?
+    raise 'Bot aliases are not supported in private channels.' if is_group?
 
     aliases&.any? ? aliases.map { |a| "`#{a}`" }.and : 'not set'
   end

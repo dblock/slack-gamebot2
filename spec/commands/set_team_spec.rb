@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::SetTeam do
     it 'shows default settings' do
       expect(message: '@gamebot set', user: user.user_id, channel: 'DM').to respond_with_slack_message([
         "API for team #{user.team.team_id} is on, and the API token is not set.",
-        'Aliases are `gamebot`, `pongbot` and `pp`.',
+        'Default bot aliases are `gamebot`, `pongbot` and `pp`.',
         'GIFs are on by default.',
         'Default elo is 0.',
         'Default leaderboard max is not set.',

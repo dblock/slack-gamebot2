@@ -6,7 +6,7 @@ module SlackGamebot
           channel: data.channel,
           text: [
             "API for team #{team.team_id} is #{team.api_s}, and the API token is #{team.api_token.blank? ? 'not set' : 'set'}.",
-            "Aliases are #{team.aliases_s}.",
+            "Default bot aliases are #{team.aliases_s}.",
             "GIFs are #{team.gifs_s} by default.",
             "Default elo is #{team.elo}.",
             "Default leaderboard max is #{team.leaderboard_max_s}.",

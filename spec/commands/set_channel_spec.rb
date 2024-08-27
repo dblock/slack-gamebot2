@@ -324,7 +324,7 @@ describe SlackGamebot::Commands::SetChannel do
       it 'shows default settings' do
         expect(message: '@gamebot set', user: captain, channel: channel).to respond_with_slack_message([
           'API for channel <#channel> is on, and the team API token is not set.',
-          'Aliases are not set.',
+          'Bot aliases are not set.',
           'GIFs are on.',
           'Elo is 0.',
           'Leaderboard max is not set.',
@@ -502,7 +502,7 @@ describe SlackGamebot::Commands::SetChannel do
     context 'aliases' do
       it 'are not supported' do
         expect(message: '@gamebot set aliases', user: captain, channel: channel).to respond_with_slack_message(
-          'Aliases are not supported in private channels, sorry.'
+          'Bot aliases are not supported in private channels, sorry.'
         )
       end
     end

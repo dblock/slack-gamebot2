@@ -317,7 +317,7 @@ Display current team's info, including captains.
 ```
 gamebot team
 
-Team _China_, captains Deng Yaping and Victor Barna.
+Team T04KB5WQH #pong, captains Deng Yaping and Victor Barna.
 ```
 
 #### gamebot reset &lt;team id|team name&gt;
@@ -325,7 +325,7 @@ Team _China_, captains Deng Yaping and Victor Barna.
 Reset all users and pending challenges and start a new season. Must be a captain to do this and confirm by specifying the team ID or name.
 
 ```
-gamebot reset china
+gamebot reset #pong
 
 Welcome to the new season!
 ```
@@ -400,7 +400,7 @@ Enable/disable GIFs for your team.
 ```
 gamebot set gifs off
 
-GIFs for team China are off.
+GIFs are now off.
 ```
 
 ![](screenshots/gifs.gif)
@@ -442,7 +442,7 @@ Set additional aliases for the bot. For example, you could upload a custom emoji
 ```
 gamebot set aliases pp :pong:
 
-Team China aliases are set to pp and :pong:.
+Bot aliases are set to pp and :pong:.
 ```
 
 ![](screenshots/aliases.gif)
@@ -458,14 +458,14 @@ Enable/disable team data in the public API for your team and display team API UR
 ```
 gamebot set api on
 
-API for team China is on!
+API is now on!
 https://gamebot2.playplay.io/api/teams/57224e65bc526eac95bfe316
 ```
 
 ```
 gamebot unset api
 
-API for team China is off.
+API is now off.
 ```
 
 You will need a token to use the API, DM the bot `set token xyz`, then pass `X-Access-Token: xyz` in a header to the API.
@@ -477,7 +477,7 @@ Allow unbalanced challenges with different numbers of opponents.
 ```
 gamebot set unbalanced on
 
-Unbalanced challenges for team China are on!
+Unbalanced challenges are now on!
 ```
 
 #### gamebot subscription
