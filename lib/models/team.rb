@@ -67,7 +67,6 @@ class Team
     return if trial_informed_at && (Time.now.utc < trial_informed_at + 7.days)
 
     inform! trial_message
-    inform_admin! trial_message
     update_attributes!(trial_informed_at: Time.now.utc)
   end
 
@@ -108,7 +107,6 @@ class Team
 
   def dead!(message)
     inform! message
-    inform_admin! message
   ensure
     update_attributes!(dead_at: Time.now.utc)
   end
@@ -166,14 +164,6 @@ class Team
       logger.info "Sending '#{message}' to #{self} on ##{channel['name']}."
       slack_client.chat_postMessage(text: message, channel: channel['id'], as_user: true)
     end
-  end
-
-  def inform_admin!(message)
-    return unless activated_user_id
-
-    channel = slack_client.conversations_open(users: activated_user_id.to_s)
-    logger.info "Sending DM '#{message}' to #{activated_user_id}."
-    slack_client.chat_postMessage(text: message, channel: channel.channel.id, as_user: true)
   end
 
   def stripe_customer
@@ -337,7 +327,6 @@ class Team
   def subscribed!
     return unless subscribed? && subscribed_changed?
 
-    inform_admin! SUBSCRIBED_TEXT
     inform! SUBSCRIBED_TEXT
   end
 
@@ -345,7 +334,7 @@ class Team
     return unless active? && activated_user_id && bot_user_id
     return unless active_changed? || activated_user_id_changed?
 
-    inform_admin! INSTALLED_TEXT
+    inform! INSTALLED_TEXT
   end
 
   def update_subscribed_at

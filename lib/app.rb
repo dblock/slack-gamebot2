@@ -66,7 +66,7 @@ module SlackGamebot
       Team.where(subscribed: true, :stripe_customer_id.ne => nil).each do |team|
         if team.subscribed? && team.stripe_customer.subscriptions.none?
           logger.info "No active subscriptions for #{team} (#{team.stripe_customer_id}), downgrading."
-          team.inform_admin! 'Your subscription was canceled and your team has been downgraded. Thank you for being a customer!'
+          team.inform! 'Your subscription was canceled and your team has been downgraded. Thank you for being a customer!'
           team.update_attributes!(subscribed: false)
         else
           team.stripe_customer.subscriptions.each do |subscription|
@@ -75,10 +75,10 @@ module SlackGamebot
             case subscription.status
             when 'past_due'
               logger.warn "Subscription for #{team} is #{subscription.status}, notifying."
-              team.inform_admin! "Your subscription to #{subscription_name} is past due. #{team.update_cc_text}"
+              team.inform! "Your subscription to #{subscription_name} is past due. #{team.update_cc_text}"
             when 'canceled', 'unpaid'
               logger.warn "Subscription for #{team} is #{subscription.status}, downgrading."
-              team.inform_admin! "Your subscription to #{subscription.plan.name} (#{ActiveSupport::NumberHelper.number_to_currency(subscription.plan.amount.to_f / 100)}) was canceled and your team has been downgraded. Thank you for being a customer!"
+              team.inform! "Your subscription to #{subscription.plan.name} (#{ActiveSupport::NumberHelper.number_to_currency(subscription.plan.amount.to_f / 100)}) was canceled and your team has been downgraded. Thank you for being a customer!"
               team.update_attributes!(subscribed: false)
             end
           end

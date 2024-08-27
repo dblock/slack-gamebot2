@@ -176,7 +176,6 @@ describe Team do
     describe '#inform_trial!' do
       it 'subscribed' do
         expect(subscribed_team).not_to receive(:inform!)
-        expect(subscribed_team).not_to receive(:inform_admin!)
         subscribed_team.inform_trial!
       end
 
@@ -184,21 +183,16 @@ describe Team do
         expect(team_created_1_week_ago).to receive(:inform!).with(
           "Your trial subscription expires in 6 days. #{team_created_1_week_ago.subscribe_text}"
         )
-        expect(team_created_1_week_ago).to receive(:inform_admin!).with(
-          "Your trial subscription expires in 6 days. #{team_created_1_week_ago.subscribe_text}"
-        )
         team_created_1_week_ago.inform_trial!
       end
 
       it 'expired' do
         expect(team_created_3_weeks_ago).not_to receive(:inform!)
-        expect(team_created_3_weeks_ago).not_to receive(:inform_admin!)
         team_created_3_weeks_ago.inform_trial!
       end
 
       it 'informs once' do
         expect(team_created_1_week_ago).to receive(:inform!).once
-        expect(team_created_1_week_ago).to receive(:inform_admin!).once
         2.times { team_created_1_week_ago.inform_trial! }
       end
     end
@@ -507,7 +501,6 @@ describe Team do
 
       before do
         allow_any_instance_of(Team).to receive(:inform!)
-        allow_any_instance_of(Team).to receive(:inform_admin!)
       end
 
       it 'is a slack mention' do
