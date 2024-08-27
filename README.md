@@ -363,9 +363,13 @@ I've removed @WangHoe from the leaderboard.
 
 Users that have left a Slack team can be removed by omitting the `@`, e.g. `gamebot unregister WangHoe`.
 
+#### gamebot set
+
+Show current default settings in a DM or channel settings in a channel. 
+
 #### gamebot set nickname [name]
 
-Sets a nickname for display purposes.
+Sets a nickname for display purposes in a channel.
 
 ```
 gamebot set nickname John Doe
@@ -444,6 +448,8 @@ Team China aliases are set to pp and :pong:.
 ![](screenshots/aliases.gif)
 
 Remove all aliases with `unset aliases`.
+
+Aliases only work in public channels.
 
 #### gamebot set api on|off
 

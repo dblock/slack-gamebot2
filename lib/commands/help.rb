@@ -42,7 +42,7 @@ module SlackGamebot
         set nickname [name], unset nickname: set/unset your nickname displayed in leaderboards
         set leaderboard max [number|infinity], unset leaderboard max: set/unset leaderboard max
         set gifs [on|off], unset gifs: enable/disable animated GIFs, default is on
-        set aliases [<alias> ...], unset aliases: set/unset additional bot aliases
+        set aliases [<alias> ...], unset aliases: set/unset additional bot aliases in public channels
         set elo [number], unset elo: set/unset base elo for the team
         set api [on|off], unset api: enable/disable team data in the public API, default is off
         set token [token], unset token: set/unset API token

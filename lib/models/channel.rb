@@ -4,12 +4,13 @@ class Channel
 
   field :channel_id, type: String
   field :inviter_id, type: String
+  field :is_group, type: Boolean, default: false
   field :enabled, type: Boolean, default: true
   field :elo, type: Integer, default: 0
   field :unbalanced, type: Boolean, default: false
   field :leaderboard_max, type: Integer
   field :gifs, type: Boolean, default: true
-  field :aliases, type: Array, default: %w[gamebot pongbot pp]
+  field :aliases, type: Array, default: []
 
   scope :api, -> { where(api: true) }
   field :api, type: Boolean, default: false
@@ -34,6 +35,8 @@ class Channel
   end
 
   def aliases_s
+    raise 'Aliases are not supported in private channels.' if is_group?
+
     aliases&.any? ? aliases.map { |a| "`#{a}`" }.and : 'not set'
   end
 

@@ -324,7 +324,7 @@ describe SlackGamebot::Commands::SetChannel do
       it 'shows default settings' do
         expect(message: '@gamebot set', user: captain, channel: channel).to respond_with_slack_message([
           'API for channel <#channel> is on, and the team API token is not set.',
-          'Aliases are `gamebot`, `pongbot` and `pp`.',
+          'Aliases are not set.',
           'GIFs are on.',
           'Elo is 0.',
           'Leaderboard max is not set.',
@@ -376,7 +376,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'can see aliases' do
         expect(message: '@gamebot set aliases', user: user, channel: channel).to respond_with_slack_message(
-          "Bot aliases for #{channel.slack_mention} are `gamebot`, `pongbot` and `pp`."
+          "#{channel.slack_mention} does not have any bot aliases."
         )
       end
     end
@@ -489,6 +489,21 @@ describe SlackGamebot::Commands::SetChannel do
           "You don't have a nickname set anymore, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to be_nil
+      end
+    end
+  end
+
+  context 'in a private channel' do
+    before do
+      channel.update_attributes!(is_group: true)
+      user.update_attributes!(captain: true)
+    end
+
+    context 'aliases' do
+      it 'are not supported' do
+        expect(message: '@gamebot set aliases', user: captain, channel: channel).to respond_with_slack_message(
+          'Aliases are not supported in private channels, sorry.'
+        )
       end
     end
   end

@@ -228,11 +228,12 @@ describe Team do
       allow(team.slack_client).to receive(:conversations_info)
     end
 
-    it 'creates a new channel' do
+    it 'creates a new public channel' do
       expect do
         channel = team.find_create_or_update_channel_by_channel_id!('C123', 'U123')
         expect(channel.channel_id).to eq 'C123'
         expect(channel.inviter_id).to eq 'U123'
+        expect(channel.is_group).to be false
       end.to change(Channel, :count).by(1)
     end
 
@@ -291,6 +292,21 @@ describe Team do
         )
         channel = team.find_create_or_update_channel_by_channel_id!('C1234', 'U123')
         expect(channel).not_to be_nil
+      end.to change(Channel, :count).by(1)
+    end
+
+    it 'create a new private group channel' do
+      expect do
+        expect(team.slack_client).to receive(:conversations_info).and_return(
+          Hashie::Mash.new(
+            channel: {
+              is_group: true
+            }
+          )
+        )
+        channel = team.find_create_or_update_channel_by_channel_id!('C1234', 'U123')
+        expect(channel).not_to be_nil
+        expect(channel.is_group).to be true
       end.to change(Channel, :count).by(1)
     end
 
@@ -362,12 +378,23 @@ describe Team do
   describe '#join_channel!' do
     let!(:team) { Fabricate(:team) }
 
-    it 'creates a new channel' do
+    before do
+      allow(team.slack_client).to receive(:conversations_info).and_return(
+        Hashie::Mash.new(
+          channel: {
+            is_group: true
+          }
+        )
+      )
+    end
+
+    it 'creates a new private channel' do
       expect do
         channel = team.join_channel!('C123', 'U123')
         expect(channel).not_to be_nil
         expect(channel.channel_id).to eq 'C123'
         expect(channel.inviter_id).to eq 'U123'
+        expect(channel.is_group).to be true
       end.to change(Channel, :count).by(1)
     end
 
@@ -386,6 +413,7 @@ describe Team do
             rejoined_channel.reload
             expect(rejoined_channel.enabled).to be true
             expect(rejoined_channel.inviter_id).to eq 'U456'
+            expect(rejoined_channel.is_group).to be true
           end
         end
       end
@@ -400,26 +428,30 @@ describe Team do
           expect(channel).not_to be_nil
           expect(channel.channel_id).to eq 'C123'
           expect(channel.inviter_id).to eq 'U123'
+          expect(channel.is_group).to be true
         end.to change(Channel, :count).by(1)
       end
 
       it 'creates a new channel for a different team' do
         expect do
           team2 = Fabricate(:team)
+          expect(team2.slack_client).to receive(:conversations_info)
           channel2 = team2.join_channel!(channel.channel_id, 'U123')
           expect(channel2).not_to be_nil
           expect(channel2.team).to eq team2
           expect(channel2.inviter_id).to eq 'U123'
+          expect(channel2.is_group).to be false
         end.to change(Channel, :count).by(1)
       end
 
-      it 'updates an existing team' do
+      it 'updates an existing channel' do
         expect do
           channel2 = team.join_channel!(channel.channel_id, 'U123')
           expect(channel2).not_to be_nil
           expect(channel2).to eq channel
           expect(channel2.team).to eq team
           expect(channel2.inviter_id).to eq 'U123'
+          expect(channel2.is_group).to be true
         end.not_to change(Channel, :count)
       end
     end

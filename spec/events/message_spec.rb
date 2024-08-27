@@ -6,7 +6,8 @@ describe 'events/message' do
   include_context 'event'
 
   let(:team) { Fabricate(:team) }
-  let(:channel) { Fabricate(:channel, team: team) }
+
+  let(:channel) { Fabricate(:channel, team: team, aliases: ['gamebot']) }
   let(:user) { Fabricate(:user, channel: channel) }
 
   context 'alias' do

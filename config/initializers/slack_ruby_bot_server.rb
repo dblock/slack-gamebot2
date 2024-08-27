@@ -5,7 +5,6 @@ SlackRubyBotServer.configure do |config|
     'channels:history',
     'channels:read',
     'chat:write',
-    'groups:history',
     'groups:read',
     'im:history',
     'mpim:history',

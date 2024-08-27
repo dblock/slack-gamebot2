@@ -293,10 +293,6 @@ class Team
     channel = channels.where(channel_id: channel_id).first
     return channel if channel
 
-    # do not support direct message channels for all commands
-    channel_info = slack_client.conversations_info(channel: channel_id)
-    return nil if channel_info&.channel&.is_im
-
     create_channel!(channel_id, user_id)
   end
 
@@ -308,7 +304,7 @@ class Team
   def join_channel!(channel_id, inviter_id)
     channel = channels.where(channel_id: channel_id).first
     if channel
-      channel.update_attributes!(enabled: true, inviter_id: inviter_id)
+      update_channel!(channel, inviter_id)
     else
       channel = create_channel!(channel_id, inviter_id)
     end
@@ -362,21 +358,33 @@ class Team
     end
   end
 
-  def channel_inherited_fields
-    {
-      elo: elo,
-      aliases: aliases,
-      gifs: gifs,
-      unbalanced: unbalanced,
-      leaderboard_max: leaderboard_max
-    }
+  def update_channel!(channel, inviter_id)
+    channel_info = slack_client.conversations_info(channel: channel.channel_id)
+    logger.info "Updating channel id=#{channel.channel_id}, name=#{channel_info&.channel&.name}, #{self}."
+    channel.update_attributes!(
+      enabled: true,
+      inviter_id: inviter_id,
+      is_group: !!channel_info&.channel&.is_group
+    )
   end
 
   def create_channel!(channel_id, inviter_id)
+    # do not support direct message channels for all commands
+    channel_info = slack_client.conversations_info(channel: channel_id)
+    return nil if channel_info&.channel&.is_im
+
+    logger.info "Creating channel id=#{channel_id}, name=#{channel_info&.channel&.name}, #{self}."
+
     channels.create!(
-      channel_inherited_fields.merge(
-        channel_id: channel_id, enabled: true, inviter_id: inviter_id
-      )
+      channel_id: channel_id,
+      enabled: true,
+      inviter_id: inviter_id,
+      is_group: !!channel_info&.channel&.is_group,
+      elo: elo,
+      aliases: channel_info&.channel&.is_group ? [] : aliases,
+      gifs: gifs,
+      unbalanced: unbalanced,
+      leaderboard_max: leaderboard_max
     )
   end
 end

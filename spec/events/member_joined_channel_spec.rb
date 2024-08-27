@@ -15,6 +15,10 @@ describe 'events/member_joined_channel' do
     }
   end
 
+  before do
+    allow_any_instance_of(Slack::Web::Client).to receive(:conversations_info)
+  end
+
   it 'posts a welcome message' do
     expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage).with(
       channel: 'channel_id', text: /Hi there!/
