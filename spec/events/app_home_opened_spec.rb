@@ -28,6 +28,7 @@ describe 'events/app_home_opened' do
     expect(channel.enabled).to be false
     expect(channel.channel_id).to eq 'DM'
     expect(channel.users.count).to eq 1
+    expect(channel.is_app_home).to be true
     user = channel.users.first
     expect(user.user_id).to eq 'user_id'
     expect(user.registered).to be false

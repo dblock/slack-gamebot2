@@ -200,13 +200,15 @@ describe Team do
 
   describe '#inform!' do
     let(:team) { Fabricate(:team) }
+    let!(:not_app_home_channel) { Fabricate(:channel, team: team) }
+    let!(:app_home_channel) { Fabricate(:channel, team: team, is_app_home: true) }
 
     before do
       team.bot_user_id = 'bot_user_id'
     end
 
     it 'sends message to all channels', vcr: { cassette_name: 'users_conversations' } do
-      expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage).exactly(25).times.and_return('ts' => '1503435956.000247')
+      expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage).exactly(26).times.and_return('ts' => '1503435956.000247')
       team.inform!(message: 'message')
     end
   end
@@ -228,6 +230,7 @@ describe Team do
         expect(channel.channel_id).to eq 'C123'
         expect(channel.inviter_id).to eq 'U123'
         expect(channel.is_group).to be false
+        expect(channel.is_app_home).to be false
       end.to change(Channel, :count).by(1)
     end
 
@@ -301,6 +304,7 @@ describe Team do
         channel = team.find_create_or_update_channel_by_channel_id!('C1234', 'U123')
         expect(channel).not_to be_nil
         expect(channel.is_group).to be true
+        expect(channel.is_app_home).to be false
       end.to change(Channel, :count).by(1)
     end
 
@@ -389,6 +393,7 @@ describe Team do
         expect(channel.channel_id).to eq 'C123'
         expect(channel.inviter_id).to eq 'U123'
         expect(channel.is_group).to be true
+        expect(channel.is_app_home).to be false
       end.to change(Channel, :count).by(1)
     end
 
@@ -408,6 +413,7 @@ describe Team do
             expect(rejoined_channel.enabled).to be true
             expect(rejoined_channel.inviter_id).to eq 'U456'
             expect(rejoined_channel.is_group).to be true
+            expect(rejoined_channel.is_app_home).to be false
           end
         end
       end

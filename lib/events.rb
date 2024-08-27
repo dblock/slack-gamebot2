@@ -53,7 +53,7 @@ SlackRubyBotServer::Events.configure do |config|
 
     next { ok: true } if data.user == data.team.activated_user_id
 
-    channel = data.team.channels.create!(channel_id: data.channel, enabled: false, inviter_id: data.user)
+    channel = data.team.channels.create!(channel_id: data.channel, enabled: false, is_app_home: true, inviter_id: data.user)
     channel.users.create!(team: data.team, channel: channel, user_id: data.user, registered: false)
 
     text = [

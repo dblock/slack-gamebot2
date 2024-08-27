@@ -5,6 +5,7 @@ class Channel
   field :channel_id, type: String
   field :inviter_id, type: String
   field :is_group, type: Boolean, default: false
+  field :is_app_home, type: Boolean, default: false
   field :enabled, type: Boolean, default: true
   field :elo, type: Integer, default: 0
   field :unbalanced, type: Boolean, default: false
@@ -13,6 +14,7 @@ class Channel
   field :aliases, type: Array, default: []
 
   scope :api, -> { where(api: true) }
+  scope :app_home, -> { where(is_app_home: true) }
   field :api, type: Boolean, default: false
 
   belongs_to :team

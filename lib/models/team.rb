@@ -160,6 +160,10 @@ class Team
   end
 
   def inform!(message)
+    channels.app_home.each do |channel|
+      logger.info "Sending '#{message}' to #{self} on app_home channel ##{channel.channel_id}."
+      slack_client.chat_postMessage(text: message, channel: channel.channel_id, as_user: true)
+    end
     slack_channels.each do |channel|
       logger.info "Sending '#{message}' to #{self} on ##{channel['name']}."
       slack_client.chat_postMessage(text: message, channel: channel['id'], as_user: true)
