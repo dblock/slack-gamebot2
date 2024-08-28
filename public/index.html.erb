@@ -72,10 +72,10 @@
     <section id= "gotslack" class="bg-light-gray">
       <div class="container">
         <div class="row">
-          <div class="intro-text">
+          <div class="intro-text hidden">
             <h4 id="active_teams_count" class="intro-lead-in">&nbsp;</h4>
           </div>
-          <div class="text-left">
+          <div class="text-center">
             <p class="text_muted">Invite the bot to a channel, then follow its lead.</p>
           </div>
         </div>
@@ -101,7 +101,7 @@
             </a>
             <div class="portfolio-caption">
               <h4>Step 1</h4>
-              <p class="text-muted">Invite the gamebot</p>
+              <p class="text-muted">Invite the gamebot to a channel</p>
             </div>
           </div>
           <div class="col-md-4 col-sm-6 portfolio-item">
@@ -115,7 +115,7 @@
             </a>
             <div class="portfolio-caption">
               <h4>Step 2</h4>
-              <p class="text-muted">Invite friends for a challenge</p>
+              <p class="text-muted">Challenge someone</p>
             </div>
           </div>
           <div class="col-md-4 col-sm-6 portfolio-item">
@@ -189,15 +189,8 @@
               <h6 id="value" class="section-subheading text-center">&nbsp;</h6>
             </a>
             <div>
-              Bot offline?
-              <a href="https://twitter.com/messages/compose?recipient_id=4528918701&text=Help! My bot is offline. My team name is " class="twitter-dm-button" data-screen-name="@playplayio">
-              I'm having trouble, DM @playplayio</a>
-              <br><br>
-            </div>
-            <div>
               <a href='https://github.com/dblock/slack-gamebot2'>Fork me on Github</a>,
               <a href='https://github.com/dblock/slack-gamebot2/issues/new'>open an issue</a>,
-              <a href='https://twitter.com/playplayio'>tweet at @playplayio</a>,
               or <a href='mailto:dblock[at]vestris[dot]com'>e-mail dblock[at]vestris[dot]com</a>.
               <br><br>
               Follow Us at <a href='https://twitter.com/playplayio' target="_blank">@playplayio on X</a> and show us some love on <a href='https://www.producthunt.com/tech/playplay-io' target='_blank'>ProductHunt</a>.
@@ -296,9 +289,7 @@
             <div class="row spacer"></div>
             <div id="messages" class="alert">just click the button</div>
             <div class="alert">
-              Having trouble? <a href='https://twitter.com/playplayio' target="_blank">@playplayio</a> on Twitter
-              <br><br>
-              <a href="https://twitter.com/share" class="twitter-share-button" data-url="<%= SlackRubyBotServer::Service.url %>" data-text="I'm team captain on PlayPlay, a free ping pong, chess, pool and tic-tac-toe bot for @SlackHQ @SlackAPI." data-via="playplayio" data-size="large" data-related="SlackAPI">Tweet</a>
+              <a href="https://twitter.com/share" class="twitter-share-button" data-url="<%= SlackRubyBotServer::Service.url %>" data-text="I'm team captain on playplay.io, a leaderboard bot for @SlackHQ @SlackAPI." data-via="playplayio" data-size="large" data-related="SlackAPI">Tweet</a>
               <br><br>
               <a href='<%= SlackRubyBotServer::Service.url %>'>Go back to playplay.io.</a>
             </div>
