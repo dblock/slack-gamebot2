@@ -17,7 +17,7 @@ GEM
       timers (~> 4.1)
     base64 (0.2.0)
     bigdecimal (3.1.8)
-    bson (5.0.0)
+    bson (5.0.1)
     builder (3.3.0)
     capybara (3.40.0)
       addressable
