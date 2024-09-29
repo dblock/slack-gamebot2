@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 SlackRubyBotServer::Events.configure do |config|
   include SlackGamebot::Models::Mixins::Pluralize
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SlackGamebot
   module Commands
     class Unregister < SlackRubyBotServer::Events::AppMentions::Mention

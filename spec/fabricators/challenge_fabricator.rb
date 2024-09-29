@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Fabricator(:challenge) do
   channel { Channel.first || Fabricate(:channel) }
   before_create do |instance|

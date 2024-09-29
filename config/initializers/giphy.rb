@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Giphy
   def self.random(keywords)
     return unless ENV.key?('GIPHY_API_KEY')

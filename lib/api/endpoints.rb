@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'endpoints/channels_endpoint'
 require_relative 'endpoints/challenges_endpoint'
 require_relative 'endpoints/matches_endpoint'

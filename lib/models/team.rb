@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Team
   field :dead_at, type: DateTime
   field :trial_informed_at, type: DateTime

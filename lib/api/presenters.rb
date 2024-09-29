@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'roar/representer'
 require 'roar/json'
 require 'roar/json/hal'

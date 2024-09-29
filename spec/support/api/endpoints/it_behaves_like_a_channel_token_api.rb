@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples_for 'a channel token api' do |model|
   let(:model_s) { model.name.underscore.to_sym }
   let(:model_ps) { model.name.underscore.pluralize.to_sym }

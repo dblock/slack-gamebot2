@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SlackGamebot
   module Commands
     class Accept < SlackRubyBotServer::Events::AppMentions::Mention

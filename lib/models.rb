@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'models/mixins'
 require_relative 'models/team'
 require_relative 'models/channel'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SlackGamebot
   module Models
     module Mixins

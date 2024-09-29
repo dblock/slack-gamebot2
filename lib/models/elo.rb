@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Elo
   DELTA_TAU = 0.94
   MAX_TAU = 11

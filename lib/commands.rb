@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'commands/mixins'
 require_relative 'commands/hi'
 require_relative 'commands/about'

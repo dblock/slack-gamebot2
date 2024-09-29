@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Fabricator(:match_lost_to, class_name: 'Match') do
   before_create do |instance|
     instance.team ||= instance.channel.team

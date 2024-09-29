@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SlackGamebot
   INFO = <<~EOS.freeze
     Gamebot #{SlackGamebot::VERSION}

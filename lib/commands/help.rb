@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module SlackGamebot
   module Commands
     class Help < SlackRubyBotServer::Events::AppMentions::Mention
       include SlackGamebot::Commands::Mixins::User
 
-      HELP = <<~EOS.freeze
+      HELP = <<~EOS
         I am your friendly Gamebot, here to help.
 
         ```

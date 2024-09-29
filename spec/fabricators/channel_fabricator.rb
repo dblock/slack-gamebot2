@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Fabricator(:channel) do
   api { true }
   channel_id { Fabricate.sequence(:channel_id) { |i| "C#{i}" } }

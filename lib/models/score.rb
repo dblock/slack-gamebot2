@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Score
   # returns loser, winner points
   def self.points(scores)

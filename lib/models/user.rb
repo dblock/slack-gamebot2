@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -37,7 +39,7 @@ class User
   after_save :rank!
 
   SORT_ORDERS = ['elo', '-elo', 'created_at', '-created_at', 'wins', '-wins', 'losses', '-losses', 'ties', '-ties', 'user_name', '-user_name', 'rank', '-rank'].freeze
-  ANYONE = '*'.freeze
+  ANYONE = '*'
   EVERYONE = %w[here channel].freeze
 
   scope :ranked, -> { where(:rank.ne => nil) }

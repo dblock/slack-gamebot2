@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'mixins/rescue'
 require_relative 'mixins/subscribe'
 require_relative 'mixins/channel'

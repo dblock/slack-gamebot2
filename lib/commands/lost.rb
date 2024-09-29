@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SlackGamebot
   module Commands
     class Lost < SlackRubyBotServer::Events::AppMentions::Mention

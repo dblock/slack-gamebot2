@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SlackRubyBotServer
   class Service
     def self.url

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'subscribed team' do
   let!(:team) { Fabricate(:team, subscribed: true) }
 end
