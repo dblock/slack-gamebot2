@@ -5,7 +5,7 @@ module SlackGamebot
         format :json
 
         namespace :subscriptions do
-          desc 'Subscribe to slack-playplay.'
+          desc 'Subscribe to slack-gamebot2.'
           params do
             requires :stripe_token, type: String
             requires :stripe_token_type, type: String

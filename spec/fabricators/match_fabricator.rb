@@ -13,7 +13,7 @@ Fabricator(:match) do
   end
   after_build do |match|
     match.challenge ||= Fabricate(:challenge, channel: match.channel || Channel.first || Fabricate(:channel))
-    match.channel = challenge.channel
+    match.channel = match.challenge.channel
     match.winners = match.challenge.challengers if match.winners.none?
     match.losers = match.challenge.challenged if match.losers.none?
     match.scores = match.tied? ? [[3, 3]] : [[15, 21]]

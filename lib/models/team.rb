@@ -329,14 +329,14 @@ class Team
   ].join("\n")
 
   def subscribed!
-    return unless subscribed? && subscribed_changed?
+    return unless subscribed? && (subscribed_changed? || saved_change_to_subscribed?)
 
     inform! SUBSCRIBED_TEXT
   end
 
   def activated!
     return unless active? && activated_user_id && bot_user_id
-    return unless active_changed? || activated_user_id_changed?
+    return unless active_changed? || activated_user_id_changed? || saved_change_to_active? || saved_change_to_activated_user_id?
 
     inform! INSTALLED_TEXT
   end

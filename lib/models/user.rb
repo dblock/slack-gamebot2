@@ -118,7 +118,7 @@ class User
   end
 
   def rank!
-    return unless elo_changed?
+    return unless saved_change_to_elo?
 
     User.rank!(channel)
     reload.rank

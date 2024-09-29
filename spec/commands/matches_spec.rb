@@ -16,28 +16,28 @@ describe SlackGamebot::Commands::Matches do
 
       it 'displays top 10 matches' do
         expect_any_instance_of(Array).to receive(:take).with(10).and_call_original
-        expect(message: '@gamebot matches', user: user, channel: match1.challenge.channel).to respond_with_slack_message([
+        expect(message: '@gamebot matches', user: user, channel: doubles_challenge.channel).to respond_with_slack_message([
           "#{match1} 3 times",
           "#{match0} once"
         ].join("\n"))
       end
 
       it 'limits number of matches' do
-        expect(message: '@gamebot matches 1', user: user, channel: match1.challenge.channel).to respond_with_slack_message([
+        expect(message: '@gamebot matches 1', user: user, channel: doubles_challenge.channel).to respond_with_slack_message([
           "#{match1} 3 times"
         ].join("\n"))
       end
 
       it 'displays only matches for requested users' do
-        expect(message: "@gamebot matches #{match1.challenge.challenged.first.user_name}", user: user, channel: match1.challenge.channel).to respond_with_slack_message(
+        expect(message: "@gamebot matches #{doubles_challenge.challenged.first.user_name}", user: user, channel: doubles_challenge.channel).to respond_with_slack_message(
           "#{match1} 3 times"
         )
       end
 
       it 'displays only matches for requested users with a limit' do
-        another_challenge = Fabricate(:challenge, channel: channel, challengers: [match1.challenge.challenged.first])
+        another_challenge = Fabricate(:challenge, channel: channel, challengers: [doubles_challenge.challenged.first])
         Fabricate(:match, challenge: another_challenge)
-        expect(message: "@gamebot matches #{match1.challenge.challenged.first.user_name} 1", user: user, channel: match1.challenge.channel).to respond_with_slack_message(
+        expect(message: "@gamebot matches #{doubles_challenge.challenged.first.user_name} 1", user: user, channel: doubles_challenge.channel).to respond_with_slack_message(
           "#{match1} 3 times"
         )
       end
