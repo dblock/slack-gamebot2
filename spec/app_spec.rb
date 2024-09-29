@@ -4,13 +4,13 @@ require 'spec_helper'
 
 describe SlackGamebot::App do
   subject do
-    SlackGamebot::App.instance
+    described_class.instance
   end
 
   describe '#instance' do
     it 'is an instance of the market app' do
       expect(subject).to be_a(SlackRubyBotServer::App)
-      expect(subject).to be_an_instance_of(SlackGamebot::App)
+      expect(subject).to be_an_instance_of(described_class)
     end
   end
 

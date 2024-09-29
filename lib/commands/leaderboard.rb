@@ -14,7 +14,7 @@ module SlackGamebot
         if number
           if number[0] == '-'
             reverse = true
-            number = number[1..-1]
+            number = number[1..]
           end
           max = case number.downcase
                 when 'infinity'

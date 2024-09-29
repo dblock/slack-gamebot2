@@ -32,7 +32,7 @@ describe Season do
   end
 
   context 'without challenges' do
-    let(:season) { Season.new(team: channel.team, channel: channel) }
+    let(:season) { described_class.new(team: channel.team, channel: channel) }
 
     it 'cannot be created' do
       expect(season).not_to be_valid
@@ -47,7 +47,7 @@ describe Season do
   context 'without challenges and a lost match' do
     let(:challenger) { Fabricate(:user, channel: channel) }
     let(:challenged) { Fabricate(:user, channel: channel) }
-    let(:season) { Season.new(team: channel.team, channel: channel) }
+    let(:season) { described_class.new(team: channel.team, channel: channel) }
 
     before do
       Match.lose!(team: channel.team, channel: channel, winners: [challenger], losers: [challenged])
@@ -68,7 +68,7 @@ describe Season do
 
   context 'current season with one match' do
     let!(:match) { Fabricate(:match, channel: channel) }
-    let(:season) { Season.new(team: channel.team, channel: channel) }
+    let(:season) { described_class.new(team: channel.team, channel: channel) }
 
     it 'to_s' do
       expect(season.to_s).to eq "Current: #{season.winners.map(&:to_s).and}, 1 match, 2 players"
@@ -82,7 +82,7 @@ describe Season do
   context 'current season with multiple matches and one winner' do
     let(:user) { Fabricate(:user, channel: channel) }
     let!(:matches) { Array.new(3) { Fabricate(:match, channel: channel, challenge: Fabricate(:challenge, channel: channel, challengers: [user])) } }
-    let(:season) { Season.new(team: channel.team, channel: channel) }
+    let(:season) { described_class.new(team: channel.team, channel: channel) }
 
     it 'to_s' do
       expect(season.to_s).to eq "Current: #{season.winners.map(&:to_s).and}, 3 matches, 4 players"
@@ -107,7 +107,7 @@ describe Season do
   context 'current season with two winners' do
     let!(:matches) { Array.new(2) { Fabricate(:match, channel: channel) } }
     let!(:matches) { Array.new(2) { Fabricate(:match, channel: channel) } }
-    let(:season) { Season.new(team: channel.team, channel: channel) }
+    let(:season) { described_class.new(team: channel.team, channel: channel) }
 
     it 'has two winners' do
       expect(season.winners.count).to eq 2

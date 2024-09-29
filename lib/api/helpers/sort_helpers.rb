@@ -22,7 +22,7 @@ module SlackGamebot
             sort_order = {}
             if sort_entry[0] == '-'
               sort_order[:direction] = :desc
-              sort_order[:column] = sort_entry[1..-1]
+              sort_order[:column] = sort_entry[1..]
             else
               sort_order[:direction] = :asc
               sort_order[:column] = sort_entry

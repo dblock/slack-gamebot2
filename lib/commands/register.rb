@@ -8,7 +8,7 @@ module SlackGamebot
       user_in_channel_command 'register' do |channel, user, data|
         ts = Time.now.utc - 1
         user.register! if user && !user.registered?
-        user.promote! if user && !channel.captains.any?
+        user.promote! if user && channel.captains.none?
         message = if user.created_at >= ts
                     "Welcome <@#{data.user}>! You're ready to play."
                   elsif user.updated_at >= ts

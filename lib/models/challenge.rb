@@ -45,7 +45,7 @@ class Challenge
   scope :current, -> { where(season_id: nil) }
 
   # challenges scoped by state
-  ChallengeState.values.each do |state|
+  ChallengeState.each_value do |state|
     scope state.to_sym, -> { where(state: state) }
   end
 

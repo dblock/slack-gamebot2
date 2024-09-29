@@ -68,7 +68,7 @@ describe User do
     it 'resets all user stats' do
       user1 = Fabricate(:user, channel: channel, elo: 48, losses: 1, wins: 2, ties: 3, tau: 0.5)
       user2 = Fabricate(:user, channel: channel, elo: 54, losses: 2, wins: 1, tau: 1.5)
-      User.reset_all!(user1.channel)
+      described_class.reset_all!(user1.channel)
       user1.reload
       user2.reload
       expect(user1.wins).to eq 0
@@ -161,13 +161,13 @@ describe User do
 
   describe '.ranked' do
     it 'returns an empty list' do
-      expect(User.ranked).to eq []
+      expect(described_class.ranked).to eq []
     end
 
     it 'ignores players without rank' do
       user1 = Fabricate(:user, channel: channel, elo: 1, wins: 1, losses: 1)
       Fabricate(:user, channel: channel)
-      expect(User.ranked).to eq [user1]
+      expect(described_class.ranked).to eq [user1]
     end
   end
 
@@ -178,21 +178,21 @@ describe User do
       user3 = Fabricate(:user, channel: channel, elo: 60, wins: 2, losses: 0)
       user4 = Fabricate(:user, channel: channel, elo: 80, wins: 3, losses: 0)
       [user1, user2, user3, user4].each(&:reload)
-      expect(User.rank_section(channel, [user1])).to eq [user1]
-      expect(User.rank_section(channel, [user1, user3])).to eq [user1, user4, user3]
-      expect(User.rank_section(channel, [user1, user3, user4])).to eq [user1, user4, user3]
+      expect(described_class.rank_section(channel, [user1])).to eq [user1]
+      expect(described_class.rank_section(channel, [user1, user3])).to eq [user1, user4, user3]
+      expect(described_class.rank_section(channel, [user1, user3, user4])).to eq [user1, user4, user3]
     end
 
     it 'limits by channel' do
       user = Fabricate(:user, channel: channel, elo: 100, wins: 4, losses: 0)
-      expect(User.rank_section(Fabricate(:channel), [user])).to eq []
+      expect(described_class.rank_section(Fabricate(:channel), [user])).to eq []
     end
 
     it 'only returns one unranked user' do
       user1 = Fabricate(:user, channel: channel)
       user2 = Fabricate(:user, channel: channel)
-      expect(User.rank_section(channel, [user1])).to eq [user1]
-      expect(User.rank_section(channel, [user1, user2])).to eq [user1, user2]
+      expect(described_class.rank_section(channel, [user1])).to eq [user1]
+      expect(described_class.rank_section(channel, [user1, user2])).to eq [user1, user2]
     end
   end
 

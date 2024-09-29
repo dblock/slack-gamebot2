@@ -3,6 +3,6 @@
 def logger
   @logger ||= begin
     $stdout.sync = true
-    Logger.new(STDOUT)
+    Logger.new($stdout)
   end
 end

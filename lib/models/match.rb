@@ -137,7 +137,7 @@ class Match
   end
 
   def calculated_elo
-    @calcualted_elo ||= begin
+    @calculated_elo ||= begin
       winners_delta = []
       losers_delta = []
       winners_elo = Elo.team_elo(winners)

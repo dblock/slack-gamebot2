@@ -49,8 +49,8 @@ describe SlackGamebot::Api::Endpoints::ChallengesEndpoint do
     it 'returns a challenge with links to challengers, challenged and played match' do
       challenge = client.challenge(id: existing_challenge.id)
       expect(challenge.id).to eq existing_challenge.id.to_s
-      expect(challenge._links.challengers._url).to eq existing_challenge.challengers.map { |user| "http://example.org/api/users/#{user.id}" }
-      expect(challenge._links.challenged._url).to eq existing_challenge.challenged.map { |user| "http://example.org/api/users/#{user.id}" }
+      expect(challenge._links.challengers._url).to eq(existing_challenge.challengers.map { |user| "http://example.org/api/users/#{user.id}" })
+      expect(challenge._links.challenged._url).to eq(existing_challenge.challenged.map { |user| "http://example.org/api/users/#{user.id}" })
       expect(challenge._links.match._url).to eq "http://example.org/api/matches/#{existing_challenge.match.id}"
     end
   end

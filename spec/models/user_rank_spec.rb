@@ -6,7 +6,7 @@ describe UserRank do
   describe '#from_user' do
     it 'creates a record' do
       user = Fabricate(:user)
-      user_rank = UserRank.from_user(user)
+      user_rank = described_class.from_user(user)
       expect(user_rank.user).to eq user
       expect(user_rank.user_name).to eq user.user_name
       expect(user_rank.wins).to eq user.wins

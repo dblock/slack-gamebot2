@@ -86,7 +86,7 @@ class User
   def to_s
     wins_s = "#{wins} win#{wins == 1 ? '' : 's'}"
     losses_s = "#{losses} loss#{losses == 1 ? '' : 'es'}"
-    ties_s = "#{ties} tie#{ties == 1 ? '' : 's'}" if ties && ties > 0
+    ties_s = "#{ties} tie#{ties == 1 ? '' : 's'}" if ties&.positive?
     elo_s = "elo: #{channel_elo}"
     lws_s = "lws: #{winning_streak}" if winning_streak >= losing_streak && winning_streak >= 3
     lls_s = "lls: #{losing_streak}" if losing_streak > winning_streak && losing_streak >= 3
@@ -137,7 +137,7 @@ class User
     players = any_of({ :wins.gt => 0 }, { :losses.gt => 0 }, :ties.gt => 0).where(channel: channel, registered: true).desc(:elo).desc(:wins).asc(:losses).desc(:ties)
     players.each_with_index do |player, index|
       if player.registered?
-        rank += 1 if index > 0 && %i[elo wins losses ties].any? { |property| players[index - 1].send(property) != player.send(property) }
+        rank += 1 if index.positive? && %i[elo wins losses ties].any? { |property| players[index - 1].send(property) != player.send(property) }
         player.set(rank: rank) unless rank == player.rank
       end
     end

@@ -27,11 +27,9 @@ module Score
   def self.parse(expression)
     return unless expression
 
-    scores = []
-    expression.split(/[\s,.]/).reject(&:blank?).each do |pair|
-      scores << check(pair)
+    expression.split(/[\s,.]/).reject(&:blank?).map do |pair|
+      check(pair)
     end
-    scores
   end
 
   def self.check(pair)
@@ -46,7 +44,7 @@ module Score
 
     pair_n.map do |points|
       points = Integer(points)
-      raise SlackGamebot::Error, 'points must be greater or equal to zero' if points < 0
+      raise SlackGamebot::Error, 'points must be greater or equal to zero' if points.negative?
 
       points
     rescue StandardError => e

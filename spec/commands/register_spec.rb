@@ -59,7 +59,7 @@ describe SlackGamebot::Commands::Register do
   end
 
   it 'registers a previously unregistered user but does not promote them to captain' do
-    captain = Fabricate(:user, registered: true, captain: true)
+    Fabricate(:user, registered: true, captain: true)
     user = Fabricate(:user, registered: false, captain: false, created_at: 2.days.ago, user_name: 'user_name', user_id: 'user_id')
     expect do
       expect(message: '@gamebot register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration.")

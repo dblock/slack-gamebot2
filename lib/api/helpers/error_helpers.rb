@@ -20,7 +20,7 @@ module SlackGamebot
             Api::Middleware.logger.warn "#{e.class.name}: #{e.message}\n  #{backtrace}"
             rack_response({
               type: 'param_error',
-              message: e.document.errors.full_messages.uniq.join(', ') + '.',
+              message: "#{e.document.errors.full_messages.uniq.join(', ')}.",
               detail: e.document.errors.messages.transform_values(&:uniq)
             }.to_json, 400)
           end

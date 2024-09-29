@@ -26,15 +26,15 @@ module SlackGamebot
           raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
 
           target_user = channel.find_or_create_by_mention!(slack_mention)
-          v = v[slack_mention.length + 1..-1]
+          v = v[slack_mention.length + 1..]
         end
         target_user.update_attributes!(nickname: v) unless v.nil?
         if target_user.nickname.blank?
           channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set, #{target_user.user_name}.", gif: 'anonymous')
-          logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : ' for ' + target_user.user_name}is not set"
+          logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : " for #{target_user.user_name}"}is not set"
         else
           channel.slack_client.say(channel: data.channel, text: "Your nickname is #{v.nil? ? '' : 'now '}_#{target_user.nickname}_, #{target_user.slack_mention}.", gif: 'name')
-          logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : ' for ' + target_user.user_name}is #{target_user.nickname}"
+          logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : " for #{target_user.user_name}"}is #{target_user.nickname}"
         end
       end
 
@@ -49,7 +49,7 @@ module SlackGamebot
         old_nickname = target_user.nickname
         target_user.update_attributes!(nickname: nil)
         channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set#{old_nickname.blank? ? '' : ' anymore'}, #{target_user.slack_mention}.", gif: 'anonymous')
-        logger.info "UNSET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : ' for ' + target_user.user_name} was #{old_nickname.blank? ? 'not ' : 'un'}set"
+        logger.info "UNSET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : " for #{target_user.user_name}"} was #{old_nickname.blank? ? 'not ' : 'un'}set"
       end
 
       def set_gifs(channel, data, user, v)

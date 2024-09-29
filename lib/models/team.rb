@@ -359,7 +359,7 @@ class Team
     channel.update_attributes!(
       enabled: true,
       inviter_id: inviter_id,
-      is_group: !!channel_info&.channel&.is_group
+      is_group: !channel_info&.channel&.is_group.nil?
     )
   end
 
@@ -374,7 +374,7 @@ class Team
       channel_id: channel_id,
       enabled: true,
       inviter_id: inviter_id,
-      is_group: !!channel_info&.channel&.is_group,
+      is_group: !channel_info&.channel&.is_group.nil?,
       elo: elo,
       aliases: channel_info&.channel&.is_group ? [] : aliases,
       gifs: gifs,

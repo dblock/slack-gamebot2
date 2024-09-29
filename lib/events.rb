@@ -60,7 +60,7 @@ SlackRubyBotServer::Events.configure do |config|
 
     text = [
       "Hi there! I'm your team's Leaderboard Gamebot. I don't know how to play any games myself, but I keep leaderboards for your team.",
-      data.team.channels.enabled.count > 0 ? "I keep leaderboards in #{pluralize(data.team.channels.enabled.count, 'channel')}#{' (' + data.team.channels.enabled.map(&:slack_mention).and + ')'}." : 'Invite me to a channel to start a new leaderboard.',
+      data.team.channels.enabled.count.positive? ? "I keep leaderboards in #{pluralize(data.team.channels.enabled.count, 'channel')}#{" (#{data.team.channels.enabled.map(&:slack_mention).and})"}." : 'Invite me to a channel to start a new leaderboard.',
       "Type `#{data.team.bot_mention} help` for more options."
     ].join("\n")
 
@@ -78,7 +78,7 @@ SlackRubyBotServer::Events.configure do |config|
     next { ok: true } unless team
 
     channel = team.channels.where(channel_id: data['channel']).first if data && data['channel']
-    next { ok: true } unless channel && channel.aliases.any?
+    next { ok: true } unless channel&.aliases&.any?
 
     bot_aliases_regexp = Regexp.new("^(#{channel.aliases.map { |a| "#{a}[[:space:]]" }.join('|')})")
     text = data['text'].gsub(bot_aliases_regexp, '')

@@ -13,7 +13,7 @@ describe Giphy, :js, type: :feature do
     end
 
     it 'returns a random gif', vcr: { cassette_name: 'giphy_random' } do
-      expect(Giphy.random('bot')).to eq 'https://media4.giphy.com/media/QAPGorQJSoarrsjVhH/200.gif'
+      expect(described_class.random('bot')).to eq 'https://media4.giphy.com/media/QAPGorQJSoarrsjVhH/200.gif'
     end
   end
 end

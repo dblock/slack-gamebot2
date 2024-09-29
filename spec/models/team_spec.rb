@@ -10,7 +10,7 @@ describe Team do
     let!(:season) { Fabricate(:season, channel: channel) }
 
     it 'destroys dependent records' do
-      expect(Team.count).to eq 1
+      expect(described_class.count).to eq 1
       expect(User.count).to eq 2
       expect(Challenge.count).to eq 1
       expect(Match.count).to eq 1
@@ -22,7 +22,7 @@ describe Team do
               expect do
                 expect do
                   team.destroy
-                end.to change(Team, :count).by(-1)
+                end.to change(described_class, :count).by(-1)
               end.to change(Channel, :count).by(-1)
             end.to change(User, :count).by(-2)
           end.to change(Challenge, :count).by(-1)
@@ -40,13 +40,13 @@ describe Team do
 
     it 'destroys teams inactive for two weeks' do
       expect do
-        Team.purge!
-      end.to change(Team, :count).by(-2)
-      expect(Team.find(active_team.id)).to eq active_team
-      expect(Team.find(inactive_team.id)).to eq inactive_team
-      expect(Team.find(inactive_team_a_week_ago.id)).to eq inactive_team_a_week_ago
-      expect(Team.find(inactive_team_two_weeks_ago.id)).to be_nil
-      expect(Team.find(inactive_team_a_month_ago.id)).to be_nil
+        described_class.purge!
+      end.to change(described_class, :count).by(-2)
+      expect(described_class.find(active_team.id)).to eq active_team
+      expect(described_class.find(inactive_team.id)).to eq inactive_team
+      expect(described_class.find(inactive_team_a_week_ago.id)).to eq inactive_team_a_week_ago
+      expect(described_class.find(inactive_team_two_weeks_ago.id)).to be_nil
+      expect(described_class.find(inactive_team_a_month_ago.id)).to be_nil
     end
   end
 
@@ -508,7 +508,7 @@ describe Team do
       let(:team) { Fabricate(:team, bot_user_id: 'bot_id') }
 
       before do
-        allow_any_instance_of(Team).to receive(:inform!)
+        allow_any_instance_of(described_class).to receive(:inform!)
       end
 
       it 'is a slack mention' do

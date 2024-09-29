@@ -105,7 +105,7 @@ class Channel
         user_id: slack_id,
         user_name: instance_info.name,
         registered: true,
-        captain: !captains.any?,
+        captain: captains.none?,
         is_owner: instance_info.is_owner,
         is_admin: instance_info.is_admin
       )

@@ -231,23 +231,23 @@ describe Match do
       let!(:channel) { Fabricate(:channel) }
 
       it 'loser first' do
-        expect(Match.new(team: channel.team, channel: channel, scores: [[15, 21]])).to be_valid
+        expect(described_class.new(team: channel.team, channel: channel, scores: [[15, 21]])).to be_valid
       end
 
       it 'loser first with 3 scores' do
-        expect(Match.new(team: channel.team, channel: channel, scores: [[15, 21], [21, 5], [3, 11]])).to be_valid
+        expect(described_class.new(team: channel.team, channel: channel, scores: [[15, 21], [21, 5], [3, 11]])).to be_valid
       end
 
       it 'winner first' do
-        expect(Match.new(team: channel.team, channel: channel, scores: [[21, 15]])).not_to be_valid
+        expect(described_class.new(team: channel.team, channel: channel, scores: [[21, 15]])).not_to be_valid
       end
 
       it 'winner first with 3 scores' do
-        expect(Match.new(team: channel.team, channel: channel, scores: [[21, 15], [5, 21], [11, 3]])).not_to be_valid
+        expect(described_class.new(team: channel.team, channel: channel, scores: [[21, 15], [5, 21], [11, 3]])).not_to be_valid
       end
 
       it 'draw' do
-        expect(Match.new(team: channel.team, channel: channel, tied: true, scores: [[15, 15]])).to be_valid
+        expect(described_class.new(team: channel.team, channel: channel, tied: true, scores: [[15, 15]])).to be_valid
       end
     end
   end

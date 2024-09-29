@@ -36,13 +36,13 @@ describe Challenge do
 
     it 'finds a challenge by challenger' do
       challenge.challengers.each do |challenger|
-        expect(Challenge.find_by_user(challenger)).to eq challenge
+        expect(described_class.find_by_user(challenger)).to eq challenge
       end
     end
 
     it 'finds a challenge by challenged' do
       challenge.challenged.each do |challenger|
-        expect(Challenge.find_by_user(challenger)).to eq challenge
+        expect(described_class.find_by_user(challenger)).to eq challenge
       end
     end
   end
@@ -55,7 +55,7 @@ describe Challenge do
 
     it 'splits a single challenge' do
       opponent = Fabricate(:user, user_name: 'username')
-      challengers, opponents = Challenge.split_teammates_and_opponents(challenger, ['username'])
+      challengers, opponents = described_class.split_teammates_and_opponents(challenger, ['username'])
       expect(challengers).to eq([challenger])
       expect(opponents).to eq([opponent])
     end
@@ -64,7 +64,7 @@ describe Challenge do
       teammate = Fabricate(:user, channel: channel)
       opponent1 = Fabricate(:user, channel: channel, user_name: 'username')
       opponent2 = Fabricate(:user, channel: channel)
-      challengers, opponents = Challenge.split_teammates_and_opponents(challenger, ['username', opponent2.slack_mention, 'with', teammate.slack_mention])
+      challengers, opponents = described_class.split_teammates_and_opponents(challenger, ['username', opponent2.slack_mention, 'with', teammate.slack_mention])
       expect(challengers).to eq([challenger, teammate])
       expect(opponents).to eq([opponent1, opponent2])
     end
@@ -72,7 +72,7 @@ describe Challenge do
     it 'requires known opponents' do
       allow(channel.team.slack_client).to receive(:users_info)
       expect do
-        Challenge.split_teammates_and_opponents(challenger, ['username'])
+        described_class.split_teammates_and_opponents(challenger, ['username'])
       end.to raise_error SlackGamebot::Error, "I don't know who username is!"
     end
   end
@@ -87,13 +87,13 @@ describe Challenge do
 
     it 'requires an opponent' do
       expect do
-        Challenge.create_from_teammates_and_opponents!(challenger, [])
+        described_class.create_from_teammates_and_opponents!(challenger, [])
       end.to raise_error Mongoid::Errors::Validations, /Number of teammates \(1\) and opponents \(0\) must match./
     end
 
     it 'requires the same number of opponents' do
       expect do
-        Challenge.create_from_teammates_and_opponents!(challenger, [opponent.slack_mention, 'with', teammate.slack_mention])
+        described_class.create_from_teammates_and_opponents!(challenger, [opponent.slack_mention, 'with', teammate.slack_mention])
       end.to raise_error Mongoid::Errors::Validations, /Number of teammates \(2\) and opponents \(1\) must match./
     end
 
@@ -104,26 +104,26 @@ describe Challenge do
 
       it 'requires an opponent' do
         expect do
-          Challenge.create_from_teammates_and_opponents!(challenger, [])
+          described_class.create_from_teammates_and_opponents!(challenger, [])
         end.to raise_error Mongoid::Errors::Validations, /Number of teammates \(1\) and opponents \(0\) must match./
       end
 
       it 'does not require the same number of opponents' do
         expect do
-          Challenge.create_from_teammates_and_opponents!(challenger, [opponent.slack_mention, 'with', teammate.slack_mention])
+          described_class.create_from_teammates_and_opponents!(challenger, [opponent.slack_mention, 'with', teammate.slack_mention])
         end.not_to raise_error
       end
     end
 
     it 'requires another opponent' do
       expect do
-        Challenge.create_from_teammates_and_opponents!(challenger, [challenger.slack_mention])
+        described_class.create_from_teammates_and_opponents!(challenger, [challenger.slack_mention])
       end.to raise_error Mongoid::Errors::Validations, /#{challenger.user_name} cannot play against themselves./
     end
 
     it 'uniques opponents mentioned multiple times' do
       expect do
-        Challenge.create_from_teammates_and_opponents!(challenger, [opponent.slack_mention, opponent.slack_mention, 'with', teammate.slack_mention])
+        described_class.create_from_teammates_and_opponents!(challenger, [opponent.slack_mention, opponent.slack_mention, 'with', teammate.slack_mention])
       end.to raise_error Mongoid::Errors::Validations, /Number of teammates \(2\) and opponents \(1\) must match./
     end
 
@@ -133,14 +133,14 @@ describe Challenge do
       it 'cannot create a duplicate challenge for the challenger' do
         existing_challenger = challenge.challengers.first
         expect do
-          Challenge.create_from_teammates_and_opponents!(challenger, [existing_challenger.slack_mention])
+          described_class.create_from_teammates_and_opponents!(challenger, [existing_challenger.slack_mention])
         end.to raise_error Mongoid::Errors::Validations, /#{existing_challenger.user_name} can't play./
       end
 
       it 'cannot create a duplicate challenge for the challenge' do
         existing_challenger = challenge.challenged.first
         expect do
-          Challenge.create_from_teammates_and_opponents!(challenger, [existing_challenger.slack_mention])
+          described_class.create_from_teammates_and_opponents!(challenger, [existing_challenger.slack_mention])
         end.to raise_error Mongoid::Errors::Validations, /#{existing_challenger.user_name} can't play./
       end
     end
@@ -151,7 +151,7 @@ describe Challenge do
       it 'cannot create a duplicate challenge for the challenger' do
         existing_challenger = challenge.challengers.last
         expect do
-          Challenge.create_from_teammates_and_opponents!(challenger, [existing_challenger.slack_mention])
+          described_class.create_from_teammates_and_opponents!(challenger, [existing_challenger.slack_mention])
         end.to raise_error Mongoid::Errors::Validations, /#{existing_challenger.user_name} can't play./
       end
     end
