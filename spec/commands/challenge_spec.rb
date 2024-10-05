@@ -128,4 +128,17 @@ describe SlackGamebot::Commands::Challenge do
       expect(challenge.challenged).to eq team.users.everyone
     end
   end
+
+  context 'DM' do
+    include_context 'dm'
+
+    let(:admin) { Fabricate(:admin, team: team) }
+
+    it 'challenge' do
+      expect(message: 'challenge @someone', channel: 'DM', user: admin.user_id).to respond_with_slack_message([
+        'Invite me to a channel to start a new leaderboard.',
+        'Type ` help` for more options.'
+      ].join("\n"))
+    end
+  end
 end

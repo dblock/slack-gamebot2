@@ -19,10 +19,13 @@ module SlackGamebot
 
           def user_in_channel_command(*values, &_block)
             user_command(*values) do |channel, user, data|
-              if channel
+              if channel.is_a?(::Channel)
                 yield channel, user, data
               else
-                data.team.slack_client.say(channel: data.channel, text: 'Please run this command in a channel.')
+                data.team.slack_client.say(channel: data.channel, text: [
+                  'Invite me to a channel to start a new leaderboard.',
+                  "Type `#{data.team.bot_mention} help` for more options."
+                ].join("\n"))
               end
             end
           end

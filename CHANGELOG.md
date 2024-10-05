@@ -1,5 +1,6 @@
 ### Change Log
 
+* [#5](https://github.com/dblock/slack-gamebot2/issues/5): Produce an error when running channel commands in a DM - [@dblock](https://github.com/dblock).
 * [#87](https://github.com/dblock/slack-gamebot/issues/87): Forked into `slack-gamebot2` with a leaderboard per channel support - [@dblock](https://github.com/dblock).
 * [#189](https://github.com/dblock/slack-gamebot/pull/189): Capped user tau at 11 for elo scoring - [@eddycurry](https://github.com/eddycurry).
 * [#166](https://github.com/dblock/slack-gamebot/issues/166): Challenge anyone to a game with `challenge @here` or `challenge @channel` - [@dblock](https://github.com/dblock).
