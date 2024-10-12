@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '3.3.3'
+ruby '3.3.5'
 
 gem 'faraday', '~> 2.9.2'
 gem 'hashie', '3.4.6'
@@ -30,7 +30,7 @@ gem 'wannabe_bool'
 
 group :development, :test do
   gem 'foreman'
-  gem 'rake', '~> 12.3'
+  gem 'rake'
   gem 'rubocop'
   gem 'rubocop-capybara'
   gem 'rubocop-faker'

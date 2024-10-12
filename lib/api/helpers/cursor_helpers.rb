@@ -21,10 +21,10 @@ module SlackGamebot
           end
           # some items may be skipped with a block
           query = block_given? ? coll : coll.limit(size)
-          query.scroll(params[:cursor]) do |record, next_cursor|
+          query.scroll(params[:cursor]) do |record, iterator|
             record = yield(record) if block_given?
             results[:results] << record if record
-            results[:next] = next_cursor.to_s
+            results[:next] = iterator.next_cursor.to_s
             break if results[:results].count >= size
           end
           results[:total_count] = coll.count if params[:total_count] && coll.respond_to?(:count)
