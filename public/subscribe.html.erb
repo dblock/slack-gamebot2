@@ -37,13 +37,13 @@
         $(document).ready(function() {
 
           var team = {
-            id: <%= team ? "'#{team._id}'" : 'null' %>,
-            name: <%= team ? "'#{team.name}'" : 'null' %>,
+            id: "<%= team && team.id %>",
+            name: <%= JSON::generate(ERB::Util.html_escape(team && team.name)) %>,
             subscribed: <%= !!(team && team.subscribed) %>
           };
 
           var coupon = {
-            code: <%= coupon ? "'#{coupon.id}'" : 'null' %>
+            code: "<%= coupon && coupon.id %>",
           };
 
           var subscription = {
@@ -60,9 +60,9 @@
             PlayPlay.message('Team <b>' + team.name + '</b> is already subscribed, thank you.');
             $('#subscribeButton').remove();
           } else if (team.id && team.name && coupon.code) {
-            PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $' + pay.dollars + ' for the first year and $' + subscription.dollars + ' thereafter with coupon <b>' + coupon.code + '!');
+            PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $' + pay.dollars + ' for the first year and $' + subscription.dollars + ' thereafter with coupon <b>' + coupon.code + '.');
           } else if (team.id && team.name) {
-            PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $49.99 a year!');
+            PlayPlay.message('Subscribe team <b>' + team.name + '</b> for $49.99/yr.');
           } else {
             $('#subscribeButton').remove();
             PlayPlay.errorMessage('Missing or invalid team ID.');

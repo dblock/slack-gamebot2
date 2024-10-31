@@ -30,7 +30,7 @@ describe 'Subscribe', :js, type: :feature do
   shared_examples 'subscribes' do
     it 'subscribes' do
       visit "/subscribe?team_id=#{team.team_id}"
-      expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} for $49.99 a year!")
+      expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} for $49.99/yr.")
       find_by_id('subscribe', visible: true)
 
       expect(Stripe::Customer).to receive(:create).and_return('id' => 'customer_id')
@@ -75,6 +75,26 @@ describe 'Subscribe', :js, type: :feature do
       it_behaves_like 'subscribes'
     end
 
+    [
+      Faker::Lorem.word,
+      "#{Faker::Lorem.word}'s",
+      '💥 team',
+      'команда',
+      "\"#{Faker::Lorem.word}'s\"",
+      "#{Faker::Lorem.word}\n#{Faker::Lorem.word}",
+      "<script>alert('xss');</script>",
+      '<script>alert("xss");</script>'
+    ].each do |team_name|
+      context "team #{team_name}" do
+        let!(:team) { Fabricate(:team, name: team_name) }
+
+        it 'displays subscribe page' do
+          visit "/subscribe?team_id=#{team.team_id}"
+          expect(find_by_id('messages')).to have_text("Subscribe team #{team.name.gsub("\n", ' ')} for $49.99/yr.")
+        end
+      end
+    end
+
     context 'with a coupon' do
       let!(:team) { Fabricate(:team) }
 
@@ -82,7 +102,7 @@ describe 'Subscribe', :js, type: :feature do
         coupon = double(Stripe::Coupon, id: 'coupon-id', amount_off: 1200)
         expect(Stripe::Coupon).to receive(:retrieve).with('coupon-id').and_return(coupon)
         visit "/subscribe?team_id=#{team.team_id}&coupon=coupon-id"
-        expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} for $37.99 for the first year and $49.99 thereafter with coupon coupon-id!")
+        expect(find_by_id('messages')).to have_text("Subscribe team #{team.name} for $37.99 for the first year and $49.99 thereafter with coupon coupon-id.")
         find_by_id('subscribe', visible: true)
 
         expect(Stripe::Customer).to receive(:create).with(hash_including(coupon: 'coupon-id')).and_return('id' => 'customer_id')
