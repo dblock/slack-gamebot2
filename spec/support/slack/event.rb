@@ -56,7 +56,7 @@ RSpec::Matchers.define :respond_with_slack_message do |expected|
     allow(slack_client).to receive(:chat_postMessage) do |options|
       @messages ||= []
       @messages.push options
-    end
+    end.and_return('ts' => SecureRandom.hex)
 
     begin
       SlackRubyBotServer::Events.config.run_callbacks(

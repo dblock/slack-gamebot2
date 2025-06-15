@@ -43,11 +43,13 @@ module SlackGamebot
           logger.info "RESIGNED: #{channel} - #{data.user}, cannot score."
         elsif opponents.any? && (challenge.nil? || (challenge.challengers != opponents && challenge.challenged != opponents))
           match = ::Match.resign!(team: channel.team, channel: channel, winners: opponents, losers: teammates)
-          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
+          rc = channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
+          channel.slack_client.chat_postMessage(channel: data.channel, text: channel.leaderboard_s, thread_ts: rc['ts']) if rc.key?('ts') && channel.details.include?(Details::LEADERBOARD)
           logger.info "RESIGNED TO: #{channel} - #{match}"
         elsif challenge
           challenge.resign!(challenger)
-          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
+          rc = channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
+          channel.slack_client.chat_postMessage(channel: data.channel, text: channel.leaderboard_s, thread_ts: rc['ts']) if rc.key?('ts') && channel.details.include?(Details::LEADERBOARD)
           logger.info "RESIGNED: #{channel} - #{challenge}"
         else
           channel.slack_client.say(channel: data.channel, text: 'No challenge to resign!')

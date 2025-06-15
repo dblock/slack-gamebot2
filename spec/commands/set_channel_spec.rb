@@ -208,6 +208,60 @@ describe SlackGamebot::Commands::SetChannel do
       end
     end
 
+    context 'details' do
+      context 'with details' do
+        before do
+          channel.update_attributes!(details: %w[elo])
+        end
+
+        it 'shows current value of details' do
+          expect(message: '@gamebot set details', user: captain, channel: channel).to respond_with_slack_message(
+            "Match details for #{channel.slack_mention} are `elo`."
+          )
+        end
+
+        it 'sets details' do
+          expect(message: '@gamebot set details elo leaderboard', user: captain, channel: channel).to respond_with_slack_message(
+            "Match details for #{channel.slack_mention} are `elo` and `leaderboard`."
+          )
+          expect(channel.reload.details).to eq %w[elo leaderboard]
+        end
+
+        it 'removes details using unset' do
+          expect(message: '@gamebot unset details', user: captain, channel: channel).to respond_with_slack_message(
+            "Match details for #{channel.slack_mention} are not shown."
+          )
+          expect(channel.reload.details).to be_empty
+        end
+
+        it 'removes details using set' do
+          expect(message: '@gamebot set details none', user: captain, channel: channel).to respond_with_slack_message(
+            "Match details for #{channel.slack_mention} are not shown."
+          )
+          expect(channel.reload.details).to be_empty
+        end
+
+        it 'handles errors' do
+          expect(message: '@gamebot set details invalid', user: captain, channel: channel).to respond_with_slack_message(
+            'Invalid value: invalid, possible values are elo and leaderboard.'
+          )
+          expect(channel.reload.details).to eq ['elo']
+        end
+      end
+
+      context 'without details' do
+        before do
+          channel.update_attributes!(details: [])
+        end
+
+        it 'shows no details' do
+          expect(message: '@gamebot set details', user: captain, channel: channel).to respond_with_slack_message(
+            "Match details for #{channel.slack_mention} are not shown."
+          )
+        end
+      end
+    end
+
     context 'elo' do
       context 'with a non-default base elo' do
         before do
@@ -393,6 +447,20 @@ describe SlackGamebot::Commands::SetChannel do
       it 'can see elo' do
         expect(message: '@gamebot set elo', user: user, channel: channel).to respond_with_slack_message(
           "Base elo for #{channel.slack_mention} is 0."
+        )
+      end
+    end
+
+    context 'details' do
+      it 'cannot set details' do
+        expect(message: '@gamebot set details leaderboard', user: user, channel: channel).to respond_with_slack_message(
+          "You're not a captain, sorry."
+        )
+      end
+
+      it 'can see details' do
+        expect(message: '@gamebot set details', user: user, channel: channel).to respond_with_slack_message(
+          "Match details for #{channel.slack_mention} are not shown."
         )
       end
     end

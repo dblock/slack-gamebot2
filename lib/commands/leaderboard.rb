@@ -6,7 +6,7 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'leaderboard' do |channel, _user, data|
-        max = channel.leaderboard_max
+        max = nil
         reverse = false
         arguments = data.match['expression'].split.reject(&:blank?) if data.match['expression']
         arguments ||= []
@@ -23,13 +23,8 @@ module SlackGamebot
                   Integer(number)
                 end
         end
-        ranked_players = channel.users.ranked
-        if ranked_players.any?
-          ranked_players = ranked_players.send(reverse ? :desc : :asc, :rank)
-          ranked_players = ranked_players.limit(max) if max && max >= 1
-          message = ranked_players.each_with_index.map do |user, index|
-            "#{reverse ? index + 1 : user.rank}. #{user}"
-          end.join("\n")
+        message = channel.leaderboard_s(max: max, reverse: reverse)
+        if message
           channel.slack_client.say(channel: data.channel, text: message)
         else
           channel.slack_client.say(channel: data.channel, text: "There're no ranked players.", gif: 'empty')

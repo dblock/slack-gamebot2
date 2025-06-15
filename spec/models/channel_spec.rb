@@ -216,4 +216,95 @@ describe Channel do
       end
     end
   end
+
+  describe 'leaderboard_s' do
+    let!(:channel) { Fabricate(:channel) }
+
+    let!(:user1) { Fabricate(:user, channel: channel, elo: 42, wins: 3, losses: 2) }
+    let!(:user2) { Fabricate(:user, channel: channel, elo: 48, wins: 2, losses: 3) }
+    let!(:user3) { Fabricate(:user, channel: channel, elo: 45, wins: 1, losses: 1) }
+
+    before do
+      User.rank!(channel)
+    end
+
+    it 'returns nil when there are no ranked players' do
+      User.reset_all!(channel)
+      expect(channel.leaderboard_s).to be_nil
+    end
+
+    it 'returns all ranked players sorted by rank' do
+      expected = [
+        "1. #{user2}",
+        "2. #{user3}",
+        "3. #{user1}"
+      ].join("\n")
+      expect(channel.leaderboard_s).to eq(expected)
+    end
+
+    it 'respects leaderboard_max when set' do
+      channel.update_attributes!(leaderboard_max: 2)
+      expected = [
+        "1. #{user2}",
+        "2. #{user3}"
+      ].join("\n")
+      expect(channel.leaderboard_s).to eq(expected)
+    end
+
+    it 'respects explicit max parameter' do
+      expected = [
+        "1. #{user2}",
+        "2. #{user3}"
+      ].join("\n")
+      expect(channel.leaderboard_s(max: 2)).to eq(expected)
+    end
+
+    it 'respects explicit reverse parameter' do
+      expected = [
+        "1. #{user1}",
+        "2. #{user3}"
+      ].join("\n")
+      expect(channel.leaderboard_s(max: 2, reverse: true)).to eq(expected)
+    end
+
+    it 'ignores unregistered users' do
+      user2.unregister!
+      User.rank!(channel)
+      expected = [
+        "1. #{user3}",
+        "2. #{user1}"
+      ].join("\n")
+      expect(channel.leaderboard_s).to eq(expected)
+    end
+
+    it 'returns all players when max is nil' do
+      channel.update_attributes!(leaderboard_max: nil)
+      expected = [
+        "1. #{user2}",
+        "2. #{user3}",
+        "3. #{user1}"
+      ].join("\n")
+      expect(channel.leaderboard_s).to eq(expected)
+    end
+
+    it 'returns all players when max is 0' do
+      channel.update_attributes!(leaderboard_max: 0)
+      expected = [
+        "1. #{user2}",
+        "2. #{user3}",
+        "3. #{user1}"
+      ].join("\n")
+      expect(channel.leaderboard_s).to eq(expected)
+    end
+
+    it 'returns all players when max is negative' do
+      channel.update_attributes!(leaderboard_max: -1)
+      expected = [
+        "1. #{user2}",
+        "2. #{user3}",
+        "3. #{user1}"
+      ].join("\n")
+      expect(channel.leaderboard_s).to eq(expected)
+    end
+  end
 end

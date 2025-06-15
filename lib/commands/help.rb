@@ -49,6 +49,7 @@ module SlackGamebot
         set api [on|off], unset api: enable/disable team data in the public API, default is off
         set token [token], unset token: set/unset API token
         set unbalanced [on|off], unset unbalanced: allow/disallow matches between different numbers of players, default is off
+        set details [elo,leaderboard|none]: show match elo details, auto-post a leaderboard in a thread
 
         Captains
         --------

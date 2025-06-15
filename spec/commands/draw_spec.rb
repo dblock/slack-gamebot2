@@ -47,6 +47,24 @@ describe SlackGamebot::Commands::Draw do
         expect(challenge.draw).to eq challenge.challenged + challenge.challengers
       end
 
+      context 'with channel leaderboard details' do
+        before do
+          channel.update_attributes!(details: [Details::LEADERBOARD])
+        end
+
+        it 'displays leaderboard in a thread' do
+          expect(SecureRandom).to receive(:hex).and_return('thread_id')
+          message_match_recorded = "Match has been recorded! #{challenge.challengers.map(&:display_name).and} tied with #{challenge.challenged.map(&:display_name).and}."
+          expect(message: '@gamebot draw', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
+          calls = []
+          expect(channel.slack_client).to have_received(:chat_postMessage).twice do |call|
+            calls << call
+          end
+          expect(calls[0]).to eq({ channel: 'channel', text: message_match_recorded })
+          expect(calls[1]).to eq({ channel: 'channel', text: channel.leaderboard_s, thread_ts: 'thread_id' })
+        end
+      end
+
       it 'with score' do
         expect(message: '@gamebot draw 3:3', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
           "Match has been recorded! #{challenge.challengers.map(&:display_name).and} tied with #{challenge.challenged.map(&:display_name).and} with the score of 3:3."

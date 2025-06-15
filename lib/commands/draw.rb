@@ -75,7 +75,8 @@ module SlackGamebot
           else
             challenge.draw!(challenger, scores)
             if challenge.state == ChallengeState::PLAYED
-              channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'tie')
+              rc = channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'tie')
+              channel.slack_client.chat_postMessage(channel: data.channel, text: channel.leaderboard_s, thread_ts: rc['ts']) if rc.key?('ts') && channel.details.include?(Details::LEADERBOARD)
             else
               messages = [
                 "Match is a draw, waiting to hear from #{(challenge.challengers + challenge.challenged - challenge.draw).map(&:display_name).and}.",

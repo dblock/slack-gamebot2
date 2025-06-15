@@ -43,11 +43,13 @@ module SlackGamebot
           logger.info "LOST TO: #{channel} - SELF"
         elsif opponents.any? && (challenge.nil? || (challenge.challengers != opponents && challenge.challenged != opponents))
           match = ::Match.lose!(team: channel.team, channel: channel, winners: opponents, losers: teammates, scores: scores)
-          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
+          rc = channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{match}.", gif: 'loser')
+          channel.slack_client.chat_postMessage(channel: data.channel, text: channel.leaderboard_s, thread_ts: rc['ts']) if rc.key?('ts') && channel.details.include?(Details::LEADERBOARD)
           logger.info "LOST TO: #{channel} - #{match}"
         elsif challenge
           challenge.lose!(challenger, scores)
-          channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
+          rc = channel.slack_client.say(channel: data.channel, text: "Match has been recorded! #{challenge.match}.", gif: 'loser')
+          channel.slack_client.chat_postMessage(channel: data.channel, text: channel.leaderboard_s, thread_ts: rc['ts']) if rc.key?('ts') && channel.details.include?(Details::LEADERBOARD)
           logger.info "LOST: #{channel} - #{challenge}"
         else
           match = ::Match.where(loser_ids: challenger.id).desc(:_id).first

@@ -29,6 +29,16 @@ describe Match do
         expect(match.to_s).to eq "bob defeated #{match.losers.first.user_name} with #{Score.scores_to_string(match.scores)}"
       end
     end
+
+    context 'with channel details' do
+      before do
+        match.channel.update_attributes!(details: [Details::ELO])
+      end
+
+      it 'displays match' do
+        expect(match.to_s).to eq "#{match.winners.first.user_name} (0 +48) defeated #{match.losers.first.user_name} (0 -48) with #{Score.scores_to_string(match.scores)}"
+      end
+    end
   end
 
   context 'elo' do

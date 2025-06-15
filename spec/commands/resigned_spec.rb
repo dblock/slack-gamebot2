@@ -24,6 +24,24 @@ describe SlackGamebot::Commands::Resigned do
       expect(challenge.match.resigned?).to be true
     end
 
+    context 'with channel leaderboard details' do
+      before do
+        channel.update_attributes!(details: [Details::LEADERBOARD])
+      end
+
+      it 'displays leaderboard in a thread' do
+        expect(SecureRandom).to receive(:hex).and_return('thread_id')
+        message_match_recorded = "Match has been recorded! #{challenge.challenged.map(&:display_name).and} resigned against #{challenge.challengers.map(&:display_name).and}."
+        expect(message: '@gamebot resigned', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
+        calls = []
+        expect(channel.slack_client).to have_received(:chat_postMessage).twice do |call|
+          calls << call
+        end
+        expect(calls[0]).to eq({ channel: 'channel', text: message_match_recorded })
+        expect(calls[1]).to eq({ channel: 'channel', text: channel.leaderboard_s, thread_ts: 'thread_id' })
+      end
+    end
+
     it 'resigned with score' do
       expect(message: '@gamebot resigned 15:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         'Cannot score when resigning.'

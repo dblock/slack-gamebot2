@@ -451,6 +451,19 @@ Remove all aliases with `unset aliases`.
 
 Aliases only work in public channels.
 
+#### gamebot set details &lt;elo,leaderboard|none&gt; ...
+
+Use `elo` to display ELO change details when a match being recorded.
+Use `leaderboard` to display a leaderboard in a thread after a match has been recorded.
+
+```
+gamebot set details elo leaderboard
+
+Channel details are now `elo` and `leaderboard`.
+```
+
+Remove all details with `unset details`.
+
 #### gamebot set api on|off
 
 Enable/disable team data in the public API for your team and display team API URL.

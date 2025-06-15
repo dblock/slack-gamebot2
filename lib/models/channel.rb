@@ -15,6 +15,9 @@ class Channel
   field :gifs, type: Boolean, default: true
   field :aliases, type: Array, default: []
 
+  field :details, type: Array, default: []
+  validates :details, inclusion: { in: Details.values }
+
   scope :api, -> { where(api: true) }
   scope :app_home, -> { where(is_app_home: true) }
   field :api, type: Boolean, default: false
@@ -44,6 +47,10 @@ class Channel
     aliases&.any? ? aliases.map { |a| "`#{a}`" }.and : 'not set'
   end
 
+  def details_s
+    details&.any? ? details.map { |a| "`#{a}`" }.and : 'not shown'
+  end
+
   def api_s
     api? ? 'on' : 'off'
   end
@@ -58,6 +65,19 @@ class Channel
 
   def leaderboard_max_s
     leaderboard_max || 'not set'
+  end
+
+  def leaderboard_s(max: nil, reverse: false)
+    max ||= leaderboard_max
+    ranked_players = users.ranked
+    return nil if ranked_players.none?
+
+    ranked_players = ranked_players.send(reverse ? :desc : :asc, :rank)
+    ranked_players = ranked_players.limit(max) if max && max >= 1
+
+    ranked_players.each_with_index.map do |user, index|
+      "#{reverse ? index + 1 : user.rank}. #{user}"
+    end.join("\n")
   end
 
   def slack_mention

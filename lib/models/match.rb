@@ -23,6 +23,7 @@ class Match
   validates_presence_of :channel
   validates_presence_of :team
   validate :validate_team
+  embeds_many :elo_changes
 
   has_and_belongs_to_many :winners, class_name: 'User', inverse_of: nil
   has_and_belongs_to_many :losers, class_name: 'User', inverse_of: nil
@@ -36,10 +37,10 @@ class Match
 
   def to_s
     if resigned?
-      "#{losers.map(&:display_name).and} resigned against #{winners.map(&:display_name).and}"
+      "#{display_names_with_details(losers)} resigned against #{display_names_with_details(winners)}"
     else
       [
-        "#{winners.map(&:display_name).and} #{score_verb} #{losers.map(&:display_name).and}",
+        "#{display_names_with_details(winners)} #{score_verb} #{display_names_with_details(losers)}",
         scores ? "with #{Score.scores_to_string(scores)}" : nil
       ].compact.join(' ')
     end
@@ -82,6 +83,19 @@ class Match
   end
 
   private
+
+  def display_names_with_details(users)
+    if channel.details.include?(Details::ELO)
+      users.map { |user| display_name_with_details(user) }.and
+    else
+      users.map(&:display_name).and
+    end
+  end
+
+  def display_name_with_details(user)
+    delta = elo_changes.detect { |elo_change| elo_change.user == user }
+    delta ? "#{user.display_name} (#{delta})" : user.display_name
+  end
 
   def validate_team
     return if team == channel.team
@@ -159,6 +173,7 @@ class Match
         winner.tau = [winner.tau + 0.5, Elo::MAX_TAU].min
         delta = e * ratio * (Elo::DELTA_TAU**winner.tau) * winners_ratio
         winners_delta << delta
+        elo_changes << EloChange.new(match: self, user: winner, elo: winner.elo, delta: delta)
         winner.elo += delta
       end
 
@@ -167,6 +182,7 @@ class Match
         loser.tau = [loser.tau + 0.5, Elo::MAX_TAU].min
         delta = e * ratio * (Elo::DELTA_TAU**loser.tau) * losers_ratio
         losers_delta << delta
+        elo_changes << EloChange.new(match: self, user: loser, elo: loser.elo, delta: -delta)
         loser.elo -= delta
       end
 

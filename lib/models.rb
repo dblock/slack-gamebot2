@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'models/mixins'
+require_relative 'models/details'
+require_relative 'models/elo_change'
 require_relative 'models/team'
 require_relative 'models/channel'
 require_relative 'models/elo'

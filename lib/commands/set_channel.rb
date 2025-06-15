@@ -72,6 +72,26 @@ module SlackGamebot
         logger.info "UNSET: #{channel} - #{user.user_name}: GIFs are off"
       end
 
+      def set_details(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+
+        if v&.downcase == 'none'
+          channel.update_attributes!(details: [])
+        else
+          channel.update_attributes!(details: v.split(/[\s,;]+/).map { |detail| Details.parse_s(detail) }) unless v.nil?
+        end
+        channel.slack_client.say(channel: data.channel, text: "Match details for #{channel.slack_mention} are #{channel.details_s}.", gif: 'details')
+        logger.info "SET: #{channel} - #{user.user_name}: match details are #{channel.details_s}"
+      end
+
+      def unset_details(channel, data, user)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        channel.update_attributes!(details: [])
+        channel.slack_client.say(channel: data.channel, text: "Match details for #{channel.slack_mention} are not shown.", gif: 'details')
+        logger.info "UNSET: #{channel} - #{user.user_name}: match details are not shown"
+      end
+
       def set_unbalanced(channel, data, user, v)
         raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
 
@@ -200,6 +220,8 @@ module SlackGamebot
           set_elo channel, data, user, v
         when 'aliases'
           set_aliases channel, data, user, v
+        when 'details'
+          set_details channel, data, user, v
         when nil
           set_channel_info channel, data, user
         else
@@ -228,6 +250,8 @@ module SlackGamebot
           unset_elo channel, data, user
         when 'aliases'
           unset_aliases channel, data, user
+        when 'details'
+          unset_details channel, data, user
         when nil
           raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
         else
