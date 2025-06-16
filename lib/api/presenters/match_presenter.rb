@@ -14,6 +14,8 @@ module SlackGamebot
         property :scores, type: Array, desc: 'Match scores.'
         property :created_at, type: DateTime, desc: 'Date/time when the match was created.'
 
+        collection :elo_changes, extend: EloChangePresenter, as: :elo_changes, embedded: true
+
         link :channel do |opts|
           request = Grape::Request.new(opts[:env])
           "#{request.base_url}/api/channels/#{represented.channel.id}" if represented.channel

@@ -8,14 +8,9 @@ describe EloChange do
   let(:match) { Fabricate(:match, channel: channel) }
   let(:elo_change) { described_class.new(match: match, user: user, elo: 100, delta: 25) }
 
-  describe '#new_elo' do
-    it 'returns the sum of elo and delta' do
-      expect(elo_change.new_elo).to eq 125
-    end
-
-    it 'handles negative delta' do
-      elo_change.delta = -25
-      expect(elo_change.new_elo).to eq 75
+  describe '#channel_elo' do
+    it 'returns the sum of elo and channel elo' do
+      expect(elo_change.channel_elo).to eq 100
     end
   end
 
