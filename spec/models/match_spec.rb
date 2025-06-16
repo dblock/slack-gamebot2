@@ -36,7 +36,17 @@ describe Match do
       end
 
       it 'displays match' do
-        expect(match.to_s).to eq "#{match.winners.first.user_name} (0 +48) defeated #{match.losers.first.user_name} (0 -48) with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "#{match.winners.first.user_name} (+48 → 48) defeated #{match.losers.first.user_name} (-48 → -48) with #{Score.scores_to_string(match.scores)}"
+      end
+
+      context 'with base elo' do
+        before do
+          match.channel.update_attributes!(elo: 1000)
+        end
+
+        it 'displays match' do
+          expect(match.to_s).to eq "#{match.winners.first.user_name} (+48 → 1048) defeated #{match.losers.first.user_name} (-48 → 951) with #{Score.scores_to_string(match.scores)}"
+        end
       end
     end
   end
