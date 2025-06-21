@@ -460,7 +460,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'can see details' do
         expect(message: '@gamebot set details', user: user, channel: channel).to respond_with_slack_message(
-          "Match details for #{channel.slack_mention} are not shown."
+          "Match details for #{channel.slack_mention} are `elo`."
         )
       end
     end

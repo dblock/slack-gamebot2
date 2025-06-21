@@ -5,6 +5,10 @@ require 'spec_helper'
 describe SlackGamebot::Commands::Matches do
   include_context 'channel'
 
+  before do
+    channel.update_attributes!(details: [])
+  end
+
   shared_examples_for 'matches' do
     let(:user) { Fabricate(:user, channel: channel, user_name: 'username') }
     let(:singles_challenge) { Fabricate(:challenge, channel: channel, challengers: [user]) }

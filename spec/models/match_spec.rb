@@ -7,7 +7,7 @@ describe Match do
     let(:match) { Fabricate(:match) }
 
     it 'displays match' do
-      expect(match.to_s).to eq "#{match.winners.first.user_name} defeated #{match.losers.first.user_name} with #{Score.scores_to_string(match.scores)}"
+      expect(match.to_s).to eq "#{match.winners.first.user_name} (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
     end
 
     context 'unregistered users' do
@@ -16,7 +16,7 @@ describe Match do
       end
 
       it 'removes user name' do
-        expect(match.to_s).to eq "<unregistered> defeated #{match.losers.first.user_name} with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "<unregistered> (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
       end
     end
 
@@ -26,7 +26,7 @@ describe Match do
       end
 
       it 'rewrites user name' do
-        expect(match.to_s).to eq "bob defeated #{match.losers.first.user_name} with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "bob (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
       end
     end
 
@@ -36,7 +36,7 @@ describe Match do
       end
 
       it 'displays match' do
-        expect(match.to_s).to eq "#{match.winners.first.user_name} (+48 → 48) defeated #{match.losers.first.user_name} (-48 → -48) with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "#{match.winners.first.user_name} (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
       end
 
       context 'with base elo' do

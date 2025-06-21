@@ -15,7 +15,7 @@ describe SlackGamebot::Commands::Draw do
 
     it 'draw' do
       expect(message: '@gamebot draw', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
-        "Match is a draw, waiting to hear from #{challenge.challengers.map(&:display_name).and}."
+        "Match is a draw, waiting to hear from #{challenge.challengers[0].display_name}."
       )
       challenge.reload
       expect(challenge.state).to eq ChallengeState::DRAWN
@@ -24,7 +24,7 @@ describe SlackGamebot::Commands::Draw do
 
     it 'draw with a score' do
       expect(message: '@gamebot draw 2:2', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
-        "Match is a draw, waiting to hear from #{challenge.challengers.map(&:display_name).and}. Recorded the score of 2:2."
+        "Match is a draw, waiting to hear from #{challenge.challengers[0].display_name}. Recorded the score of 2:2."
       )
       challenge.reload
       expect(challenge.state).to eq ChallengeState::DRAWN
@@ -40,7 +40,7 @@ describe SlackGamebot::Commands::Draw do
 
       it 'confirmed' do
         expect(message: '@gamebot draw', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
-          "Match has been recorded! #{challenge.challengers.map(&:display_name).and} tied with #{challenge.challenged.map(&:display_name).and}."
+          "Match has been recorded! #{challenge.challengers[0].display_name} tied with #{challenge.challenged[0].display_name}."
         )
         challenge.reload
         expect(challenge.state).to eq ChallengeState::PLAYED
@@ -54,7 +54,7 @@ describe SlackGamebot::Commands::Draw do
 
         it 'displays leaderboard in a thread' do
           expect(SecureRandom).to receive(:hex).and_return('thread_id')
-          message_match_recorded = "Match has been recorded! #{challenge.challengers.map(&:display_name).and} tied with #{challenge.challenged.map(&:display_name).and}."
+          message_match_recorded = "Match has been recorded! #{challenge.challengers[0].display_name} tied with #{challenge.challenged[0].display_name}."
           expect(message: '@gamebot draw', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
           calls = []
           expect(channel.slack_client).to have_received(:chat_postMessage).twice do |call|
@@ -67,7 +67,7 @@ describe SlackGamebot::Commands::Draw do
 
       it 'with score' do
         expect(message: '@gamebot draw 3:3', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
-          "Match has been recorded! #{challenge.challengers.map(&:display_name).and} tied with #{challenge.challenged.map(&:display_name).and} with the score of 3:3."
+          "Match has been recorded! #{challenge.challengers[0].display_name} tied with #{challenge.challenged[0].display_name} with the score of 3:3."
         )
         challenge.reload
         expect(challenge.match.scores).to eq [[3, 3]]
@@ -81,7 +81,7 @@ describe SlackGamebot::Commands::Draw do
 
       it 'draw with scores' do
         expect(message: '@gamebot draw 21:15 15:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
-          "Match has been recorded! #{challenge.challengers.map(&:display_name).and} tied with #{challenge.challenged.map(&:display_name).and} with the scores of 15:21 21:15."
+          "Match has been recorded! #{challenge.challengers[0].display_name} tied with #{challenge.challenged[0].display_name} with the scores of 15:21 21:15."
         )
         challenge.reload
         expect(challenge.match.scores).to eq [[21, 15], [15, 21]]
@@ -91,7 +91,7 @@ describe SlackGamebot::Commands::Draw do
     it 'draw already confirmed' do
       challenge.draw!(challenge.challenged.first)
       expect(message: '@gamebot draw', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
-        "Match is a draw, still waiting to hear from #{challenge.challengers.map(&:display_name).and}."
+        "Match is a draw, still waiting to hear from #{challenge.challengers[0].display_name}."
       )
     end
 

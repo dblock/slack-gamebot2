@@ -15,7 +15,7 @@ class Channel
   field :gifs, type: Boolean, default: true
   field :aliases, type: Array, default: []
 
-  field :details, type: Array, default: []
+  field :details, type: Array, default: [Details::ELO]
   validates :details, inclusion: { in: Details.values }
 
   scope :api, -> { where(api: true) }

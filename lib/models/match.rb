@@ -93,8 +93,8 @@ class Match
   end
 
   def display_name_with_details(user)
-    delta = elo_changes.detect { |elo_change| elo_change.user == user }
-    delta ? "#{user.display_name} (#{delta})" : user.display_name
+    delta_s = elo_changes.detect { |elo_change| elo_change.user == user }&.to_s
+    delta_s ? "#{user.display_name} (#{delta_s})" : user.display_name
   end
 
   def validate_team
