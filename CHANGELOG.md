@@ -1,5 +1,6 @@
 ### Change Log
 
+* Fix: correct display current `season` with only `lost to` matches  - [@dblock](https://github.com/dblock).
 * Added `set details elo,leaderboard|none` to display after a match has been recorded - [@dblock](https://github.com/dblock).
 * Fix: subscribe and change cc for teams with special characters in name - [@dblock](https://github.com/dblock).
 * [#5](https://github.com/dblock/slack-gamebot2/issues/5): Produce an error when running channel commands in a DM - [@dblock](https://github.com/dblock).

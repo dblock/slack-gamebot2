@@ -14,7 +14,7 @@ class Season
   after_create :archive_challenges!
   after_create :reset_users!
 
-  validate :validate_challenges
+  validate :validate_challenges_and_matches
   validate :validate_channels
   validates_presence_of :channel
   validates_presence_of :team
@@ -67,7 +67,7 @@ class Season
     persisted? ? created_at.strftime('%F') : 'Current'
   end
 
-  def validate_challenges
+  def validate_challenges_and_matches
     return if channel.matches.current.any? || channel.challenges.current.any?
 
     errors.add(:challenges, 'No matches have been recorded.')
