@@ -154,7 +154,7 @@ class Channel
                registered: true
              )
            when nil
-             users.where(user_name: ::Regexp.new("^#{user_name}$", 'i')).first
+             users.where(user_name: ::Regexp.new("^#{Regexp.escape(user_name)}$", 'i')).first
            else
              users.where(user_id: slack_id).first || find_or_create_by_slack_id!(slack_id)
            end

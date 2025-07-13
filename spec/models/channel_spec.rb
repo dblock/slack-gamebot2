@@ -93,6 +93,12 @@ describe Channel do
         expect(channel.find_or_create_by_mention!(user.user_name.capitalize)).to eq user
       end
 
+      it 'finds by username with special regex characters' do
+        special_name = 'nog$()[]{}.*?^|'
+        user.update_attributes!(user_name: special_name)
+        expect(channel.find_or_create_by_mention!(special_name)).to eq user
+      end
+
       it 'creates a new user when ID is known', vcr: { cassette_name: 'users_info' } do
         expect do
           channel.find_or_create_by_mention!('<@nobody>')
