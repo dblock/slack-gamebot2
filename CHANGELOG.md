@@ -1,6 +1,6 @@
 ### Change Log
 
-* [#74](https://github.com/dblock/slack-gamebot2/issues/74): Fix: `RegexpError` for users with special characters - [@dblock](https://github.com/dblock).
+* [#74](https://github.com/dblock/slack-gamebot2/issues/74): Fix: `RegexpError` for users and bot aliases with special characters - [@dblock](https://github.com/dblock).
 * Fix: correct display current `season` with only `lost to` matches - [@dblock](https://github.com/dblock).
 * Added `set details elo,leaderboard|none` to display after a match has been recorded - [@dblock](https://github.com/dblock).
 * Fix: subscribe and change cc for teams with special characters in name - [@dblock](https://github.com/dblock).

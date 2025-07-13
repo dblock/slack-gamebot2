@@ -68,6 +68,29 @@ describe 'events/message' do
         expect(JSON.parse(last_response.body)).to eq('ok' => true)
       end
     end
+
+    context 'with a matching alias containing special regex characters' do
+      before do
+        channel.update_attributes!(aliases: ['game$bot(', 'xy'])
+      end
+
+      let(:event) do
+        {
+          type: 'message',
+          team: team.team_id,
+          user: user.user_id,
+          channel: channel.channel_id,
+          text: 'game$bot( help'
+        }
+      end
+
+      it 'matches message with special character alias' do
+        expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
+        post '/api/slack/event', event_envelope
+        expect(last_response.status).to eq 201
+        expect(JSON.parse(last_response.body)).to eq('ok' => true)
+      end
+    end
   end
 
   context 'message with subtype' do
