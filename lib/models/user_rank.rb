@@ -33,6 +33,6 @@ class UserRank
   end
 
   def to_s
-    "#{user_name}: #{wins} win#{wins == 1 ? '' : 's'}, #{losses} loss#{losses == 1 ? '' : 'es'} (elo: #{channel_elo})"
+    "#{user_name}: #{wins} win#{'s' unless wins == 1}, #{losses} loss#{'es' unless losses == 1} (elo: #{channel_elo})"
   end
 end

@@ -57,11 +57,11 @@ module SlackGamebot
 
         team.update_attributes!(api: v.to_b) unless v.nil?
         message = if team.api && !team.api_token.blank?
-                    "API for team #{team.team_id} is #{v.nil? ? '' : 'now '}on, and the API token is set to `#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
+                    "API for team #{team.team_id} is #{'now ' unless v.nil?}on, and the API token is set to `#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
                   elsif team.api
-                    "API for team #{team.team_id} is #{v.nil? ? '' : 'now '}on, set an API token with _set token xyz_."
+                    "API for team #{team.team_id} is #{'now ' unless v.nil?}on, set an API token with _set token xyz_."
                   else
-                    "API for team #{team.team_id} is #{v.nil? ? '' : 'now '}off."
+                    "API for team #{team.team_id} is #{'now ' unless v.nil?}off."
                   end
 
         team.slack_client.say(channel: data.channel, text: message, gif: 'programmer')
@@ -81,11 +81,11 @@ module SlackGamebot
 
         team.update_attributes!(api_token: v.to_s) unless v.nil?
         message = if team.api && !team.api_token.blank?
-                    "API for team #{team.team_id} is on, and the API token is #{v.nil? ? '' : 'now '}`#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
+                    "API for team #{team.team_id} is on, and the API token is #{'now ' unless v.nil?}`#{team.api_token}`.\nPass it in with an `X-Access-Token` header to #{team.api_url}."
                   elsif team.api && team.api_token.blank?
                     "API for team #{team.team_id} is on, set an API token with _set token xyz_."
                   elsif !team.api && !team.api_token.blank?
-                    "API token for team #{team.team_id} is #{v.nil? ? '' : 'now '}`#{team.api_token}`, but the API is off. Set it on with _set api on_."
+                    "API token for team #{team.team_id} is #{'now ' unless v.nil?}`#{team.api_token}`, but the API is off. Set it on with _set api on_."
                   else
                     "API token for team #{team.team_id} is not set, and the API is off. Set it on with _set api on_ and set a token with _set token xyz_."
                   end
@@ -105,7 +105,7 @@ module SlackGamebot
         raise SlackGamebot::Error, "You're not a team admin, sorry." unless v.nil? || admin.team_admin?
 
         team.update_attributes!(elo: parse_int(v)) unless v.nil?
-        message = "Default base elo is #{v.nil? ? '' : 'now '}#{team.elo}."
+        message = "Default base elo is #{'now ' unless v.nil?}#{team.elo}."
         team.slack_client.say(channel: data.channel, text: message, gif: 'score')
         logger.info "SET: #{team} - #{admin.user_name}: default elo is #{team.elo}"
       end
@@ -125,7 +125,7 @@ module SlackGamebot
           v = parse_int_with_inifinity(v)
           team.update_attributes!(leaderboard_max: v && v != 0 ? v : nil)
         end
-        message = "Default leaderboard max is #{v.nil? ? '' : 'now '}#{team.leaderboard_max || 'not set'}."
+        message = "Default leaderboard max is #{'now ' unless v.nil?}#{team.leaderboard_max || 'not set'}."
         team.slack_client.say(channel: data.channel, text: message, gif: 'count')
         logger.info "SET: #{team} - #{admin.user_name}: default leaderboard max is #{team.leaderboard_max}"
       end
@@ -143,10 +143,10 @@ module SlackGamebot
 
         team.update_attributes!(aliases: v.split(/[\s,;]+/)) unless v.nil?
         if team.aliases.length == 1
-          team.slack_client.say(channel: data.channel, text: "Default bot alias is #{v.nil? ? '' : 'now '}#{team.aliases_s}.", gif: 'name')
+          team.slack_client.say(channel: data.channel, text: "Default bot alias is #{'now ' unless v.nil?}#{team.aliases_s}.", gif: 'name')
           logger.info "SET: #{team} - #{admin.user_name}: Default bot alias is #{team.aliases.and}"
         elsif team.aliases.any?
-          team.slack_client.say(channel: data.channel, text: "Default bot aliases are #{v.nil? ? '' : 'now '}#{team.aliases_s}.", gif: 'name')
+          team.slack_client.say(channel: data.channel, text: "Default bot aliases are #{'now ' unless v.nil?}#{team.aliases_s}.", gif: 'name')
           logger.info "SET: #{team} - #{admin.user_name}: Default bot aliases are #{team.aliases.and}"
         else
           team.slack_client.say(channel: data.channel, text: 'No default bot aliases set.', gif: 'name')

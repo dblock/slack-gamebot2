@@ -31,10 +31,10 @@ module SlackGamebot
         target_user.update_attributes!(nickname: v) unless v.nil?
         if target_user.nickname.blank?
           channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set, #{target_user.user_name}.", gif: 'anonymous')
-          logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : " for #{target_user.user_name}"}is not set"
+          logger.info "SET: #{channel} - #{user.user_name}: nickname #{" for #{target_user.user_name}" unless target_user == user}is not set"
         else
-          channel.slack_client.say(channel: data.channel, text: "Your nickname is #{v.nil? ? '' : 'now '}_#{target_user.nickname}_, #{target_user.slack_mention}.", gif: 'name')
-          logger.info "SET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : " for #{target_user.user_name}"}is #{target_user.nickname}"
+          channel.slack_client.say(channel: data.channel, text: "Your nickname is #{'now ' unless v.nil?}_#{target_user.nickname}_, #{target_user.slack_mention}.", gif: 'name')
+          logger.info "SET: #{channel} - #{user.user_name}: nickname #{" for #{target_user.user_name}" unless target_user == user}is #{target_user.nickname}"
         end
       end
 
@@ -48,8 +48,8 @@ module SlackGamebot
         end
         old_nickname = target_user.nickname
         target_user.update_attributes!(nickname: nil)
-        channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set#{old_nickname.blank? ? '' : ' anymore'}, #{target_user.slack_mention}.", gif: 'anonymous')
-        logger.info "UNSET: #{channel} - #{user.user_name}: nickname #{target_user == user ? '' : " for #{target_user.user_name}"} was #{old_nickname.blank? ? 'not ' : 'un'}set"
+        channel.slack_client.say(channel: data.channel, text: "You don't have a nickname set#{' anymore' unless old_nickname.blank?}, #{target_user.slack_mention}.", gif: 'anonymous')
+        logger.info "UNSET: #{channel} - #{user.user_name}: nickname #{" for #{target_user.user_name}" unless target_user == user} was #{old_nickname.blank? ? 'not ' : 'un'}set"
       end
 
       def set_gifs(channel, data, user, v)

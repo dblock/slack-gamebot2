@@ -13,7 +13,7 @@ module SlackGamebot
       end
 
       def gifs?
-        gifs.nil? ? true : gifs
+        gifs.nil? || gifs
       end
 
       def say(options = {})

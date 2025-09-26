@@ -30,7 +30,7 @@ describe SlackGamebot::Commands::Seasons do
       let!(:seasons) do
         Array.new(2) do |n|
           team.users.all.destroy
-          Array.new((n + 1)) { Fabricate(:match, channel: channel, team: team) }
+          Array.new(n + 1) { Fabricate(:match, channel: channel, team: team) }
           challenge = Fabricate(:challenge, channel: channel, challengers: [team.users.asc(:_id).first], challenged: [team.users.asc(:_id).last])
           Fabricate(:match, channel: channel, challenge: challenge)
           Fabricate(:season, channel: channel)
