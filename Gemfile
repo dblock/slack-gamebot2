@@ -15,6 +15,7 @@ gem 'mongoid-scroll'
 gem 'multi_json'
 gem 'newrelic_rpm'
 gem 'ostruct'
+gem 'puma'
 gem 'rack', '~> 2'
 gem 'rack-robotz'
 gem 'rack-server-pages'
@@ -26,7 +27,6 @@ gem 'slack-ruby-bot-server-events-app-mentions'
 gem 'slack-ruby-client'
 gem 'stripe', '1.58.0'
 gem 'time_ago_in_words'
-gem 'unicorn'
 gem 'wannabe_bool'
 
 group :development, :test do
@@ -58,5 +58,4 @@ group :test do
   gem 'timecop'
   gem 'vcr'
   gem 'webmock'
-  gem 'webrick'
 end
