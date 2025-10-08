@@ -5,8 +5,8 @@
     <script src='https://checkout.stripe.com/checkout.js'></script>
     <link rel='stylesheet' href='https://checkout.stripe.com/v3/checkout/button.css'></link>
     <%
-      team = Team.where(team_id: request['team_id']).first
-      coupon = Stripe::Coupon.retrieve(request[:coupon]) if request[:coupon]
+      team = Team.where(team_id: request.params['team_id']).first
+      coupon = Stripe::Coupon.retrieve(request.params['coupon']) if request.params['coupon']
       subscription_cents = 4999
       subscription_dollars = subscription_cents.to_f / 100
       amount_cents = subscription_cents
