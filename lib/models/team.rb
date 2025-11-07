@@ -31,6 +31,7 @@ class Team
   before_save :update_subscribed_at
   after_update :subscribed!
   after_save :activated!
+  before_destroy :destroy_subscribed_team
 
   def subscription_expired?
     return false if subscribed?
@@ -381,5 +382,9 @@ class Team
       unbalanced: unbalanced,
       leaderboard_max: leaderboard_max
     )
+  end
+
+  def destroy_subscribed_team
+    raise 'cannot destroy a subscribed team' if subscribed?
   end
 end
