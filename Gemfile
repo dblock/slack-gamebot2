@@ -4,7 +4,7 @@ source 'http://rubygems.org'
 
 ruby '3.4.6'
 
-gem 'faraday', '~> 2.9.2'
+gem 'faraday', '~> 2.14.1'
 gem 'hashie', '3.4.6'
 gem 'irb'
 gem 'json'
