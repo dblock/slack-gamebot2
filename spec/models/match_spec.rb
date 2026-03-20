@@ -153,7 +153,7 @@ describe Match do
     context 'two matches against previous losers' do
       let(:challenge1) { Fabricate(:doubles_challenge) }
       let(:challengers) { challenge1.challengers }
-      let(:challenged) { [Fabricate(:user), Fabricate(:user)] }
+      let(:challenged) { [Fabricate(:user, channel: challenge1.channel), Fabricate(:user, channel: challenge1.channel)] }
       let(:match) { Fabricate(:match, challenge: Fabricate(:challenge, challengers: challengers, challenged: challenged)) }
 
       before do
@@ -179,7 +179,7 @@ describe Match do
     context 'a tie against previous losers' do
       let(:challenge1) { Fabricate(:doubles_challenge) }
       let(:challengers) { challenge1.challengers }
-      let(:challenged) { [Fabricate(:user), Fabricate(:user)] }
+      let(:challenged) { [Fabricate(:user, channel: challenge1.channel), Fabricate(:user, channel: challenge1.channel)] }
       let(:match) { Fabricate(:match, challenge: Fabricate(:challenge, challengers: challengers, challenged: challenged), tied: true) }
 
       before do
@@ -205,7 +205,7 @@ describe Match do
     context 'a tie against previous winners' do
       let(:challenge1) { Fabricate(:doubles_challenge) }
       let(:challengers) { challenge1.challengers }
-      let(:challenged) { [Fabricate(:user), Fabricate(:user)] }
+      let(:challenged) { [Fabricate(:user, channel: challenge1.channel), Fabricate(:user, channel: challenge1.channel)] }
       let(:match) { Fabricate(:match, challenge: Fabricate(:challenge, challengers: challengers, challenged: challenged), tied: true) }
 
       before do

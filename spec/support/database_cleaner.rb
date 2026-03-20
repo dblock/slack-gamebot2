@@ -8,6 +8,10 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with :deletion
   end
 
+  config.before do
+    Mongoid.purge!
+  end
+
   config.after :suite do
     Mongoid.purge!
   end

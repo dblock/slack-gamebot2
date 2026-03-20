@@ -38,7 +38,7 @@ describe SlackGamebot::Commands::Seasons do
       end
 
       it 'returns past seasons and current season' do
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message seasons.reverse.map(&:to_s).join("\n")
+        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message seasons.reverse.join("\n")
       end
     end
 
@@ -66,7 +66,7 @@ describe SlackGamebot::Commands::Seasons do
       end
 
       it 'returns past seasons and current season' do
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message [current_season, season1].map(&:to_s).join("\n")
+        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message [current_season, season1].join("\n")
       end
     end
   end
