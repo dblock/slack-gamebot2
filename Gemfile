@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '3.4.6'
+ruby '4.0.2'
 
 gem 'faraday', '~> 2.14.1'
 gem 'hashie', '3.4.6'
