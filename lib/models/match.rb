@@ -150,6 +150,16 @@ class Match
     end
   end
 
+  def score_ratio
+    return 1.0 unless scores?
+
+    loser_points, winner_points = Score.points(scores)
+    total = loser_points + winner_points
+    return 1.0 if total.zero?
+
+    2.0 * winner_points / total
+  end
+
   def calculated_elo
     @calculated_elo ||= begin
       winners_delta = []
@@ -165,7 +175,7 @@ class Match
               elsif tied?
                 0.5 # half the elo in a tie
               else
-                1 # whole elo
+                score_ratio # scales with margin of victory when scores are present
               end
 
       winners.each do |winner|

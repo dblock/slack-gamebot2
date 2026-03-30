@@ -7,7 +7,7 @@ describe Match do
     let(:match) { Fabricate(:match) }
 
     it 'displays match' do
-      expect(match.to_s).to eq "#{match.winners.first.user_name} (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
+      expect(match.to_s).to eq "#{match.winners.first.user_name} (+56) defeated #{match.losers.first.user_name} (-56) with #{Score.scores_to_string(match.scores)}"
     end
 
     context 'unregistered users' do
@@ -16,7 +16,7 @@ describe Match do
       end
 
       it 'removes user name' do
-        expect(match.to_s).to eq "<unregistered> (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "<unregistered> (+56) defeated #{match.losers.first.user_name} (-56) with #{Score.scores_to_string(match.scores)}"
       end
     end
 
@@ -26,7 +26,7 @@ describe Match do
       end
 
       it 'rewrites user name' do
-        expect(match.to_s).to eq "bob (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "bob (+56) defeated #{match.losers.first.user_name} (-56) with #{Score.scores_to_string(match.scores)}"
       end
     end
 
@@ -36,7 +36,7 @@ describe Match do
       end
 
       it 'displays match' do
-        expect(match.to_s).to eq "#{match.winners.first.user_name} (+48) defeated #{match.losers.first.user_name} (-48) with #{Score.scores_to_string(match.scores)}"
+        expect(match.to_s).to eq "#{match.winners.first.user_name} (+56) defeated #{match.losers.first.user_name} (-56) with #{Score.scores_to_string(match.scores)}"
       end
 
       context 'with base elo' do
@@ -45,7 +45,7 @@ describe Match do
         end
 
         it 'displays match' do
-          expect(match.to_s).to eq "#{match.winners.first.user_name} (+48 → 1048) defeated #{match.losers.first.user_name} (-48 → 951) with #{Score.scores_to_string(match.scores)}"
+          expect(match.to_s).to eq "#{match.winners.first.user_name} (+56 → 1056) defeated #{match.losers.first.user_name} (-56 → 943) with #{Score.scores_to_string(match.scores)}"
         end
       end
     end
@@ -56,9 +56,9 @@ describe Match do
       let(:match) { Fabricate(:match) }
 
       it 'updates elo and tau' do
-        expect(match.winners.map(&:elo)).to eq [48]
+        expect(match.winners.map(&:elo)).to eq [56]
         expect(match.winners.map(&:tau)).to eq [0.5]
-        expect(match.losers.map(&:elo)).to eq [-48]
+        expect(match.losers.map(&:elo)).to eq [-56]
         expect(match.losers.map(&:tau)).to eq [0.5]
       end
 
@@ -136,9 +136,9 @@ describe Match do
       let(:match) { Fabricate(:match, challenge: Fabricate(:doubles_challenge)) }
 
       it 'updates elo and tau' do
-        expect(match.winners.map(&:elo)).to eq [48, 48]
+        expect(match.winners.map(&:elo)).to eq [56, 56]
         expect(match.winners.map(&:tau)).to eq [0.5, 0.5]
-        expect(match.losers.map(&:elo)).to eq [-48, -48]
+        expect(match.losers.map(&:elo)).to eq [-56, -56]
         expect(match.losers.map(&:tau)).to eq [0.5, 0.5]
       end
 
@@ -162,9 +162,9 @@ describe Match do
       end
 
       it 'updates elo and tau' do
-        expect(match.winners.map(&:elo)).to eq [5, 5]
+        expect(match.winners.map(&:elo)).to eq [14, 14]
         expect(match.winners.map(&:tau)).to eq [1, 1]
-        expect(match.losers.map(&:elo)).to eq [-55, -55]
+        expect(match.losers.map(&:elo)).to eq [-64, -64]
         expect(match.losers.map(&:tau)).to eq [0.5, 0.5]
       end
 
@@ -240,10 +240,35 @@ describe Match do
       end
 
       it 'updates elo and tau' do
-        expect(match.winners.map(&:elo)).to eq [88, 88]
+        expect(match.winners.map(&:elo)).to eq [95, 95]
         expect(match.winners.map(&:tau)).to eq [1, 1]
-        expect(match.losers.map(&:elo)).to eq [-41, -41]
+        expect(match.losers.map(&:elo)).to eq [-48, -48]
         expect(match.losers.map(&:tau)).to eq [0.5, 0.5]
+      end
+    end
+
+    context 'score-based elo' do
+      let(:channel) { Fabricate(:channel) }
+      let(:winner) { Fabricate(:user, channel: channel) }
+      let(:loser) { Fabricate(:user, channel: channel) }
+
+      def make_match(scores)
+        Match.lose!(team: channel.team, channel: channel, winners: [winner], losers: [loser], scores: scores)
+      end
+
+      it 'awards more elo for a dominant win than a standard win' do
+        match = make_match([[0, 21]])
+        expect(match.winners.map(&:elo).first).to be > 56
+      end
+
+      it 'awards less elo for a close win than a standard win' do
+        match = make_match([[20, 21]])
+        expect(match.winners.map(&:elo).first).to be < 56
+      end
+
+      it 'awards standard elo when no scores given' do
+        match = make_match(nil)
+        expect(match.winners.map(&:elo).first).to eq 48
       end
     end
 
