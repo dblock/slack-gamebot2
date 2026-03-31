@@ -11,6 +11,7 @@ module SlackGamebot
             channel.is_group ? nil : "Bot aliases are #{channel.aliases_s}.",
             "GIFs are #{channel.gifs_s}.",
             "Elo is #{channel.elo}.",
+            "Elo algorithm is #{channel.elo_algorithm_s}.",
             "Leaderboard max is #{channel.leaderboard_max_s}.",
             "Unbalanced challenges are #{channel.unbalanced_s} by default.",
             "Won command is #{channel.won_s}."
@@ -151,10 +152,64 @@ module SlackGamebot
       def set_elo(channel, data, user, v)
         raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
 
-        channel.update_attributes!(elo: parse_int(v)) unless v.nil?
-        message = "Base elo for #{channel.slack_mention} is #{channel.elo}."
-        channel.slack_client.say(channel: data.channel, text: message, gif: 'score')
-        logger.info "SET: #{channel} - #{user.user_name}: ELO is #{channel.elo}"
+        if v
+          k, v = v.split(/\s+/, 2)
+          case k
+          when 'algorithm'
+            set_elo_algorithm channel, data, user, v
+          when 'k'
+            set_elo_k channel, data, user, v
+          when 'decay'
+            set_elo_decay channel, data, user, v
+          else
+            channel.update_attributes!(elo: parse_int(k))
+            message = "Base elo for #{channel.slack_mention} is #{channel.elo}."
+            channel.slack_client.say(channel: data.channel, text: message, gif: 'score')
+            logger.info "SET: #{channel} - #{user.user_name}: ELO is #{channel.elo}"
+          end
+        else
+          message = "Base elo for #{channel.slack_mention} is #{channel.elo}."
+          channel.slack_client.say(channel: data.channel, text: message, gif: 'score')
+          logger.info "SET: #{channel} - #{user.user_name}: ELO is #{channel.elo}"
+        end
+      end
+
+      def set_elo_algorithm(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+
+        if v
+          raise SlackGamebot::Error, "Invalid elo algorithm #{v}, valid options are: #{Elo::ALGORITHMS.join(', ')}." unless Elo::ALGORITHMS.include?(v.downcase)
+          raise SlackGamebot::Error, 'Elo algorithm can only be changed at the start of a new season.' if channel.matches.current.any?
+
+          channel.update_attributes!(elo_algorithm: v.downcase)
+        end
+        channel.slack_client.say(channel: data.channel, text: "Elo algorithm for #{channel.slack_mention} is #{channel.elo_algorithm_s}.", gif: 'score')
+        logger.info "SET: #{channel} - #{user.user_name}: elo algorithm is #{channel.elo_algorithm_s}"
+      end
+
+      def set_elo_k(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+        raise SlackGamebot::Error, 'K can only be set when the elo algorithm is standard.' unless channel.elo_algorithm == 'standard'
+
+        channel.update_attributes!(elo_k: parse_int(v)) if v
+        channel.slack_client.say(channel: data.channel, text: "Elo K for #{channel.slack_mention} is #{channel.elo_k}.", gif: 'score')
+        logger.info "SET: #{channel} - #{user.user_name}: elo K is #{channel.elo_k}"
+      end
+
+      def set_elo_decay(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+        raise SlackGamebot::Error, 'Decay can only be set when the elo algorithm is adaptive.' unless channel.elo_algorithm == 'adaptive'
+
+        if v
+          decay = Float(v)
+          raise SlackGamebot::Error, 'Elo decay must be between 0 and 1.' unless decay.positive? && decay < 1
+
+          channel.update_attributes!(elo_decay: decay)
+        end
+        channel.slack_client.say(channel: data.channel, text: "Elo decay for #{channel.slack_mention} is #{channel.elo_decay}.", gif: 'score')
+        logger.info "SET: #{channel} - #{user.user_name}: elo decay is #{channel.elo_decay}"
+      rescue ArgumentError
+        raise SlackGamebot::Error, "Sorry, #{v} is not a valid number."
       end
 
       def unset_elo(channel, data, user)

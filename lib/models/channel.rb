@@ -10,6 +10,9 @@ class Channel
   field :is_app_home, type: Boolean, default: false
   field :enabled, type: Boolean, default: true
   field :elo, type: Integer, default: 0
+  field :elo_algorithm, type: String, default: 'adaptive'
+  field :elo_k, type: Integer, default: Elo::Standard::DEFAULT_K
+  field :elo_decay, type: Float, default: Elo::Adaptive::DELTA_TAU
   field :won, type: Boolean, default: true
   field :unbalanced, type: Boolean, default: false
   field :leaderboard_max, type: Integer
@@ -50,6 +53,14 @@ class Channel
 
   def details_s
     details&.any? ? details.map { |a| "`#{a}`" }.and : 'not shown'
+  end
+
+  def elo_algorithm_s
+    case elo_algorithm
+    when 'standard' then "#{elo_algorithm} (k=#{elo_k})"
+    when 'adaptive' then "#{elo_algorithm} (decay=#{elo_decay})"
+    else elo_algorithm
+    end
   end
 
   def api_s

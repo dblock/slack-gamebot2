@@ -460,6 +460,39 @@ gamebot set elo 1000
 gamebot unset elo
 ```
 
+#### gamebot set elo algorithm &lt;adaptive|standard&gt;
+
+Set the ELO algorithm. Can only be changed at the start of a new season (no matches recorded yet). The default is `adaptive`.
+
+- **adaptive**: The existing tau-decay system. Each player accumulates a `tau` value with every match played. ELO volatility scales by `decay^tau`, so new players experience larger swings and veterans stabilize over time. Tunable with `set elo decay`.
+- **standard**: The textbook `K * (S - E)` formula with a fixed K-factor. Tunable with `set elo k`.
+
+```
+gamebot set elo algorithm standard
+
+Elo algorithm for #channel is standard (k=32).
+```
+
+#### gamebot set elo k &lt;number&gt;
+
+Set the K-factor for the `standard` algorithm. The default is 32.
+
+```
+gamebot set elo k 16
+
+Elo K for #channel is 16.
+```
+
+#### gamebot set elo decay &lt;number&gt;
+
+Set the decay factor for the `adaptive` algorithm. Must be between 0 and 1. The default is 0.94.
+
+```
+gamebot set elo decay 0.9
+
+Elo decay for #channel is 0.9.
+```
+
 #### gamebot set aliases &lt;alias|none&gt; ...
 
 Set additional aliases for the bot. For example, you could upload a custom emoji for :pong: and set an alias for it.
