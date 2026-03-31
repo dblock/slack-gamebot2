@@ -24,6 +24,7 @@ module SlackGamebot
         challenge <opponent> ... [with <teammate> ...]: challenge opponent(s) to a game
         challenge @here|@channel: challenge anyone to a game
         challenge? <opponent> ... [with <teammate> ...]: show elo at stake
+        challenges: show pending challenges
         accept: accept a challenge
         decline: decline a previous challenge
         cancel: cancel a previous challenge
@@ -47,8 +48,12 @@ module SlackGamebot
         set gifs [on|off], unset gifs: enable/disable animated GIFs, default is on
         set aliases [<alias> ...], unset aliases: set/unset additional bot aliases in public channels
         set elo [number], unset elo: set/unset base elo for the team
+        set elo algorithm [adaptive|standard]: set elo algorithm, only at start of season, default is adaptive
+        set elo decay [number]: set adaptive algorithm decay factor (0-1), default is 0.94
+        set elo k [number]: set standard algorithm K-factor, default is 32
         set api [on|off], unset api: enable/disable team data in the public API, default is off
         set token [token], unset token: set/unset API token
+        set won [on|off], unset won: enable/disable the won command, default is on
         set unbalanced [on|off], unset unbalanced: allow/disallow matches between different numbers of players, default is off
         set details [elo,leaderboard|none]: show match elo details, auto-post a leaderboard in a thread
 

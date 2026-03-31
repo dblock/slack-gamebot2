@@ -172,38 +172,23 @@ class Match
 
   def calculated_elo
     @calculated_elo ||= begin
-      winners_delta = []
-      losers_delta = []
-      winners_elo = Elo.team_elo(winners)
-      losers_elo = Elo.team_elo(losers)
+      algo = channel.elo_algorithm == 'standard' ? Elo::Standard : Elo::Adaptive
+      winners_delta, losers_delta = algo.calculate(
+        winners, losers,
+        tied: tied?,
+        score_ratio: score_ratio,
+        k: channel.elo_k,
+        decay: channel.elo_decay
+      )
 
-      losers_ratio = losers.any? ? [winners.size.to_f / losers.size, 1].min : 1
-      winners_ratio = winners.any? ? [losers.size.to_f / winners.size, 1].min : 1
-
-      ratio = if winners_elo == losers_elo && tied?
-                0 # no elo updates when tied and elo is equal
-              elsif tied?
-                0.5 # half the elo in a tie
-              else
-                score_ratio # scales with margin of victory when scores are present
-              end
-
-      winners.each do |winner|
-        e = 100 - (1.0 / (1.0 + (10.0**((losers_elo - winner.elo) / 400.0))) * 100)
-        winner.tau = [winner.tau + 0.5, Elo::MAX_TAU].min
-        delta = e * ratio * (Elo::DELTA_TAU**winner.tau) * winners_ratio
-        winners_delta << delta
-        elo_changes << EloChange.new(match: self, user: winner, elo: winner.elo, delta: delta)
-        winner.elo += delta
+      winners.each_with_index do |winner, i|
+        elo_changes << EloChange.new(match: self, user: winner, elo: winner.elo, delta: winners_delta[i])
+        winner.elo += winners_delta[i]
       end
 
-      losers.each do |loser|
-        e = 100 - (1.0 / (1.0 + (10.0**((loser.elo - winners_elo) / 400.0))) * 100)
-        loser.tau = [loser.tau + 0.5, Elo::MAX_TAU].min
-        delta = e * ratio * (Elo::DELTA_TAU**loser.tau) * losers_ratio
-        losers_delta << delta
-        elo_changes << EloChange.new(match: self, user: loser, elo: loser.elo, delta: -delta)
-        loser.elo -= delta
+      losers.each_with_index do |loser, i|
+        elo_changes << EloChange.new(match: self, user: loser, elo: loser.elo, delta: -losers_delta[i])
+        loser.elo -= losers_delta[i]
       end
 
       [winners_delta, losers_delta]

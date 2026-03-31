@@ -1,5 +1,6 @@
 ### Change Log
 
+* [#92](https://github.com/dblock/slack-gamebot2/pull/92): Added `set elo algorithm adaptive|standard`, `set elo k` and `set elo decay` — algorithm can only be changed at the start of a new season - [@dblock](https://github.com/dblock).
 * [#91](https://github.com/dblock/slack-gamebot2/pull/91): Added rolling 10-game elo average (`avg`) to rank and leaderboard output - [@dblock](https://github.com/dblock).
 * [#90](https://github.com/dblock/slack-gamebot2/pull/90): Fix: `challenge?` now displays each player's elo stake inline, e.g. `35 elo for @challenger and 48 elo for @opponent` - [@dblock](https://github.com/dblock).
 * [#89](https://github.com/dblock/slack-gamebot2/pull/89): Added `won [against <opponent>] [score, ...]` command with `set won on|off` setting - [@dblock](https://github.com/dblock).

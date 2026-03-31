@@ -342,6 +342,108 @@ describe SlackGamebot::Commands::SetChannel do
           expect(channel.reload.elo).to eq 0
         end
       end
+
+      context 'algorithm' do
+        it 'shows current algorithm' do
+          expect(message: '@gamebot set elo algorithm', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo algorithm for #{channel.slack_mention} is adaptive (decay=0.94)."
+          )
+        end
+
+        it 'switches to standard at start of season' do
+          expect(message: '@gamebot set elo algorithm standard', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo algorithm for #{channel.slack_mention} is standard (k=32)."
+          )
+          expect(channel.reload.elo_algorithm).to eq 'standard'
+        end
+
+        it 'errors when matches exist in current season' do
+          Fabricate(:match, channel: channel)
+          expect(message: '@gamebot set elo algorithm standard', user: captain, channel: channel).to respond_with_slack_message(
+            'Elo algorithm can only be changed at the start of a new season.'
+          )
+          expect(channel.reload.elo_algorithm).to eq 'adaptive'
+        end
+
+        it 'errors on invalid algorithm' do
+          expect(message: '@gamebot set elo algorithm invalid', user: captain, channel: channel).to respond_with_slack_message(
+            'Invalid elo algorithm invalid, valid options are: adaptive, standard.'
+          )
+        end
+
+        it 'errors without captain' do
+          non_captain = Fabricate(:user, channel: channel)
+          expect(message: '@gamebot set elo algorithm standard', user: non_captain, channel: channel).to respond_with_slack_message(
+            "You're not a captain, sorry."
+          )
+        end
+      end
+
+      context 'k' do
+        before do
+          channel.update_attributes!(elo_algorithm: 'standard')
+        end
+
+        it 'shows current k' do
+          expect(message: '@gamebot set elo k', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo K for #{channel.slack_mention} is 32."
+          )
+        end
+
+        it 'sets k' do
+          expect(message: '@gamebot set elo k 16', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo K for #{channel.slack_mention} is 16."
+          )
+          expect(channel.reload.elo_k).to eq 16
+        end
+
+        it 'errors when algorithm is not standard' do
+          channel.update_attributes!(elo_algorithm: 'adaptive')
+          expect(message: '@gamebot set elo k 16', user: captain, channel: channel).to respond_with_slack_message(
+            'K can only be set when the elo algorithm is standard.'
+          )
+        end
+
+        it 'errors on invalid number' do
+          expect(message: '@gamebot set elo k invalid', user: captain, channel: channel).to respond_with_slack_message(
+            'Sorry, invalid is not a valid number.'
+          )
+        end
+      end
+
+      context 'decay' do
+        it 'shows current decay' do
+          expect(message: '@gamebot set elo decay', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo decay for #{channel.slack_mention} is 0.94."
+          )
+        end
+
+        it 'sets decay' do
+          expect(message: '@gamebot set elo decay 0.9', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo decay for #{channel.slack_mention} is 0.9."
+          )
+          expect(channel.reload.elo_decay).to eq 0.9
+        end
+
+        it 'errors when algorithm is not adaptive' do
+          channel.update_attributes!(elo_algorithm: 'standard')
+          expect(message: '@gamebot set elo decay 0.9', user: captain, channel: channel).to respond_with_slack_message(
+            'Decay can only be set when the elo algorithm is adaptive.'
+          )
+        end
+
+        it 'errors when decay is out of range' do
+          expect(message: '@gamebot set elo decay 1.5', user: captain, channel: channel).to respond_with_slack_message(
+            'Elo decay must be between 0 and 1.'
+          )
+        end
+
+        it 'errors on invalid number' do
+          expect(message: '@gamebot set elo decay invalid', user: captain, channel: channel).to respond_with_slack_message(
+            'Sorry, invalid is not a valid number.'
+          )
+        end
+      end
     end
 
     context 'leaderboard max' do
@@ -423,6 +525,7 @@ describe SlackGamebot::Commands::SetChannel do
           'Bot aliases are not set.',
           'GIFs are on.',
           'Elo is 0.',
+          'Elo algorithm is adaptive (decay=0.94).',
           'Leaderboard max is not set.',
           'Unbalanced challenges are off by default.',
           'Won command is on.'
