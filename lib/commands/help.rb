@@ -48,9 +48,10 @@ module SlackGamebot
         set gifs [on|off], unset gifs: enable/disable animated GIFs, default is on
         set aliases [<alias> ...], unset aliases: set/unset additional bot aliases in public channels
         set elo [number], unset elo: set/unset base elo for the team
-        set elo algorithm [adaptive|standard]: set elo algorithm, only at start of season, default is adaptive
+        set elo algorithm [adaptive|standard|glicko|glicko2]: set elo algorithm, only at start of season, default is adaptive
         set elo decay [number]: set adaptive algorithm decay factor (0-1), default is 0.94
         set elo k [number]: set standard algorithm K-factor, default is 32
+        set elo glicko2 tau [number]: set glicko2 system constant τ, default is 0.5
         set api [on|off], unset api: enable/disable team data in the public API, default is off
         set token [token], unset token: set/unset API token
         set won [on|off], unset won: enable/disable the won command, default is on
