@@ -88,13 +88,27 @@ class User
     losses_s = "#{losses} loss#{'es' unless losses == 1}"
     ties_s = "#{ties} tie#{'s' unless ties == 1}" if ties&.positive?
     elo_s = "elo: #{channel_elo}"
+    elo_avg_s = "avg: #{channel_elo_average}" if elo_history.size >= 2
     lws_s = "lws: #{winning_streak}" if winning_streak >= losing_streak && winning_streak >= 3
     lls_s = "lls: #{losing_streak}" if losing_streak > winning_streak && losing_streak >= 3
-    "#{display_name}: #{[wins_s, losses_s, ties_s].compact.join(', ')} (#{[elo_s, lws_s, lls_s].compact.join(', ')})"
+    "#{display_name}: #{[wins_s, losses_s, ties_s].compact.join(', ')} (#{[elo_s, elo_avg_s, lws_s, lls_s].compact.join(', ')})"
   end
 
   def channel_elo
     elo + channel.elo
+  end
+
+  ELO_AVERAGE_WINDOW = 10
+
+  def elo_average
+    window = elo_history.last(ELO_AVERAGE_WINDOW)
+    return elo if window.empty?
+
+    (window.sum.to_f / window.size).round
+  end
+
+  def channel_elo_average
+    elo_average + channel.elo
   end
 
   def promote!

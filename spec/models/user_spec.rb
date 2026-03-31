@@ -13,6 +13,26 @@ describe User do
       expect(user.to_s).to include 'elo: 50'
     end
 
+    context 'with elo history' do
+      before do
+        user.update_attributes!(elo_history: [0, 30, 60, 48])
+      end
+
+      it 'displays elo average' do
+        expect(user.to_s).to include 'avg: 37'
+      end
+    end
+
+    context 'with more than 10 elo history entries' do
+      before do
+        user.update_attributes!(elo_history: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 48])
+      end
+
+      it 'averages only the last 10 entries' do
+        expect(user.to_s).to include 'avg: 61'
+      end
+    end
+
     context 'unregistered user' do
       before do
         user.update_attributes!(registered: false)
@@ -156,6 +176,32 @@ describe User do
       user2 = Fabricate(:user, channel: channel, elo: 40, wins: 4, losses: 0)
       expect(user1.reload.rank).to be_nil
       expect(user2.reload.rank).to eq 1
+    end
+  end
+
+  describe '#elo_average' do
+    let(:user) { Fabricate(:user, channel: channel) }
+
+    it 'returns current elo when history is empty' do
+      user.update_attributes!(elo: 50)
+      user.update_attributes!(elo_history: [])
+      expect(user.elo_average).to eq 50
+    end
+
+    it 'averages all entries when fewer than 10' do
+      user.update_attributes!(elo_history: [0, 40, 80])
+      expect(user.elo_average).to eq 40
+    end
+
+    it 'averages only the last 10 entries' do
+      user.update_attributes!(elo_history: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+      expect(user.elo_average).to eq 55
+    end
+
+    it 'includes channel elo offset in channel_elo_average' do
+      channel.update_attributes!(elo: 1000)
+      user.update_attributes!(elo_history: [0, 40, 80])
+      expect(user.channel_elo_average).to eq 1040
     end
   end
 

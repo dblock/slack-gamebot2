@@ -259,23 +259,23 @@ Get the leaderboard.
 ```
 gamebot leaderboard
 
-1. Victor Barna: 3 wins, 2 losses (elo: 148, lws: 5)
-2. Deng Yaping: 1 win, 3 losses (elo: 24)
-3. Wang Hoe: 0 wins, 1 loss (elo: -12)
+1. Victor Barna: 3 wins, 2 losses (elo: 148, avg: 140, lws: 5)
+2. Deng Yaping: 1 win, 3 losses (elo: 24, avg: 30)
+3. Wang Hoe: 0 wins, 1 loss (elo: -12, avg: -6)
 ```
 
 The leaderboard contains players ranked by [Elo](http://en.wikipedia.org/wiki/Elo_rating_system), use _leaderboard 10_ or _leaderboard infinity_ to see 10 players or all players, respectively. Use `set leaderboard max 3` to limit the default leaderboard size to 3.
 
-The leaderboard also shows the longest winning (lws) and losing (lls) streaks of at least 3.
+The leaderboard also shows the longest winning (lws) and losing (lls) streaks of at least 3, as well as a rolling 10-game elo average (avg) once a player has played at least 2 games.
 
 In case you want to see the leaderboard in reverse order (which would be totally wrong but motivational for people at the bottom of the leaderboard), specify a negative number or `-infinity`:
 
 ```
 gamebot leaderboard -5
 
-1. Wang Hoe: 0 wins, 1 loss (elo: -12)
-2. Deng Yaping: 1 win, 3 losses (elo: 24)
-3. Victor Barna: 3 wins, 2 losses (elo: 148, lws: 5)
+1. Wang Hoe: 0 wins, 1 loss (elo: -12, avg: -6)
+2. Deng Yaping: 1 win, 3 losses (elo: 24, avg: 30)
+3. Victor Barna: 3 wins, 2 losses (elo: 148, avg: 140, lws: 5)
 ```
 
 #### gamebot matches [number|infinity]
@@ -311,8 +311,8 @@ Show the smallest range of ranks for a list of players.  If no user is specified
 ```
 gamebot rank @WangHoe @DengYaping
 
-2. Deng Yaping: 1 win, 3 losses (elo: 24)
-3. Wang Hoe: 0 wins, 1 loss (elo: -12)
+2. Deng Yaping: 1 win, 3 losses (elo: 24, avg: 30)
+3. Wang Hoe: 0 wins, 1 loss (elo: -12, avg: -6)
 ```
 
 #### gamebot promote &lt;player&gt; ...
