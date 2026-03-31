@@ -14,6 +14,8 @@ class User
   field :elo, type: Integer, default: 0
   field :elo_history, type: Array, default: []
   field :tau, type: Float, default: 0
+  field :rd, type: Float, default: Elo::Glicko::DEFAULT_RD
+  field :volatility, type: Float, default: Elo::Glicko2::DEFAULT_VOLATILITY
   field :rank, type: Integer
   field :captain, type: Boolean, default: false
   field :registered, type: Boolean, default: true
@@ -77,6 +79,8 @@ class User
       elo: 0,
       elo_history: [],
       tau: 0,
+      rd: Elo::Glicko::DEFAULT_RD,
+      volatility: Elo::Glicko2::DEFAULT_VOLATILITY,
       rank: nil,
       losing_streak: 0,
       winning_streak: 0

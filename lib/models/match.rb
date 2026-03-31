@@ -172,13 +172,19 @@ class Match
 
   def calculated_elo
     @calculated_elo ||= begin
-      algo = channel.elo_algorithm == 'standard' ? Elo::Standard : Elo::Adaptive
+      algo = case channel.elo_algorithm
+             when 'standard' then Elo::Standard
+             when 'glicko'   then Elo::Glicko
+             when 'glicko2'  then Elo::Glicko2
+             else Elo::Adaptive
+             end
       winners_delta, losers_delta = algo.calculate(
         winners, losers,
         tied: tied?,
         score_ratio: score_ratio,
         k: channel.elo_k,
-        decay: channel.elo_decay
+        decay: channel.elo_decay,
+        glicko2_tau: channel.elo_glicko2_tau
       )
 
       winners.each_with_index do |winner, i|

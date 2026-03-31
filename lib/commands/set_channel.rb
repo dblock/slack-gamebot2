@@ -161,6 +161,9 @@ module SlackGamebot
             set_elo_k channel, data, user, v
           when 'decay'
             set_elo_decay channel, data, user, v
+          when 'glicko2'
+            sub, val = v&.split(/\s+/, 2)
+            set_elo_glicko2 channel, data, user, sub, val
           else
             channel.update_attributes!(elo: parse_int(k))
             message = "Base elo for #{channel.slack_mention} is #{channel.elo}."
@@ -208,6 +211,29 @@ module SlackGamebot
         end
         channel.slack_client.say(channel: data.channel, text: "Elo decay for #{channel.slack_mention} is #{channel.elo_decay}.", gif: 'score')
         logger.info "SET: #{channel} - #{user.user_name}: elo decay is #{channel.elo_decay}"
+      rescue ArgumentError
+        raise SlackGamebot::Error, "Sorry, #{v} is not a valid number."
+      end
+
+      def set_elo_glicko2(channel, data, user, sub_cmd, v)
+        case sub_cmd&.downcase
+        when 'tau' then set_elo_glicko2_tau(channel, data, user, v)
+        else raise SlackGamebot::Error, "Unknown glicko2 parameter #{sub_cmd}, valid options are: tau."
+        end
+      end
+
+      def set_elo_glicko2_tau(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+        raise SlackGamebot::Error, 'Glicko2 τ can only be set when the elo algorithm is glicko2.' unless channel.elo_algorithm == 'glicko2'
+
+        if v
+          tau = Float(v)
+          raise SlackGamebot::Error, 'Glicko2 τ must be positive.' unless tau.positive?
+
+          channel.update_attributes!(elo_glicko2_tau: tau)
+        end
+        channel.slack_client.say(channel: data.channel, text: "Glicko2 τ for #{channel.slack_mention} is #{channel.elo_glicko2_tau}.", gif: 'score')
+        logger.info "SET: #{channel} - #{user.user_name}: elo glicko2 tau is #{channel.elo_glicko2_tau}"
       rescue ArgumentError
         raise SlackGamebot::Error, "Sorry, #{v} is not a valid number."
       end

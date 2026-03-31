@@ -13,6 +13,7 @@ class Channel
   field :elo_algorithm, type: String, default: 'adaptive'
   field :elo_k, type: Integer, default: Elo::Standard::DEFAULT_K
   field :elo_decay, type: Float, default: Elo::Adaptive::DELTA_TAU
+  field :elo_glicko2_tau, type: Float, default: Elo::Glicko2::DEFAULT_TAU
   field :won, type: Boolean, default: true
   field :unbalanced, type: Boolean, default: false
   field :leaderboard_max, type: Integer
@@ -59,6 +60,7 @@ class Channel
     case elo_algorithm
     when 'standard' then "#{elo_algorithm} (k=#{elo_k})"
     when 'adaptive' then "#{elo_algorithm} (decay=#{elo_decay})"
+    when 'glicko2'  then "#{elo_algorithm} (τ=#{elo_glicko2_tau})"
     else elo_algorithm
     end
   end

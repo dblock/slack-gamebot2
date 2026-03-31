@@ -460,17 +460,25 @@ gamebot set elo 1000
 gamebot unset elo
 ```
 
-#### gamebot set elo algorithm &lt;adaptive|standard&gt;
+#### gamebot set elo algorithm &lt;adaptive|standard|glicko|glicko2&gt;
 
 Set the ELO algorithm. Can only be changed at the start of a new season (no matches recorded yet). The default is `adaptive`.
 
 - **adaptive**: The existing tau-decay system. Each player accumulates a `tau` value with every match played. ELO volatility scales by `decay^tau`, so new players experience larger swings and veterans stabilize over time. Tunable with `set elo decay`.
 - **standard**: The textbook `K * (S - E)` formula with a fixed K-factor. Tunable with `set elo k`.
+- **glicko**: The [Glicko-1 system](http://www.glicko.net/glicko/glicko.pdf) (Glickman, 1995). Each player has a rating deviation (RD) that reflects the uncertainty of their rating. RD shrinks as more games are played and grows during inactivity. Higher RD means larger rating swings.
+- **glicko2**: The [Glicko-2 system](http://www.glicko.net/glicko/glicko2.pdf) (Glickman, 2001). Extends Glicko by adding per-player volatility (σ), which measures consistency of performance. The system constant τ controls how quickly volatility can change. Tunable with `set elo glicko2 tau`.
 
 ```
 gamebot set elo algorithm standard
 
 Elo algorithm for #channel is standard (k=32).
+```
+
+```
+gamebot set elo algorithm glicko2
+
+Elo algorithm for #channel is glicko2 (τ=0.5).
 ```
 
 #### gamebot set elo k &lt;number&gt;
@@ -491,6 +499,16 @@ Set the decay factor for the `adaptive` algorithm. Must be between 0 and 1. The 
 gamebot set elo decay 0.9
 
 Elo decay for #channel is 0.9.
+```
+
+#### gamebot set elo glicko2 tau &lt;number&gt;
+
+Set the system constant τ for the `glicko2` algorithm. Controls how much a player's volatility (σ) can change per match. Smaller values restrict volatility changes; larger values allow more dramatic swings. Must be positive. The default is 0.5.
+
+```
+gamebot set elo glicko2 tau 0.3
+
+Glicko2 τ for #channel is 0.3.
 ```
 
 #### gamebot set aliases &lt;alias|none&gt; ...

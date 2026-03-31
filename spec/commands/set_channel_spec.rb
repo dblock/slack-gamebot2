@@ -367,8 +367,22 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors on invalid algorithm' do
           expect(message: '@gamebot set elo algorithm invalid', user: captain, channel: channel).to respond_with_slack_message(
-            'Invalid elo algorithm invalid, valid options are: adaptive, standard.'
+            'Invalid elo algorithm invalid, valid options are: adaptive, standard, glicko, glicko2.'
           )
+        end
+
+        it 'switches to glicko at start of season' do
+          expect(message: '@gamebot set elo algorithm glicko', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo algorithm for #{channel.slack_mention} is glicko."
+          )
+          expect(channel.reload.elo_algorithm).to eq 'glicko'
+        end
+
+        it 'switches to glicko2 at start of season' do
+          expect(message: '@gamebot set elo algorithm glicko2', user: captain, channel: channel).to respond_with_slack_message(
+            "Elo algorithm for #{channel.slack_mention} is glicko2 (τ=0.5)."
+          )
+          expect(channel.reload.elo_algorithm).to eq 'glicko2'
         end
 
         it 'errors without captain' do
@@ -440,6 +454,44 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors on invalid number' do
           expect(message: '@gamebot set elo decay invalid', user: captain, channel: channel).to respond_with_slack_message(
+            'Sorry, invalid is not a valid number.'
+          )
+        end
+      end
+
+      context 'glicko2 tau' do
+        before do
+          channel.update_attributes!(elo_algorithm: 'glicko2')
+        end
+
+        it 'shows current tau' do
+          expect(message: '@gamebot set elo glicko2 tau', user: captain, channel: channel).to respond_with_slack_message(
+            "Glicko2 τ for #{channel.slack_mention} is 0.5."
+          )
+        end
+
+        it 'sets tau' do
+          expect(message: '@gamebot set elo glicko2 tau 0.3', user: captain, channel: channel).to respond_with_slack_message(
+            "Glicko2 τ for #{channel.slack_mention} is 0.3."
+          )
+          expect(channel.reload.elo_glicko2_tau).to eq 0.3
+        end
+
+        it 'errors when algorithm is not glicko2' do
+          channel.update_attributes!(elo_algorithm: 'adaptive')
+          expect(message: '@gamebot set elo glicko2 tau 0.3', user: captain, channel: channel).to respond_with_slack_message(
+            'Glicko2 τ can only be set when the elo algorithm is glicko2.'
+          )
+        end
+
+        it 'errors when tau is not positive' do
+          expect(message: '@gamebot set elo glicko2 tau 0', user: captain, channel: channel).to respond_with_slack_message(
+            'Glicko2 τ must be positive.'
+          )
+        end
+
+        it 'errors on invalid number' do
+          expect(message: '@gamebot set elo glicko2 tau invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Sorry, invalid is not a valid number.'
           )
         end
