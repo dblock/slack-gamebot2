@@ -16,6 +16,16 @@ describe SlackGamebot::Commands::ChallengeQuestion do
     end.not_to change(Challenge, :count)
   end
 
+  it 'displays challenger elo first when stakes differ due to different tau values' do
+    experienced_user = Fabricate(:user, channel: channel, user_name: 'veteran', tau: 5.0)
+    fresh_opponent = Fabricate(:user, channel: channel)
+    expect do
+      expect(message: "@gamebot challenge? <@#{fresh_opponent.user_id}>", user: experienced_user, channel: channel).to respond_with_slack_message(
+        "#{experienced_user.slack_mention} challenging #{fresh_opponent.slack_mention} to a match is worth 35 elo for #{experienced_user.slack_mention} and 48 elo for #{fresh_opponent.slack_mention}."
+      )
+    end.not_to change(Challenge, :count)
+  end
+
   it 'displays elo at stake for a doubles challenge' do
     opponent2 = Fabricate(:user, channel: channel)
     teammate = Fabricate(:user, channel: channel)
@@ -31,12 +41,12 @@ describe SlackGamebot::Commands::ChallengeQuestion do
       channel.update_attributes!(unbalanced: true)
     end
 
-    it 'displays elo at stake with different number of opponents' do
+    it 'displays elo at stake with different number of opponents, challenger first' do
       opponent1 = Fabricate(:user, channel: channel)
       opponent2 = Fabricate(:user, channel: channel)
       expect do
         expect(message: "@gamebot challenge? #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
-          "#{user.slack_mention} challenging #{opponent1.slack_mention} and #{opponent2.slack_mention} to a match is worth 24 and 48 elo."
+          "#{user.slack_mention} challenging #{opponent1.slack_mention} and #{opponent2.slack_mention} to a match is worth 48 elo for #{user.slack_mention} and 24 elo for #{opponent1.slack_mention} and #{opponent2.slack_mention}."
         )
       end.not_to change(Challenge, :count)
     end

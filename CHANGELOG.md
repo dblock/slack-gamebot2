@@ -1,5 +1,6 @@
 ### Change Log
 
+* [#90](https://github.com/dblock/slack-gamebot2/pull/90): Fix: `challenge?` now displays each player's elo stake inline, e.g. `35 elo for @challenger and 48 elo for @opponent` - [@dblock](https://github.com/dblock).
 * [#89](https://github.com/dblock/slack-gamebot2/pull/89): Added `won [against <opponent>] [score, ...]` command with `set won on|off` setting - [@dblock](https://github.com/dblock).
 * [#88](https://github.com/dblock/slack-gamebot2/pull/88): Improved ELO math to scale with score margin - [@dblock](https://github.com/dblock).
 * [#74](https://github.com/dblock/slack-gamebot2/issues/74): Fix: `RegexpError` for users and bot aliases with special characters - [@dblock](https://github.com/dblock).

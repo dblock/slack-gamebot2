@@ -9,7 +9,16 @@ module SlackGamebot
         arguments = data.match['expression'].split.reject(&:blank?) if data.match['expression']
         challenge = ::Challenge.new_from_teammates_and_opponents(challenger, arguments || [])
         match = ::Match.new(team: challenger.channel.team, channel: challenger.channel, winners: challenge.challengers, losers: challenge.challenged, scores: [])
-        channel.slack_client.say(channel: data.channel, text: "#{challenge.challengers.map(&:slack_mention).and} challenging #{challenge.challenged.map(&:slack_mention).and} to a match is worth #{match.elo_s} elo.", gif: 'challenge')
+        challengers_mention = challenge.challengers.map(&:slack_mention).and
+        challenged_mention = challenge.challenged.map(&:slack_mention).and
+        challengers_elo = match.winners_elo_s
+        challenged_elo = match.losers_elo_s
+        elo_text = if challengers_elo == challenged_elo
+                     "#{challengers_elo} elo"
+                   else
+                     "#{challengers_elo} elo for #{challengers_mention} and #{challenged_elo} elo for #{challenged_mention}"
+                   end
+        channel.slack_client.say(channel: data.channel, text: "#{challengers_mention} challenging #{challenged_mention} to a match is worth #{elo_text}.", gif: 'challenge')
         logger.info "CHALLENGE?: #{channel} - #{challenge}"
       end
     end

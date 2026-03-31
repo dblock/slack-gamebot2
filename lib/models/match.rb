@@ -82,6 +82,16 @@ class Match
     end
   end
 
+  def winners_elo_s
+    winners_delta, = calculated_elo
+    winners_delta.same? ? winners_delta.first.to_i.to_s : winners_delta.map(&:to_i).and
+  end
+
+  def losers_elo_s
+    _, losers_delta = calculated_elo
+    losers_delta.same? ? losers_delta.first.to_i.to_s : losers_delta.map(&:to_i).and
+  end
+
   private
 
   def display_names_with_details(users)
@@ -196,7 +206,7 @@ class Match
         loser.elo -= delta
       end
 
-      [losers_delta, winners_delta]
+      [winners_delta, losers_delta]
     end
   end
 
