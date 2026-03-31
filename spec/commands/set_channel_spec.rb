@@ -84,6 +84,46 @@ describe SlackGamebot::Commands::SetChannel do
       end
     end
 
+    context 'won' do
+      it 'shows current value of won on' do
+        channel.update_attributes!(won: true)
+        expect(message: '@gamebot set won', user: captain, channel: channel).to respond_with_slack_message(
+          "Won command for #{channel.slack_mention} is on!"
+        )
+      end
+
+      it 'shows current value of won off' do
+        channel.update_attributes!(won: false)
+        expect(message: '@gamebot set won', user: captain, channel: channel).to respond_with_slack_message(
+          "Won command for #{channel.slack_mention} is off."
+        )
+      end
+
+      it 'enables won' do
+        channel.update_attributes!(won: false)
+        expect(message: '@gamebot set won on', user: captain, channel: channel).to respond_with_slack_message(
+          "Won command for #{channel.slack_mention} is on!"
+        )
+        expect(channel.reload.won).to be true
+      end
+
+      it 'disables won with set' do
+        channel.update_attributes!(won: true)
+        expect(message: '@gamebot set won off', user: captain, channel: channel).to respond_with_slack_message(
+          "Won command for #{channel.slack_mention} is off."
+        )
+        expect(channel.reload.won).to be false
+      end
+
+      it 'disables won with unset' do
+        channel.update_attributes!(won: true)
+        expect(message: '@gamebot unset won', user: captain, channel: channel).to respond_with_slack_message(
+          "Won command for #{channel.slack_mention} is off."
+        )
+        expect(channel.reload.won).to be false
+      end
+    end
+
     context 'api' do
       it 'shows current value of API on' do
         channel.update_attributes!(api: true)
@@ -363,13 +403,13 @@ describe SlackGamebot::Commands::SetChannel do
     context 'invalid' do
       it 'errors set' do
         expect(message: '@gamebot set invalid on', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
+          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
         )
       end
 
       it 'errors unset' do
         expect(message: '@gamebot unset invalid', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
+          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
         )
       end
     end
@@ -384,7 +424,8 @@ describe SlackGamebot::Commands::SetChannel do
           'GIFs are on.',
           'Elo is 0.',
           'Leaderboard max is not set.',
-          'Unbalanced challenges are off by default.'
+          'Unbalanced challenges are off by default.',
+          'Won command is on.'
         ].join("\n"))
       end
 

@@ -106,8 +106,6 @@ Record your loss.
 
 ![](screenshots/lost.gif)
 
-You cannot record a win.
-
 Record your loss with a score, loser first.
 
 ```
@@ -147,6 +145,34 @@ gamebot lost to @WangHoe @ZhangJike with @DengYaping 5:21
 
 Match has been recorded! Wang Hoe and Zhang Jike defeated Victor Barna and Deng Yaping with the score of 21:5.
 ```
+
+#### gamebot won [against &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]
+
+Record your win. Scores are entered in winner:loser order.
+
+```
+gamebot won 21:5
+
+Match has been recorded! Wang Hoe crushed Victor Barna with the score of 21:5.
+```
+
+You can record a win without a challenge.
+
+```
+gamebot won against @VictorBarna 21:15
+
+Match has been recorded! Wang Hoe defeated Victor Barna with the score of 21:15.
+```
+
+You can also record wins with multiple players.
+
+```
+gamebot won against @WangHoe @ZhangJike with @DengYaping 21:5
+
+Match has been recorded! Victor Barna and Deng Yaping defeated Wang Hoe and Zhang Jike with the score of 21:5.
+```
+
+Use `set won off` to disable this command if you're concerned about players claiming wins they didn't actually win.
 
 #### gamebot draw [score ...]
 
@@ -490,6 +516,16 @@ Allow unbalanced challenges with different numbers of opponents.
 gamebot set unbalanced on
 
 Unbalanced challenges are now on!
+```
+
+#### gamebot set won on|off
+
+Enable or disable the `won` command. New channels have it enabled by default.
+
+```
+gamebot set won off
+
+Won command for #channel is off.
 ```
 
 #### gamebot subscription

@@ -12,7 +12,8 @@ module SlackGamebot
             "GIFs are #{channel.gifs_s}.",
             "Elo is #{channel.elo}.",
             "Leaderboard max is #{channel.leaderboard_max_s}.",
-            "Unbalanced challenges are #{channel.unbalanced_s} by default."
+            "Unbalanced challenges are #{channel.unbalanced_s} by default.",
+            "Won command is #{channel.won_s}."
           ].compact.join("\n"),
           gif: 'settings'
         )
@@ -90,6 +91,22 @@ module SlackGamebot
         channel.update_attributes!(details: [])
         channel.slack_client.say(channel: data.channel, text: "Match details for #{channel.slack_mention} are not shown.", gif: 'details')
         logger.info "UNSET: #{channel} - #{user.user_name}: match details are not shown"
+      end
+
+      def set_won(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+
+        channel.update_attributes!(won: v.to_b) unless v.nil?
+        channel.slack_client.say(channel: data.channel, text: "Won command for #{channel.slack_mention} is #{channel.won? ? 'on!' : 'off.'}", gif: 'winner')
+        logger.info "SET: #{channel} - #{user.user_name}: won command is #{channel.won? ? 'on' : 'off'}"
+      end
+
+      def unset_won(channel, data, user)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        channel.update_attributes!(won: false)
+        channel.slack_client.say(channel: data.channel, text: "Won command for #{channel.slack_mention} is off.", gif: 'winner')
+        logger.info "UNSET: #{channel} - #{user.user_name}: won command is off"
       end
 
       def set_unbalanced(channel, data, user, v)
@@ -214,6 +231,8 @@ module SlackGamebot
           end
         when 'unbalanced'
           set_unbalanced channel, data, user, v
+        when 'won'
+          set_won channel, data, user, v
         when 'api'
           set_api channel, data, user, v
         when 'elo'
@@ -225,7 +244,7 @@ module SlackGamebot
         when nil
           set_channel_info channel, data, user
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_ and _aliases_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_ and _aliases_."
         end
       end
 
@@ -244,6 +263,8 @@ module SlackGamebot
           end
         when 'unbalanced'
           unset_unbalanced channel, data, user
+        when 'won'
+          unset_won channel, data, user
         when 'api'
           unset_api channel, data, user
         when 'elo'
@@ -255,7 +276,7 @@ module SlackGamebot
         when nil
           raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_."
         end
       end
     end

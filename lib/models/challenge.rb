@@ -103,6 +103,25 @@ class Challenge
     update_attributes!(updated_by: challenger, state: ChallengeState::CANCELED)
   end
 
+  def win!(winner, scores = nil)
+    raise SlackGamebot::Error, 'Challenge must first be accepted.' if state == ChallengeState::PROPOSED
+    raise SlackGamebot::Error, "Challenge has already been #{state}." unless state == ChallengeState::ACCEPTED
+
+    winners, losers = winners_and_losers_for_win(winner)
+    Match.lose!(team: channel.team, channel: channel, challenge: self, winners: winners, losers: losers, scores: scores)
+    update_attributes!(state: ChallengeState::PLAYED)
+  end
+
+  def winners_and_losers_for_win(winner)
+    if challengers.include?(winner)
+      [challengers, challenged]
+    elsif challenged.include?(winner)
+      [challenged, challengers]
+    else
+      raise SlackGamebot::Error, "Only #{(challenged + challengers).map(&:user_name).or} can win this challenge."
+    end
+  end
+
   def lose!(loser, scores = nil)
     raise SlackGamebot::Error, 'Challenge must first be accepted.' if state == ChallengeState::PROPOSED
     raise SlackGamebot::Error, "Challenge has already been #{state}." unless state == ChallengeState::ACCEPTED

@@ -14,6 +14,7 @@ require_relative 'commands/info'
 require_relative 'commands/rank'
 require_relative 'commands/leaderboard'
 require_relative 'commands/lost'
+require_relative 'commands/won'
 require_relative 'commands/resigned'
 require_relative 'commands/draw'
 require_relative 'commands/register'
@@ -48,6 +49,7 @@ SlackRubyBotServer::Events::AppMentions.configure do |config|
     SlackGamebot::Commands::Unsubscribe,
     SlackGamebot::Commands::Reset,
     SlackGamebot::Commands::Set,
+    SlackGamebot::Commands::Won,
     SlackGamebot::Commands::Leaderboard,
     SlackGamebot::Commands::Promote,
     SlackGamebot::Commands::Demote,
