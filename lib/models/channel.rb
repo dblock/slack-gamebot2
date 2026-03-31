@@ -10,6 +10,7 @@ class Channel
   field :is_app_home, type: Boolean, default: false
   field :enabled, type: Boolean, default: true
   field :elo, type: Integer, default: 0
+  field :won, type: Boolean, default: true
   field :unbalanced, type: Boolean, default: false
   field :leaderboard_max, type: Integer
   field :gifs, type: Boolean, default: true
@@ -57,6 +58,10 @@ class Channel
 
   def gifs_s
     gifs? ? 'on' : 'off'
+  end
+
+  def won_s
+    won? ? 'on' : 'off'
   end
 
   def unbalanced_s

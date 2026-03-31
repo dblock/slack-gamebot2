@@ -28,6 +28,7 @@ module SlackGamebot
         decline: decline a previous challenge
         cancel: cancel a previous challenge
         lost [to <opponent>] [score, ...]: record your loss
+        won [against <opponent>] [score, ...]: record your win
         resigned [to <opponent>]: record a resignation
         draw [to <opponent>] [score, ...]: record a tie
         taunt <opponent> [<opponent> ...]: taunt players
