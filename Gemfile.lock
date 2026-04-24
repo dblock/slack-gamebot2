@@ -76,7 +76,7 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
-    erb (6.0.2)
+    erb (6.0.4)
     excon (1.4.1)
       logger
     fabrication (3.0.0)
