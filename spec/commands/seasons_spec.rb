@@ -71,6 +71,30 @@ describe SlackGamebot::Commands::Seasons do
     end
   end
 
+  context 'dm channel' do
+    include_context 'subscribed team'
+
+    it 'ignores seasons in a DM' do
+      allow(Team).to receive(:where).with(team_id: team.team_id).and_return([team])
+      allow(team.slack_client).to receive(:chat_postMessage)
+      expect do
+        SlackRubyBotServer::Events.config.run_callbacks(
+          :event,
+          %w[event_callback app_mention],
+          Slack::Messages::Message.new(
+            'team_id' => team.team_id,
+            'event' => {
+              'user' => 'user_id',
+              'channel' => 'D0AUHTSA763',
+              'text' => '@gamebot seasons'
+            }
+          )
+        )
+      end.not_to raise_error
+      expect(team.slack_client).not_to have_received(:chat_postMessage)
+    end
+  end
+
   context 'subscribed team' do
     let!(:team) { Fabricate(:team, subscribed: true) }
 
