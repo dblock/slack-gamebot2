@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/04/25: Fix: `NoMethodError: undefined method 'team' for nil` when channel commands (e.g. `seasons`) are invoked in a DM - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/04/20: Raise a descriptive error when Slack OAuth returns `ok: false`, or when an Enterprise Grid install is attempted - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * [#93](https://github.com/dblock/slack-gamebot2/pull/93): Added `set elo algorithm glicko|glicko2` and `set elo glicko2 tau` — Glicko-1 and Glicko-2 rating algorithms - [@dblock](https://github.com/dblock).
 * [#92](https://github.com/dblock/slack-gamebot2/pull/92): Added `set elo algorithm adaptive|standard`, `set elo k` and `set elo decay` — algorithm can only be changed at the start of a new season - [@dblock](https://github.com/dblock).
