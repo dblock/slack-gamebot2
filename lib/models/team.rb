@@ -252,7 +252,7 @@ class Team
     end
   end
 
-  def find_create_or_updae_admin_by_slack_id!(slack_id)
+  def find_create_or_update_admin_by_slack_id!(slack_id)
     instance = admins.where(user_id: slack_id).first
     users_info = begin
       slack_client.users_info(user: slack_id)

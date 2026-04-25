@@ -13,7 +13,7 @@ module SlackGamebot
             subscribe_command(*values) do |data|
               team = data.team
               if data.channel[0] == 'D'
-                admin = team.find_create_or_updae_admin_by_slack_id!(data.user)
+                admin = team.find_create_or_update_admin_by_slack_id!(data.user)
                 if admin
                   yield nil, admin, data
                 else

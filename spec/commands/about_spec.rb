@@ -12,6 +12,30 @@ describe SlackGamebot::Commands::About do
       expect(message: 'about', channel: 'DM', user: admin.user_id).to respond_with_slack_message(SlackGamebot::INFO)
     end
 
+    context 'with a new user' do
+      let(:user_id) { 'U_new' }
+
+      before do
+        allow_any_instance_of(Slack::Web::Client).to receive(:users_info).with(user: user_id).and_return(
+          Slack::Messages::Message.new('ok' => true, 'user' => { 'id' => user_id, 'name' => 'newuser', 'is_admin' => false, 'is_owner' => false })
+        )
+      end
+
+      it 'creates an admin record' do
+        expect do
+          expect(message: 'about', channel: 'DM', user: user_id).to respond_with_slack_message(SlackGamebot::INFO)
+        end.to change(Admin, :count).by(1)
+      end
+
+      it 'creates the admin record with is_admin false' do
+        expect(message: 'about', channel: 'DM', user: user_id).to respond_with_slack_message(SlackGamebot::INFO)
+        admin = Admin.find_by(user_id: user_id)
+        expect(admin.user_name).to eq 'newuser'
+        expect(admin.is_admin).to be false
+        expect(admin.is_owner).to be false
+      end
+    end
+
     context 'subscription expiration' do
       before do
         team.update_attributes!(subscribed: false, created_at: 3.weeks.ago)

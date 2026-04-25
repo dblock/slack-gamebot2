@@ -519,13 +519,13 @@ describe Team do
     end
   end
 
-  describe '#find_create_or_updae_admin_by_slack_id!', vcr: { cassette_name: 'users_info' } do
+  describe '#find_create_or_update_admin_by_slack_id!', vcr: { cassette_name: 'users_info' } do
     let(:team) { Fabricate(:team) }
 
     context 'without a user' do
       it 'creates an admin' do
         expect do
-          admin = team.find_create_or_updae_admin_by_slack_id!('U42')
+          admin = team.find_create_or_update_admin_by_slack_id!('U42')
           expect(admin).not_to be_nil
           expect(admin.user_id).to eq 'U42'
           expect(admin.user_name).to eq 'username'
@@ -538,13 +538,13 @@ describe Team do
 
       it 'creates another user' do
         expect do
-          team.find_create_or_updae_admin_by_slack_id!('U42')
+          team.find_create_or_update_admin_by_slack_id!('U42')
         end.to change(Admin, :count).by(1)
       end
 
       it 'updates the username of the existing user' do
         expect do
-          team.find_create_or_updae_admin_by_slack_id!(admin.user_id)
+          team.find_create_or_update_admin_by_slack_id!(admin.user_id)
         end.not_to change(Admin, :count)
         expect(admin.reload.user_name).to eq 'username'
       end
