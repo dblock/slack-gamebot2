@@ -68,6 +68,18 @@ module SlackGamebot
         unregister <player>: remove a player from the leaderboard
         subscription: show subscription info (captains also see payment data)
         unsubscribe: do not auto-renew subscription
+
+        DMs
+        ---
+        hi: be nice, say hi to your bot
+        help: get this helpful message
+        info: bot credits
+        about: show bot info
+        channels: show all channels with current season stats
+        set [options]: set team options (same as in a channel, without a channel prefix)
+        unset [options]: unset team options
+        subscription: show subscription info
+        unsubscribe: do not auto-renew subscription
         ```
       EOS
 

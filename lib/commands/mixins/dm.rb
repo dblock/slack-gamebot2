@@ -12,8 +12,7 @@ module SlackGamebot
             subscribe_command(*values) do |data|
               team = data.team
               if data && data.channel[0] == 'D'
-                admin = team.find_create_or_update_admin_by_slack_id!(data.channel, data.user)
-                yield admin, data
+                yield team, data
               else
                 team.slack_client.say(channel: data.channel, text: 'Please run this command in a DM.')
               end
