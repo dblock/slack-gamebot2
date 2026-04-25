@@ -314,14 +314,14 @@ class Team
     channel || false
   end
 
-  private
-
   INSTALLED_TEXT = [
     "Hi there! I'm your team's Leaderboard Gamebot.",
     "I don't play actual games, but I'll be keeping your leaderboards.",
     'Thanks for trying me out. To start, invite me to a channel.',
     'You can always DM me `help` for instructions.'
   ].join("\n")
+
+  private
 
   SUBSCRIBED_TEXT = [
     "Hi there! I'm your team's Leaderboard Gamebot.",
@@ -330,6 +330,12 @@ class Team
     'Follow us on X at https://twitter.com/playplayio for news and updates.',
     'Thanks for being a customer!'
   ].join("\n")
+
+  def welcome_dm!
+    channel = slack_client.conversations_open(users: activated_user_id)
+    logger.info "Sending welcome DM to #{activated_user_id} for #{self}."
+    slack_client.chat_postMessage(text: INSTALLED_TEXT, channel: channel.channel.id, as_user: true)
+  end
 
   def subscribed!
     return unless subscribed? && (subscribed_changed? || saved_change_to_subscribed?)
@@ -341,7 +347,7 @@ class Team
     return unless active? && activated_user_id && bot_user_id
     return unless active_changed? || activated_user_id_changed? || saved_change_to_active? || saved_change_to_activated_user_id?
 
-    inform! INSTALLED_TEXT
+    welcome_dm!
   end
 
   def update_subscribed_at
