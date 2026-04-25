@@ -218,7 +218,40 @@ describe Team do
   end
 
   describe '#activated' do
-    pending 'DMs installing user when activated'
+    context 'with activated_user_id and bot_user_id' do
+      let(:team) { Fabricate(:team, active: false, activated_user_id: 'U_installer', bot_user_id: 'B1') }
+
+      before do
+        allow(team.slack_client).to receive(:conversations_open).with(users: 'U_installer').and_return(
+          Slack::Messages::Message.new('channel' => { 'id' => 'D_installer' })
+        )
+        allow(team.slack_client).to receive(:chat_postMessage)
+      end
+
+      it 'DMs the installing user when activated' do
+        expect(team.slack_client).to receive(:chat_postMessage).with(
+          text: Team::INSTALLED_TEXT,
+          channel: 'D_installer',
+          as_user: true
+        )
+        team.update_attributes!(active: true)
+      end
+
+      it 'does not DM again when nothing relevant changes' do
+        team.update_attributes!(active: true)
+        expect(team.slack_client).not_to receive(:chat_postMessage)
+        team.update_attributes!(active: true)
+      end
+    end
+
+    context 'without activated_user_id' do
+      let(:team) { Fabricate(:team, active: false, activated_user_id: nil, bot_user_id: 'B1') }
+
+      it 'does not send a DM' do
+        expect(team.slack_client).not_to receive(:conversations_open)
+        team.update_attributes!(active: true)
+      end
+    end
   end
 
   describe '#find_create_or_update_channel_by_channel_id!' do
@@ -511,6 +544,7 @@ describe Team do
 
       before do
         allow_any_instance_of(described_class).to receive(:inform!)
+        allow_any_instance_of(described_class).to receive(:welcome_dm!)
       end
 
       it 'is a slack mention' do

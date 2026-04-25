@@ -35,11 +35,13 @@ describe 'Add to Slack', :js, type: :feature do
     allow_any_instance_of(Slack::Web::Client).to receive(:conversations_open).with(
       users: 'activated_user_id'
     ).and_return(
-      'channel' => {
-        'id' => 'C1'
-      }
+      Slack::Messages::Message.new('channel' => { 'id' => 'D_installer' })
     )
-    expect_any_instance_of(Team).to receive(:inform!).with(Team::INSTALLED_TEXT)
+    expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage).with(
+      text: Team::INSTALLED_TEXT,
+      channel: 'D_installer',
+      as_user: true
+    )
     expect do
       visit '/?code=code'
       expect(page.find_by_id('messages')).to have_content 'Team successfully registered!'

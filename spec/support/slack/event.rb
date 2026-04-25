@@ -26,6 +26,7 @@ RSpec.shared_context 'event' do
 
   before do
     allow_any_instance_of(Team).to receive(:inform!)
+    allow_any_instance_of(Team).to receive(:welcome_dm!)
     allow_any_instance_of(Slack::Web::Client).to receive(:users_info)
     allow_any_instance_of(Slack::Events::Request).to receive(:verify!)
   end
