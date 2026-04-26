@@ -9,16 +9,6 @@ module SlackGamebot
         I am your friendly Gamebot, here to help.
 
         ```
-        General
-        -------
-        hi: be nice, say hi to your bot
-        team: show your team's info and captains
-        register: re-register yourself as a player
-        unregister: unregister yourself, removes you from leaderboards and challenges
-        help: get this helpful message
-        info: bot credits
-        sucks: express some frustration
-
         Games
         -----
         challenge <opponent> ... [with <teammate> ...]: challenge opponent(s) to a game
@@ -35,11 +25,14 @@ module SlackGamebot
         taunt <opponent> [<opponent> ...]: taunt players
         rank [<player> ...]: rank a player or a list of players
         matches [number|infinity]: show this season's matches
+        register: re-register yourself as a player
+        unregister: unregister yourself, removes you from leaderboards and challenges
 
         Stats
         -----
         leaderboard [number|infinity]: show the leaderboard, e.g. leaderboard 10
         season: show current season
+        seasons: show all seasons
 
         Settings
         --------
@@ -63,23 +56,20 @@ module SlackGamebot
         promote <player>: promote a user to captain
         demote me: demote you from captain
         set nickname <player> [name], unset nickname <player>: set/unset someone's nickname
-        seasons: show all seasons
         reset <channel>: reset all stats, start a new season
         unregister <player>: remove a player from the leaderboard
+
+        Other
+        -----
+        hi: be nice, say hi to your bot
+        team: show your team's info and captains
+        about: show bot info
+        channels: show all channels with current season stats (DM only)
         subscription: show subscription info (captains also see payment data)
         unsubscribe: do not auto-renew subscription
-
-        DMs
-        ---
-        hi: be nice, say hi to your bot
         help: get this helpful message
         info: bot credits
-        about: show bot info
-        channels: show all channels with current season stats
-        set [options]: set team options (same as in a channel, without a channel prefix)
-        unset [options]: unset team options
-        subscription: show subscription info
-        unsubscribe: do not auto-renew subscription
+        sucks: express some frustration
         ```
       EOS
 
