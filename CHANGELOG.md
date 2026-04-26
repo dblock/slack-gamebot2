@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/04/26: Reorganized help text: merged General and DMs into Other (at end), moved seasons to Stats, removed duplicates - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/04/25: Send a welcome DM to the user who installed the bot when a team is activated - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/04/25: Added `channels` command (works in DM and channel) listing all enabled channels with current season stats — match count, player count and season count - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/04/25: Fix: `NoMethodError: undefined method 'team' for nil` when channel commands (e.g. `seasons`) are invoked in a DM - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
