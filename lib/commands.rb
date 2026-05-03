@@ -7,6 +7,7 @@ require_relative 'commands/accept'
 require_relative 'commands/cancel'
 require_relative 'commands/challenge'
 require_relative 'commands/challenge_question'
+require_relative 'commands/predict'
 require_relative 'commands/challenges'
 require_relative 'commands/decline'
 require_relative 'commands/help'
@@ -60,6 +61,7 @@ SlackRubyBotServer::Events::AppMentions.configure do |config|
     SlackGamebot::Commands::Cancel,
     SlackGamebot::Commands::Rank,
     SlackGamebot::Commands::ChallengeQuestion,
+    SlackGamebot::Commands::Predict,
     SlackGamebot::Commands::Challenges,
     SlackGamebot::Commands::Seasons,
     SlackGamebot::Commands::Season,

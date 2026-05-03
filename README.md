@@ -90,6 +90,32 @@ gamebot challenge? @WangHoe
 Victor Barna challenging Wang Hoe to a match is worth 48 and 24 elo.
 ```
 
+Show elo at stake between other players using `against`.
+
+```
+gamebot challenge? @WangHoe against @DengYaping
+
+Wang Hoe challenging Deng Yaping to a match is worth 48 elo.
+```
+
+#### gamebot predict
+
+Predict the win probability based on current Elo ratings.
+
+```
+gamebot predict @WangHoe
+
+Victor Barna has a 65% chance of beating Wang Hoe.
+```
+
+Predict between other players using `against`.
+
+```
+gamebot predict @WangHoe against @DengYaping
+
+Wang Hoe has a 55% chance of beating Deng Yaping.
+```
+
 #### gamebot accept
 
 Accept a challenge.

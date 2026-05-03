@@ -53,6 +53,23 @@ class Challenge
   end
 
   # Given a challenger and a list of names splits into two groups, returns users.
+  def self.new_from_players_against(channel, names)
+    idx = names.index('against')
+    team1_names = idx ? names[0...idx] : []
+    team2_names = idx ? names[(idx + 1)..] : []
+    raise SlackGamebot::Error, 'Please specify players on both sides of against.' if team1_names.empty? || team2_names.empty?
+
+    team1 = channel.find_or_create_many_by_mention!(team1_names)
+    team2 = channel.find_or_create_many_by_mention!(team2_names)
+    Challenge.new(
+      team: channel.team,
+      channel: channel,
+      challengers: team1,
+      challenged: team2,
+      state: ChallengeState::PROPOSED
+    )
+  end
+
   def self.split_teammates_and_opponents(challenger, names, separator = 'with')
     channel = challenger.channel
     teammates = [challenger]

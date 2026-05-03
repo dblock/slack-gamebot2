@@ -14,6 +14,9 @@ module SlackGamebot
         challenge <opponent> ... [with <teammate> ...]: challenge opponent(s) to a game
         challenge @here|@channel: challenge anyone to a game
         challenge? <opponent> ... [with <teammate> ...]: show elo at stake
+        challenge? <player> ... against <player> ...: show elo at stake between other players
+        predict <opponent> ... [with <teammate> ...]: predict win probability
+        predict <player> ... against <player> ...: predict between other players
         challenges: show pending challenges
         accept: accept a challenge
         decline: decline a previous challenge
