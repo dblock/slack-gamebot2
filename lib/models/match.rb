@@ -46,6 +46,16 @@ class Match
     end
   end
 
+  def summary
+    if resigned?
+      "#{losers.map(&:display_name).and} resigned against #{winners.map(&:display_name).and}"
+    elsif tied?
+      "#{winners.map(&:display_name).and} tied with #{losers.map(&:display_name).and}"
+    else
+      "#{winners.map(&:display_name).and} defeated #{losers.map(&:display_name).and}"
+    end
+  end
+
   def self.lose!(attrs)
     Match.create!(attrs)
   end

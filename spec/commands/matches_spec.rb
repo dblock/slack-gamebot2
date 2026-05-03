@@ -23,20 +23,20 @@ describe SlackGamebot::Commands::Matches do
       it 'displays top 10 matches' do
         expect_any_instance_of(Array).to receive(:take).with(10).and_call_original
         expect(message: '@gamebot matches', user: user, channel: doubles_challenge.channel).to respond_with_slack_message([
-          "#{match1} 3 times",
-          "#{match0} once"
+          match1.summary + ' 3 times',
+          match0.summary + ' once'
         ].join("\n"))
       end
 
       it 'limits number of matches' do
         expect(message: '@gamebot matches 1', user: user, channel: doubles_challenge.channel).to respond_with_slack_message([
-          "#{match1} 3 times"
+          match1.summary + ' 3 times'
         ].join("\n"))
       end
 
       it 'displays only matches for requested users' do
         expect(message: "@gamebot matches #{doubles_challenge.challenged.first.user_name}", user: user, channel: doubles_challenge.channel).to respond_with_slack_message(
-          "#{match1} 3 times"
+          match1.summary + ' 3 times'
         )
       end
 
@@ -44,7 +44,15 @@ describe SlackGamebot::Commands::Matches do
         another_challenge = Fabricate(:challenge, channel: channel, challengers: [doubles_challenge.challenged.first])
         Fabricate(:match, challenge: another_challenge)
         expect(message: "@gamebot matches #{doubles_challenge.challenged.first.user_name} 1", user: user, channel: doubles_challenge.channel).to respond_with_slack_message(
-          "#{match1} 3 times"
+          match1.summary + ' 3 times'
+        )
+      end
+
+      it 'aggregates matches with different scores between the same players' do
+        challenge2 = Fabricate(:challenge, channel: channel, challengers: match0.winners, challenged: match0.losers)
+        Fabricate(:match, channel: channel, challenge: challenge2, winners: match0.winners, losers: match0.losers, scores: [[21, 15]])
+        expect(message: "@gamebot matches #{match0.winners.first.user_name}", user: user, channel: channel).to respond_with_slack_message(
+          match0.summary + ' twice'
         )
       end
     end
@@ -54,7 +62,7 @@ describe SlackGamebot::Commands::Matches do
 
       it 'displays user matches' do
         expect(message: '@gamebot matches', user: user, channel: match.challenge.channel).to respond_with_slack_message(
-          "#{match} once"
+          match.summary + ' once'
         )
       end
     end
@@ -64,7 +72,7 @@ describe SlackGamebot::Commands::Matches do
 
       it 'displays user matches' do
         expect(message: '@gamebot matches', user: user, channel: match.challenge.channel).to respond_with_slack_message(
-          "#{match} once"
+          match.summary + ' once'
         )
       end
     end
@@ -83,7 +91,7 @@ describe SlackGamebot::Commands::Matches do
 
       it 'displays user matches in current season only' do
         expect(message: '@gamebot matches', user: user, channel: match2.challenge.channel).to respond_with_slack_message(
-          "#{match2} once"
+          match2.summary + ' once'
         )
       end
     end
@@ -97,7 +105,7 @@ describe SlackGamebot::Commands::Matches do
           "Match has been recorded! #{winner.user_name} defeated #{loser.user_name}."
         )
         expect(message: '@gamebot matches', user: loser.user_id, channel: channel).to respond_with_slack_message(
-          "#{team.matches.first} once"
+          team.matches.first.summary + ' once'
         )
       end
     end
