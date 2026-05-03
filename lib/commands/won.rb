@@ -38,7 +38,7 @@ module SlackGamebot
           end
         end
 
-        challenge = ::Challenge.find_by_user(winner, [ChallengeState::PROPOSED, ChallengeState::ACCEPTED])
+        challenge = ::Challenge.find_by_user(winner, [ChallengeState::ACCEPTED])
 
         if !(teammates & opponents).empty?
           channel.slack_client.say(channel: data.channel, text: 'You cannot win against yourself!', gif: 'winner')

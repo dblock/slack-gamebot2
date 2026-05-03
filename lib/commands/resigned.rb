@@ -36,7 +36,7 @@ module SlackGamebot
           end
         end
 
-        challenge = ::Challenge.find_by_user(challenger, [ChallengeState::PROPOSED, ChallengeState::ACCEPTED])
+        challenge = ::Challenge.find_by_user(challenger, [ChallengeState::ACCEPTED])
 
         if scores&.any?
           channel.slack_client.say(channel: data.channel, text: 'Cannot score when resigning.', gif: 'idiot')

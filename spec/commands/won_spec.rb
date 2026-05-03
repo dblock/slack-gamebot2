@@ -199,4 +199,18 @@ describe SlackGamebot::Commands::Won do
       )
     end
   end
+
+  context 'with a proposed challenge' do
+    let(:challenger) { Fabricate(:user, channel: channel) }
+    let(:challenged_user) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challengers: [challenger], challenged: [challenged_user]) }
+
+    it 'cannot win a challenge that has not been accepted' do
+      expect(message: '@gamebot won', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
+        'No challenge to win!'
+      )
+      expect(challenge.reload.state).to eq ChallengeState::PROPOSED
+      expect(Match.count).to eq 0
+    end
+  end
 end

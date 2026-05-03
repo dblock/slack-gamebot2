@@ -83,4 +83,17 @@ describe SlackGamebot::Commands::Resigned do
       expect(match.resigned?).to be true
     end
   end
+
+  context 'with a proposed challenge' do
+    let(:challenged) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged]) }
+
+    it 'cannot resign a challenge that has not been accepted' do
+      expect(message: '@gamebot resigned', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+        'No challenge to resign!'
+      )
+      expect(challenge.reload.state).to eq ChallengeState::PROPOSED
+      expect(Match.count).to eq 0
+    end
+  end
 end

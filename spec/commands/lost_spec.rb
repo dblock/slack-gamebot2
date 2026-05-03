@@ -238,4 +238,17 @@ describe SlackGamebot::Commands::Lost do
       expect(match.resigned?).to be false
     end
   end
+
+  context 'with a proposed challenge' do
+    let(:challenged) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let!(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged]) }
+
+    it 'cannot lose a challenge that has not been accepted' do
+      expect(message: '@gamebot lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+        'No challenge to lose!'
+      )
+      expect(challenge.reload.state).to eq ChallengeState::PROPOSED
+      expect(Match.count).to eq 0
+    end
+  end
 end

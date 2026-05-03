@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/03: [#64](https://github.com/dblock/slack-gamebot2/issues/64): Fixed a bug where `lost`, `won`, `draw`, and `resigned` could act on a proposed (not yet accepted) challenge - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#67](https://github.com/dblock/slack-gamebot2/issues/67): Aggregate matches between the same players in `matches` command - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 : Send a reminder for accepted challenges that were never recorded, configurable with `set remind <duration|never>` and `unset remind`, default is 4 hours - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: Replace never-called `after_start!` with `prepare!`/`cron!` using `Service.instance.once_and_every` - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).

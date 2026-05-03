@@ -38,7 +38,6 @@ module SlackGamebot
 
         challenge = ::Challenge.find_by_user(challenger,
                                              [
-                                               ChallengeState::PROPOSED,
                                                ChallengeState::ACCEPTED,
                                                ChallengeState::DRAWN
                                              ])
