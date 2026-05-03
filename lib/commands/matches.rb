@@ -32,7 +32,7 @@ module SlackGamebot
         matches = channel.matches.current
         matches = matches.any_of({ :winner_ids.in => user_ids }, :loser_ids.in => user_ids) if user_ids&.any?
         matches.each do |m|
-          totals[m.to_s] += 1
+          totals[m.summary] += 1
         end
         totals = totals.sort_by { |_, value| -value }
         totals = totals.take(max) if max
