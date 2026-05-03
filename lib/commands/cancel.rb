@@ -6,6 +6,8 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'cancel' do |channel, player, data|
+        raise SlackGamebot::Error, "You're not registered. Type _register_ to register." unless player.registered?
+
         challenge = ::Challenge.find_by_user(player)
         if challenge
           challenge.cancel!(player)

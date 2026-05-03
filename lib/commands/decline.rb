@@ -6,6 +6,8 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'decline' do |channel, challenger, data|
+        raise SlackGamebot::Error, "You're not registered. Type _register_ to register." unless challenger.registered?
+
         challenge = ::Challenge.find_by_user(challenger)
         if challenge
           challenge.decline!(challenger)

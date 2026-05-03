@@ -28,4 +28,16 @@ describe SlackGamebot::Commands::Cancel do
       expect(challenge.reload.state).to eq ChallengeState::CANCELED
     end
   end
+
+  context 'unregistered user' do
+    let(:user) { Fabricate(:user, channel: channel) }
+
+    before { user.unregister! }
+
+    it 'cannot cancel' do
+      expect(message: '@gamebot cancel', user: user.user_id, channel: channel).to respond_with_slack_message(
+        "You're not registered. Type _register_ to register."
+      )
+    end
+  end
 end

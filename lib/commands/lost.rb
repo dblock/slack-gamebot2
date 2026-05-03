@@ -6,6 +6,8 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'lost' do |channel, challenger, data|
+        raise SlackGamebot::Error, "You're not registered. Type _register_ to register." unless challenger.registered?
+
         expression = data.match['expression'] if data.match['expression']
         arguments = expression.split.reject(&:blank?) if expression
 

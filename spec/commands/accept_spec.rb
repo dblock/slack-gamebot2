@@ -63,4 +63,16 @@ describe SlackGamebot::Commands::Accept do
       expect(challenge.reload.state).to eq ChallengeState::PROPOSED
     end
   end
+
+  context 'unregistered user' do
+    let(:user) { Fabricate(:user, channel: channel) }
+
+    before { user.unregister! }
+
+    it 'cannot accept' do
+      expect(message: '@gamebot accept', user: user.user_id, channel: channel).to respond_with_slack_message(
+        "You're not registered. Type _register_ to register."
+      )
+    end
+  end
 end

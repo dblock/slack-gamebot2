@@ -244,4 +244,16 @@ describe SlackGamebot::Commands::Lost do
       expect(match.resigned?).to be false
     end
   end
+
+  context 'unregistered user' do
+    let(:loser) { Fabricate(:user, channel: channel) }
+
+    before { loser.unregister! }
+
+    it 'cannot record a loss' do
+      expect(message: '@gamebot lost', user: loser.user_id, channel: channel).to respond_with_slack_message(
+        "You're not registered. Type _register_ to register."
+      )
+    end
+  end
 end

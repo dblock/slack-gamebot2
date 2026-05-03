@@ -205,4 +205,16 @@ describe SlackGamebot::Commands::Won do
       )
     end
   end
+
+  context 'unregistered user' do
+    let(:user) { Fabricate(:user, channel: channel) }
+
+    before { user.unregister! }
+
+    it 'cannot record a win' do
+      expect(message: '@gamebot won', user: user.user_id, channel: channel).to respond_with_slack_message(
+        "You're not registered. Type _register_ to register."
+      )
+    end
+  end
 end
