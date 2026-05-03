@@ -79,6 +79,12 @@ describe SlackGamebot::Commands::Won do
       )
     end
 
+    it 'won with a humiliating score' do
+      expect(message: '@gamebot won 21:0', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
+        "Match has been recorded! #{challenger.display_name} (+96) humiliated #{challenged_user.display_name} (-96) with the score of 21:0."
+      )
+    end
+
     it 'won in a close game' do
       expect(message: '@gamebot won 21:19', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenger.display_name} (+50) narrowly defeated #{challenged_user.display_name} (-50) with the score of 21:19."

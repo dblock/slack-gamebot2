@@ -106,12 +106,18 @@ Record your loss.
 
 ![](screenshots/lost.gif)
 
-Record your loss with a score, loser first.
+Record your loss with a score, loser first. The result verb depends on how lopsided the score is: _narrowly defeated_, _defeated_, _crushed_, or _humiliated_ (shutout).
 
 ```
 gamebot lost 5:21
 
 Match has been recorded! Wang Hoe crushed Victor Barna with the score of 21:5.
+```
+
+```
+gamebot lost 0:21
+
+Match has been recorded! Wang Hoe humiliated Victor Barna with the score of 21:0.
 ```
 
 You can record scores for an entire match.
