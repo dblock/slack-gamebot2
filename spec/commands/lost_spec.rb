@@ -86,6 +86,12 @@ describe SlackGamebot::Commands::Lost do
       )
     end
 
+    it 'lost with a humiliating score' do
+      expect(message: '@gamebot lost 0:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+        "Match has been recorded! #{challenge.challengers[0].display_name} (+96) humiliated #{challenge.challenged[0].display_name} (-96) with the score of 21:0."
+      )
+    end
+
     it 'lost in a close game' do
       expect(message: '@gamebot lost 19:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+50) narrowly defeated #{challenge.challenged[0].display_name} (-50) with the score of 21:19."

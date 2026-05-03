@@ -164,8 +164,10 @@ class Match
         'narrowly defeated'
       elsif ratio > 0.4
         'defeated'
-      else
+      elsif ratio.positive?
         'crushed'
+      else
+        'humiliated'
       end
     end
   end
