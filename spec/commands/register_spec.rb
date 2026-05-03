@@ -20,6 +20,11 @@ describe SlackGamebot::Commands::Register do
     )
   end
 
+  it 'returns an error when trying to register someone else' do
+    user = Fabricate(:user, registered: true, captain: true, updated_at: 2.days.ago, created_at: 2.days.ago, user_name: 'user_name', user_id: 'user_id')
+    expect(message: '@gamebot register <@someone>', channel: channel, user: user).to respond_with_slack_message('Players must register themselves.')
+  end
+
   it 'registers a new user and promotes them to captain' do
     Fabricate(:user, team: team2, channel: channel2) # another user in another team
     allow_any_instance_of(User).to receive(:channel).and_return(channel)
