@@ -55,7 +55,7 @@ module SlackGamebot
           channel.slack_client.chat_postMessage(channel: data.channel, text: channel.leaderboard_s, thread_ts: rc['ts']) if rc.key?('ts') && channel.details.include?(Details::LEADERBOARD)
           logger.info "WON: #{channel} - #{challenge}"
         else
-          match = ::Match.where(winner_ids: winner.id).desc(:_id).first
+          match = ::Match.current.where(winner_ids: winner.id, :created_at.gte => 1.hour.ago).desc(:_id).first
           if match
             match.update_attributes!(scores: scores)
             channel.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')

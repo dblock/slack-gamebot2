@@ -196,6 +196,26 @@ describe SlackGamebot::Commands::Draw do
     end
   end
 
+  context 'amending scores on a tied match' do
+    let(:player) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let(:opponent) { Fabricate(:user, channel: channel) }
+    let!(:match) { Fabricate(:match, channel: channel, winners: [player], losers: [opponent], tied: true) }
+
+    it 'updates scores of a recent tied match' do
+      expect(message: '@gamebot draw 3:3', user: player.user_id, channel: channel).to respond_with_slack_message(
+        "Match scores have been updated! #{match}."
+      )
+      expect(match.reload.scores).to eq [[3, 3]]
+    end
+
+    it 'cannot amend scores of a tied match older than 1 hour' do
+      match.update_attributes!(created_at: 2.hours.ago)
+      expect(message: '@gamebot draw 3:3', user: player.user_id, channel: channel).to respond_with_slack_message(
+        'No challenge to draw!'
+      )
+    end
+  end
+
   context 'unregistered user' do
     let(:user) { Fabricate(:user, channel: channel) }
 

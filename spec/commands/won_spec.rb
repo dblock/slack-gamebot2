@@ -100,6 +100,14 @@ describe SlackGamebot::Commands::Won do
       expect(challenge.match.scores).to eq [[15, 21], [21, 14], [5, 11]]
     end
 
+    it 'cannot amend scores of a match older than 1 hour' do
+      challenge.win!(challenger)
+      challenge.match.update_attributes!(created_at: 2.hours.ago)
+      expect(message: '@gamebot won 21:15 14:21 11:5', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
+        'No challenge to win!'
+      )
+    end
+
     it 'cannot win against yourself' do
       expect(message: "@gamebot won against #{challenger.user_name}", user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
         'You cannot win against yourself!'

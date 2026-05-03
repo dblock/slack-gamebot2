@@ -89,7 +89,7 @@ module SlackGamebot
           end
           logger.info "DRAW: #{channel} - #{challenge}"
         else
-          match = ::Match.any_of({ winner_ids: challenger.id }, loser_ids: challenger.id).desc(:id).first
+          match = ::Match.current.any_of({ winner_ids: challenger.id }, loser_ids: challenger.id).where(:created_at.gte => 1.hour.ago).desc(:id).first
           if match&.tied?
             match.update_attributes!(scores: scores)
             channel.slack_client.say(channel: data.channel, text: "Match scores have been updated! #{match}.", gif: 'score')
