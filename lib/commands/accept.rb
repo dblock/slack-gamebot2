@@ -6,6 +6,8 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'accept' do |channel, user, data|
+        raise SlackGamebot::Error, "You're not registered. Type _register_ to register." unless user.registered?
+
         challenge = ::Challenge.find_by_user(user)
         challenge ||= ::Challenge.find_open_challenge(channel)
 

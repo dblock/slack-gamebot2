@@ -6,6 +6,8 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'challenge' do |channel, challenger, data|
+        raise SlackGamebot::Error, "You're not registered. Type _register_ to register." unless challenger.registered?
+
         arguments = data.match['expression'].split.reject(&:blank?) if data.match['expression']
         challenge = ::Challenge.create_from_teammates_and_opponents!(challenger, arguments || [])
         channel.slack_client.say(channel: data.channel, text: "#{challenge.challengers.map(&:slack_mention).and} challenged #{challenge.challenged.map(&:slack_mention).and} to a match!", gif: 'challenge')

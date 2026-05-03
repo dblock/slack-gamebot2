@@ -6,6 +6,7 @@ module SlackGamebot
       include SlackGamebot::Commands::Mixins::User
 
       user_in_channel_command 'won' do |channel, winner, data|
+        raise SlackGamebot::Error, "You're not registered. Type _register_ to register." unless winner.registered?
         raise SlackGamebot::Error, "The won command is disabled for #{channel.slack_mention}." unless channel.won?
 
         expression = data.match['expression'] if data.match['expression']

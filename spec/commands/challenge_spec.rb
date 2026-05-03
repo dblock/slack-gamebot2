@@ -96,6 +96,18 @@ describe SlackGamebot::Commands::Challenge do
     )
   end
 
+  context 'requires the challenger to be registered' do
+    before do
+      user.unregister!
+    end
+
+    it 'cannot challenge when unregistered' do
+      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user.user_id, channel: channel).to respond_with_slack_message(
+        "You're not registered. Type _register_ to register."
+      )
+    end
+  end
+
   context 'requires the opponent to be registered' do
     before do
       opponent.unregister!

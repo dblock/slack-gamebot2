@@ -14,4 +14,14 @@ describe SlackGamebot::Commands::Decline do
     )
     expect(challenge.reload.state).to eq ChallengeState::DECLINED
   end
+
+  context 'unregistered user' do
+    before { challenged.unregister! }
+
+    it 'cannot decline' do
+      expect(message: '@gamebot decline', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+        "You're not registered. Type _register_ to register."
+      )
+    end
+  end
 end
