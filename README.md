@@ -254,6 +254,16 @@ gamebot resigned to WangHoe
 Match has been recorded! Victor Barna resigned against Wang Hoe.
 ```
 
+#### gamebot undo
+
+Undo the last match recorded in the channel within the last hour. Restores Elo, wins, losses, and challenge state.
+
+```
+gamebot undo
+
+Match Victor Barna defeated Wang Hoe has been undone.
+```
+
 #### gamebot decline
 
 Decline a challenge.
