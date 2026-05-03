@@ -107,6 +107,14 @@ describe SlackGamebot::Commands::Lost do
       expect(challenge.match.scores).to eq [[21, 15], [14, 21], [5, 11]]
     end
 
+    it 'cannot amend scores of a match older than 1 hour' do
+      challenge.lose!(challenged)
+      challenge.match.update_attributes!(created_at: 2.hours.ago)
+      expect(message: '@gamebot lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+        'No challenge to lose!'
+      )
+    end
+
     it 'does not update a previously lost match' do
       challenge.lose!(challenged, [[11, 21]])
       challenge2 = Fabricate(:challenge, challenged: [challenged])
