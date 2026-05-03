@@ -43,4 +43,24 @@ describe SlackGamebot::Commands::Accept do
       expect(challenge.challenged).to eq [anyone_challenged]
     end
   end
+
+  context 'with max challenges set' do
+    let(:challenged) { Fabricate(:user, channel: channel, user_name: 'username') }
+    let(:other_challenger) { Fabricate(:user, channel: channel) }
+    let(:other_challenged) { Fabricate(:user, channel: channel) }
+    let!(:challenge) { Fabricate(:challenge, team: team, challenged: [challenged]) }
+
+    before do
+      channel.update_attributes!(max_challenges: 1)
+      accepted = Fabricate(:challenge, team: team, challengers: [other_challenger], challenged: [other_challenged])
+      accepted.accept!(other_challenged)
+    end
+
+    it 'cannot accept when at the limit' do
+      expect(message: '@gamebot accept', user: challenged.user_id, channel: channel).to respond_with_slack_message(
+        'Only 1 accepted challenge allowed at a time, 1 already in progress.'
+      )
+      expect(challenge.reload.state).to eq ChallengeState::PROPOSED
+    end
+  end
 end

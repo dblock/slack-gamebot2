@@ -22,6 +22,7 @@ class Channel
 
   field :expire, type: Integer, default: 8 * 60
   field :remind, type: Integer, default: 4 * 60
+  field :max_challenges, type: Integer
 
   field :details, type: Array, default: [Details::ELO]
   validates :details, inclusion: { in: Details.values }
@@ -86,6 +87,10 @@ class Channel
 
   def leaderboard_max_s
     leaderboard_max || 'not set'
+  end
+
+  def max_challenges_s
+    max_challenges || 'not set'
   end
 
   def expire_s
