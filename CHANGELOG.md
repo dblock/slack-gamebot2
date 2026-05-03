@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/03: [#57](https://github.com/dblock/slack-gamebot2/issues/57): Limit simultaneous accepted challenges with `set max challenges [number]` and `unset max challenges`, no limit by default - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#62](https://github.com/dblock/slack-gamebot2/issues/62): Display "humiliated" when the loser scores zero points (shutout) - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#65](https://github.com/dblock/slack-gamebot2/issues/65): Added `games` command to show how many games each player has played - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#67](https://github.com/dblock/slack-gamebot2/issues/67): Aggregate matches between the same players in `matches` command - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).

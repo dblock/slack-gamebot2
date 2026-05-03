@@ -122,7 +122,7 @@ module SlackGamebot
         raise SlackGamebot::Error, "You're not a team admin, sorry." unless v.nil? || admin.team_admin?
 
         unless v.nil?
-          v = parse_int_with_inifinity(v)
+          v = parse_int_or_none(v)
           team.update_attributes!(leaderboard_max: v && v != 0 ? v : nil)
         end
         message = "Default leaderboard max is #{'now ' unless v.nil?}#{team.leaderboard_max || 'not set'}."

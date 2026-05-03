@@ -538,8 +538,8 @@ describe SlackGamebot::Commands::SetChannel do
           expect(channel.reload.leaderboard_max).to be_nil
         end
 
-        it 'resets leaderboard max with set infinity' do
-          expect(message: '@gamebot set leaderboard max infinity', user: captain, channel: channel).to respond_with_slack_message(
+        it 'resets leaderboard max with set none' do
+          expect(message: '@gamebot set leaderboard max none', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} is not set."
           )
           expect(channel.reload.leaderboard_max).to be_nil
@@ -557,13 +557,13 @@ describe SlackGamebot::Commands::SetChannel do
     context 'invalid' do
       it 'errors set' do
         expect(message: '@gamebot set invalid on', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
+          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_ and _max challenges_.'
         )
       end
 
       it 'errors unset' do
         expect(message: '@gamebot unset invalid', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
+          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_ and _max challenges_.'
         )
       end
     end
@@ -666,6 +666,7 @@ describe SlackGamebot::Commands::SetChannel do
           'Elo is 0.',
           'Elo algorithm is adaptive (decay=0.94).',
           'Leaderboard max is not set.',
+          'Max challenges number is not set.',
           'Unbalanced challenges are off by default.',
           'Won command is on.'
         ].join("\n"))
@@ -673,7 +674,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'errors on unset' do
         expect(message: '@gamebot unset', user: captain, channel: channel).to respond_with_slack_message(
-          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
+          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_ and _max challenges_.'
         )
       end
     end
@@ -938,6 +939,53 @@ describe SlackGamebot::Commands::SetChannel do
     it 'cannot set remind without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
       expect(message: '@gamebot set remind 2 hours', user: non_captain, channel: channel).to respond_with_slack_message(
+        "You're not a captain, sorry."
+      )
+    end
+  end
+
+  context 'max challenges' do
+    let(:captain) { Fabricate(:user, channel: channel, captain: true) }
+
+    it 'removes max (no limit by default)' do
+      expect(message: '@gamebot set max challenges', user: captain, channel: channel).to respond_with_slack_message(
+        'Max challenges number removed.'
+      )
+    end
+
+    it 'sets max to 1' do
+      expect(message: '@gamebot set max challenges 1', user: captain, channel: channel).to respond_with_slack_message(
+        'Max challenges number is 1.'
+      )
+      expect(channel.reload.max_challenges).to eq 1
+    end
+
+    it 'sets max to 3' do
+      expect(message: '@gamebot set max challenges 3', user: captain, channel: channel).to respond_with_slack_message(
+        'Max challenges number is 3.'
+      )
+      expect(channel.reload.max_challenges).to eq 3
+    end
+
+    it 'unsets max' do
+      channel.update_attributes!(max_challenges: 2)
+      expect(message: '@gamebot unset max challenges', user: captain, channel: channel).to respond_with_slack_message(
+        'Max challenges number removed.'
+      )
+      expect(channel.reload.max_challenges).to be_nil
+    end
+
+    it 'sets max to none' do
+      channel.update_attributes!(max_challenges: 2)
+      expect(message: '@gamebot set max challenges none', user: captain, channel: channel).to respond_with_slack_message(
+        'Max challenges number removed.'
+      )
+      expect(channel.reload.max_challenges).to be_nil
+    end
+
+    it 'cannot set max challenges without being a captain' do
+      non_captain = Fabricate(:user, channel: channel)
+      expect(message: '@gamebot set max challenges 1', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end

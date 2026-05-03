@@ -8,8 +8,8 @@ module SlackGamebot
       extend SlackGamebot::Commands::SetChannel
 
       class << self
-        def parse_int_with_inifinity(v)
-          v == 'infinity' ? nil : parse_int(v)
+        def parse_int_or_none(v)
+          v == 'none' ? nil : parse_int(v)
         end
 
         def parse_int(v)

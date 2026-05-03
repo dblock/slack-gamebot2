@@ -461,9 +461,9 @@ GIFs are now off.
 
 Using `unset gifs` is equivalent to `set gifs off`.
 
-#### gamebot set leaderboard max [number|infinity]
+#### gamebot set leaderboard max [number|none]
 
-Set and reset the leaderboard max. The default is infinity, ie. to show the entire leaderboard.
+Set and reset the leaderboard max. The default is none, ie. to show the entire leaderboard.
 
 ```
 gamebot set leaderboard max 5
@@ -473,7 +473,7 @@ The following are equivalent.
 
 ```
 gamebot set leaderboard max 0
-gamebot set leaderboard max infinity
+gamebot set leaderboard max none
 gamebot unset leaderboard max
 ```
 
@@ -654,6 +654,24 @@ Reset to the default with `unset remind`.
 gamebot unset remind
 
 Reminders are disabled.
+```
+
+#### gamebot set max challenges [number|none]
+
+Set the maximum number of simultaneously accepted challenges. Useful when you only have one table. No limit by default.
+
+```
+gamebot set max challenges 1
+
+Max challenges limit is 1.
+```
+
+Remove the limit with `set max challenges` or `unset max challenges`.
+
+```
+gamebot unset max challenges
+
+Max challenges limit removed.
 ```
 
 #### gamebot subscription

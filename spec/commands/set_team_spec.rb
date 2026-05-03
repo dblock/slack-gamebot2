@@ -420,8 +420,8 @@ describe SlackGamebot::Commands::SetTeam do
           expect(team.reload.leaderboard_max).to be_nil
         end
 
-        it 'resets leaderboard max with set infinity' do
-          expect(message: '@gamebot set leaderboard max infinity', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
+        it 'resets leaderboard max with set none' do
+          expect(message: '@gamebot set leaderboard max none', user: admin.user_id, channel: 'DM').to respond_with_slack_message(
             'Default leaderboard max is not set.'
           )
           expect(team.reload.leaderboard_max).to be_nil

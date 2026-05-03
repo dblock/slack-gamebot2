@@ -15,6 +15,7 @@ module SlackGamebot
             "Elo is #{channel.elo}.",
             "Elo algorithm is #{channel.elo_algorithm_s}.",
             "Leaderboard max is #{channel.leaderboard_max_s}.",
+            "Max challenges number is #{channel.max_challenges_s}.",
             "Unbalanced challenges are #{channel.unbalanced_s} by default.",
             "Won command is #{channel.won_s}."
           ].compact.join("\n"),
@@ -252,7 +253,7 @@ module SlackGamebot
         raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
 
         unless v.nil?
-          v = parse_int_with_inifinity(v)
+          v = parse_int_or_none(v)
           channel.update_attributes!(leaderboard_max: v && v != 0 ? v : nil)
         end
         message = "Leaderboard max for #{channel.slack_mention} is #{channel.leaderboard_max || 'not set'}."
@@ -266,6 +267,29 @@ module SlackGamebot
         channel.update_attributes!(leaderboard_max: nil)
         channel.slack_client.say(channel: data.channel, text: "Leaderboard max for #{channel.slack_mention} has been unset.", gif: 'score')
         logger.info "UNSET: #{channel} - #{user.user_name}: leaderboard max has been unset"
+      end
+
+      def set_max_challenges(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        if v.nil? || v.strip == 'none'
+          channel.update_attributes!(max_challenges: nil)
+          channel.slack_client.say(channel: data.channel, text: 'Max challenges number removed.', gif: 'count')
+          logger.info "SET: #{channel} - #{user.user_name}: max_challenges removed"
+        else
+          n = parse_int_or_none(v)
+          channel.update_attributes!(max_challenges: n&.positive? ? n : nil)
+          channel.slack_client.say(channel: data.channel, text: "Max challenges number is #{channel.max_challenges_s}.", gif: 'count')
+          logger.info "SET: #{channel} - #{user.user_name}: max_challenges=#{channel.max_challenges_s}"
+        end
+      end
+
+      def unset_max_challenges(channel, data, user)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        channel.update_attributes!(max_challenges: nil)
+        channel.slack_client.say(channel: data.channel, text: 'Max challenges number removed.', gif: 'count')
+        logger.info "UNSET: #{channel} - #{user.user_name}: max_challenges removed"
       end
 
       def set_aliases(channel, data, user, v)
@@ -368,12 +392,20 @@ module SlackGamebot
           set_expire channel, data, user, v
         when 'remind'
           set_remind channel, data, user, v
+        when 'max'
+          k, v = v.split(/\s+/, 2) if v
+          case k
+          when 'challenges'
+            set_max_challenges channel, data, user, v
+          else
+            raise SlackGamebot::Error, "Invalid max setting #{k}, you can _set max challenges_."
+          end
         when 'details'
           set_details channel, data, user, v
         when nil
           set_channel_info channel, data, user
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_ and _max challenges_."
         end
       end
 
@@ -404,12 +436,19 @@ module SlackGamebot
           unset_expire channel, data, user
         when 'remind'
           unset_remind channel, data, user
+        when 'max'
+          case v
+          when 'challenges'
+            unset_max_challenges channel, data, user
+          else
+            raise SlackGamebot::Error, "Invalid max setting #{v}, you can _unset max challenges_."
+          end
         when 'details'
           unset_details channel, data, user
         when nil
-          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
+          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_ and _max challenges_.'
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_ and _max challenges_."
         end
       end
     end

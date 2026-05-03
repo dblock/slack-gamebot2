@@ -89,6 +89,13 @@ class Challenge
   def accept!(challenger)
     raise SlackGamebot::Error, "Challenge has already been #{state}." unless state == ChallengeState::PROPOSED
 
+    if channel.max_challenges
+      current = channel.challenges.where(state: ChallengeState::ACCEPTED).count
+      if current >= channel.max_challenges
+        raise SlackGamebot::Error, "Only #{channel.max_challenges} accepted challenge#{'s' unless channel.max_challenges == 1} allowed at a time, #{current} already in progress."
+      end
+    end
+
     updates = { updated_by: challenger, state: ChallengeState::ACCEPTED }
     updates[:challenged_ids] = [challenger._id] if open_challenge?
     update_attributes!(updates)
