@@ -300,9 +300,32 @@ Wang Hoe defeated Deng Yaping twice
 
 Use _matches 3_ to see top 3 matches or _matches inifinity_ to see all matches in the season.
 
+#### gamebot games [&lt;player&gt; ...]
+
+Displays total games played and a per-player breakdown of wins, losses, and ties, sorted by most games played.
+
+```
+gamebot games
+
+A total of 5 games have been played.
+Victor Barna: 3 wins, 1 loss
+Wang Hoe: 2 wins, 2 losses
+Deng Yaping: 0 wins, 2 losses
+```
+
+You can also filter by specific players.
+
+```
+gamebot games @WangHoe @DengYaping
+
+A total of 4 games have been played.
+Wang Hoe: 2 wins, 2 losses
+Deng Yaping: 0 wins, 2 losses
+```
+
 #### gamebot challenges
 
-Displays all outstanding (proposed and accepted) challenges. Proposed challenges that have not been accepted automatically expire after 8 hours (configurable with `set expire`).
+Displays all outstanding (proposed and accepted) challenges. Proposed challenges that have not been accepted automatically expire after 8 hours (configurable with `set expire`). Accepted challenges that have not been recorded will be reminded after 4 hours (configurable with `set remind`).
 
 #### gamebot rank [&lt;player&gt; ...]
 
@@ -601,6 +624,30 @@ Reset to the default with `unset expire`.
 gamebot unset expire
 
 Challenge expiry for #channel is 8 hours.
+```
+
+#### gamebot set remind [duration|never]
+
+Set how long after a challenge is accepted before players are reminded to record the result. Default is 4 hours. Reminders repeat every 24 hours. Use `never` to disable reminders. Reminder must be set to less than expire.
+
+```
+gamebot set remind 2h
+
+Reminders will be sent after 2 hours.
+```
+
+```
+gamebot set remind never
+
+Reminders are disabled.
+```
+
+Reset to the default with `unset remind`.
+
+```
+gamebot unset remind
+
+Reminders are disabled.
 ```
 
 #### gamebot subscription

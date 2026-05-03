@@ -25,6 +25,7 @@ module SlackGamebot
         taunt <opponent> [<opponent> ...]: taunt players
         rank [<player> ...]: rank a player or a list of players
         matches [number|infinity]: show this season's matches
+        games [<player> ...]: show how many games each player has played
         register: re-register yourself as a player
         unregister: unregister yourself, removes you from leaderboards and challenges
 
