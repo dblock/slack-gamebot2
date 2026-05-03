@@ -25,6 +25,7 @@ module SlackGamebot
         won [against <opponent>] [score, ...]: record your win
         resigned [to <opponent>]: record a resignation
         draw [to <opponent>] [score, ...]: record a tie
+        undo: undo the last match recorded in the last hour
         taunt <opponent> [<opponent> ...]: taunt players
         rank [<player> ...]: rank a player or a list of players
         matches [number|infinity]: show this season's matches

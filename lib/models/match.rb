@@ -56,6 +56,29 @@ class Match
     end
   end
 
+  def undo!
+    elo_changes.each do |elo_change|
+      user = elo_change.user
+      user.elo = elo_change.elo
+      user.tau = elo_change.tau if elo_change.tau
+      user.rd = elo_change.rd if elo_change.rd
+      user.volatility = elo_change.volatility if elo_change.volatility
+      user.save!
+    end
+    players = winners.to_a + losers.to_a
+    if tied?
+      winners.inc(ties: -1)
+      losers.inc(ties: -1)
+    else
+      winners.inc(wins: -1)
+      losers.inc(losses: -1)
+    end
+    players.each(&:calculate_streaks!)
+    User.rank!(channel)
+    challenge.update_attributes!(state: ChallengeState::ACCEPTED, updated_by: challenge.challenged.first) if challenge
+    destroy
+  end
+
   def self.lose!(attrs)
     Match.create!(attrs)
   end
@@ -200,12 +223,12 @@ class Match
       )
 
       winners.each_with_index do |winner, i|
-        elo_changes << EloChange.new(match: self, user: winner, elo: winner.elo, delta: winners_delta[i])
+        elo_changes << EloChange.new(match: self, user: winner, elo: winner.elo, delta: winners_delta[i], tau: winner.tau, rd: winner.rd, volatility: winner.volatility)
         winner.elo += winners_delta[i]
       end
 
       losers.each_with_index do |loser, i|
-        elo_changes << EloChange.new(match: self, user: loser, elo: loser.elo, delta: -losers_delta[i])
+        elo_changes << EloChange.new(match: self, user: loser, elo: loser.elo, delta: -losers_delta[i], tau: loser.tau, rd: loser.rd, volatility: loser.volatility)
         loser.elo -= losers_delta[i]
       end
 

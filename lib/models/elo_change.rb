@@ -5,6 +5,9 @@ class EloChange
 
   field :elo, type: Float
   field :delta, type: Float
+  field :tau, type: Float
+  field :rd, type: Float
+  field :volatility, type: Float
 
   belongs_to :user
   embedded_in :match

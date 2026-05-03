@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/03: [#25](https://github.com/dblock/slack-gamebot2/issues/25): Added `undo` command to undo the last match recorded within the last hour - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#47](https://github.com/dblock/slack-gamebot2/issues/47): Added `predict` command to show win probability based on Elo ratings - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#57](https://github.com/dblock/slack-gamebot2/issues/57): Limit simultaneous accepted challenges with `set max challenges [number]` and `unset max challenges`, no limit by default - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#62](https://github.com/dblock/slack-gamebot2/issues/62): Display "humiliated" when the loser scores zero points (shutout) - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
