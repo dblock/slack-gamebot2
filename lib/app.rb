@@ -7,29 +7,27 @@ module SlackGamebot
       Re-install the bot at https://gamebot2.playplay.io. Your data will be purged in 2 weeks.
     EOS
 
-    def after_start!
-      once_and_every 60 * 60 * 24 do
-        check_trials!
-        deactivate_dead_teams!
-        inform_dead_teams!
-        check_subscribed_teams!
-        check_active_subscriptions_without_teams!
-      end
-      once_and_every 15 * 60 do
-        expire_challenges!
+    def prepare!
+      super
+      cron!
+    end
+
+    def cron!
+      SlackRubyBotServer::Service.instance.tap do |instance|
+        instance.once_and_every 60 * 60 * 24 do
+          check_trials!
+          deactivate_dead_teams!
+          inform_dead_teams!
+          check_subscribed_teams!
+          check_active_subscriptions_without_teams!
+        end
+        instance.once_and_every 15 * 60 do
+          expire_challenges!
+        end
       end
     end
 
     private
-
-    def once_and_every(tt)
-      ::Async::Reactor.run do |task|
-        loop do
-          yield
-          task.sleep tt
-        end
-      end
-    end
 
     def expire_challenges!
       channel_ids = Challenge.proposed.distinct(:channel_id)
