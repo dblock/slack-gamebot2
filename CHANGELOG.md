@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/03: [#65](https://github.com/dblock/slack-gamebot2/issues/65): Added `games` command to show how many games each player has played - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#67](https://github.com/dblock/slack-gamebot2/issues/67): Aggregate matches between the same players in `matches` command - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 : Send a reminder for accepted challenges that were never recorded, configurable with `set remind <duration|never>` and `unset remind`, default is 4 hours - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: Replace never-called `after_start!` with `prepare!`/`cron!` using `Service.instance.once_and_every` - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).

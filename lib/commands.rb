@@ -23,6 +23,7 @@ require_relative 'commands/reset'
 require_relative 'commands/seasons'
 require_relative 'commands/season'
 require_relative 'commands/matches'
+require_relative 'commands/games'
 require_relative 'commands/channels'
 require_relative 'commands/promote'
 require_relative 'commands/demote'
@@ -63,6 +64,7 @@ SlackRubyBotServer::Events::AppMentions.configure do |config|
     SlackGamebot::Commands::Seasons,
     SlackGamebot::Commands::Season,
     SlackGamebot::Commands::Matches,
+    SlackGamebot::Commands::Games,
     SlackGamebot::Commands::Channels,
     SlackGamebot::Commands::Taunt,
     SlackGamebot::Commands::Team,
