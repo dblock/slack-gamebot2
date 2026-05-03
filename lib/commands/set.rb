@@ -17,6 +17,18 @@ module SlackGamebot
         rescue StandardError
           raise SlackGamebot::Error, "Sorry, #{v} is not a valid number."
         end
+
+        def parse_expire(v)
+          return nil if v == 'never'
+
+          seconds = ChronicDuration.parse(v, default_unit: 'minutes')
+          raise SlackGamebot::Error, "Sorry, '#{v}' is not a valid duration, e.g. _30 minutes_, _2 hours_ or _never_." unless seconds
+
+          minutes = (seconds / 60).to_i
+          raise SlackGamebot::Error, 'Expiry duration must be at least 15 minutes.' unless minutes >= 15
+
+          minutes
+        end
       end
 
       user_in_channel_or_dm_command 'unset' do |channel, user, data|

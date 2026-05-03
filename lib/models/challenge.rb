@@ -38,7 +38,9 @@ class Challenge
 
   validate :validate_updated_by
   validate :validate_draw_scores
-  validates_presence_of :updated_by, if: ->(challenge) { challenge.state != ChallengeState::PROPOSED }
+  validates_presence_of :updated_by, if: lambda { |challenge|
+    ![ChallengeState::PROPOSED, ChallengeState::EXPIRED].include?(challenge.state)
+  }
   validates_presence_of :channel
 
   # current challenges are not in an archived season
@@ -101,6 +103,12 @@ class Challenge
     raise SlackGamebot::Error, "Challenge has already been #{state}." unless [ChallengeState::PROPOSED, ChallengeState::ACCEPTED].include?(state)
 
     update_attributes!(updated_by: challenger, state: ChallengeState::CANCELED)
+  end
+
+  def expire!
+    raise SlackGamebot::Error, "Challenge has already been #{state}." unless state == ChallengeState::PROPOSED
+
+    update_attributes!(state: ChallengeState::EXPIRED)
   end
 
   def win!(winner, scores = nil)

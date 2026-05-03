@@ -302,7 +302,7 @@ Use _matches 3_ to see top 3 matches or _matches inifinity_ to see all matches i
 
 #### gamebot challenges
 
-Displays all outstanding (proposed and accepted) challenges.
+Displays all outstanding (proposed and accepted) challenges. Proposed challenges that have not been accepted automatically expire after 8 hours (configurable with `set expire`).
 
 #### gamebot rank [&lt;player&gt; ...]
 
@@ -577,6 +577,30 @@ Enable or disable the `won` command. New channels have it enabled by default.
 gamebot set won off
 
 Won command for #channel is off.
+```
+
+#### gamebot set expire [hours|never]
+
+Set how long a proposed challenge remains open before being automatically canceled. Default is 8 hours. Use `never` to disable expiry.
+
+```
+gamebot set expire 24
+
+Challenge expiry for #channel is 24 hours.
+```
+
+```
+gamebot set expire never
+
+Challenge expiry for #channel is never.
+```
+
+Reset to the default with `unset expire`.
+
+```
+gamebot unset expire
+
+Challenge expiry for #channel is 8 hours.
 ```
 
 #### gamebot subscription
