@@ -21,6 +21,7 @@ class Channel
   field :aliases, type: Array, default: []
 
   field :expire, type: Integer, default: 8 * 60
+  field :remind, type: Integer, default: 4 * 60
 
   field :details, type: Array, default: [Details::ELO]
   validates :details, inclusion: { in: Details.values }
@@ -97,12 +98,33 @@ class Channel
     expire ? "Challenges expire after #{expire_s}." : 'Challenges never expire.'
   end
 
+  def remind_s
+    return 'never' unless remind
+
+    ChronicDuration.output(remind * 60, format: :long)
+  end
+
+  def remind_message
+    remind ? "Reminders will be sent after #{remind_s}." : 'Reminders are disabled.'
+  end
+
   def expire_challenges!
     return unless expire
 
     challenges.proposed.where(:created_at.lt => Time.now.utc - expire.minutes).each do |challenge|
       challenge.expire!
       inform!("#{challenge} has expired.")
+    end
+  end
+
+  def remind_challenges!
+    return unless remind
+
+    challenges.accepted.any_of(
+      { :updated_at.lt => Time.now.utc - remind.minutes, :reminded_at.exists => false },
+      { :reminded_at.lt => Time.now.utc - 24.hours }
+    ).each do |challenge|
+      challenge.remind!
     end
   end
 

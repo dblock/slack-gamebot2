@@ -9,6 +9,7 @@ class Challenge
   SORT_ORDERS = ['created_at', '-created_at', 'updated_at', '-updated_at', 'state', '-state', 'channel', '-channel'].freeze
 
   field :state, type: String, default: ChallengeState::PROPOSED
+  field :reminded_at, type: DateTime
 
   belongs_to :team, index: true
   belongs_to :channel, index: true
@@ -109,6 +110,14 @@ class Challenge
     raise SlackGamebot::Error, "Challenge has already been #{state}." unless state == ChallengeState::PROPOSED
 
     update_attributes!(state: ChallengeState::EXPIRED)
+  end
+
+  def remind!
+    raise SlackGamebot::Error, "Challenge has already been #{state}." unless state == ChallengeState::ACCEPTED
+
+    update_attributes!(reminded_at: Time.now.utc)
+    players = (challengers + challenged).map(&:slack_mention).and
+    channel.inform!("Hey #{players}, #{self} was accepted but never recorded. Please record the match result.")
   end
 
   def win!(winner, scores = nil)

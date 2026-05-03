@@ -557,13 +557,13 @@ describe SlackGamebot::Commands::SetChannel do
     context 'invalid' do
       it 'errors set' do
         expect(message: '@gamebot set invalid on', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_ and _expire_.'
+          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
         )
       end
 
       it 'errors unset' do
         expect(message: '@gamebot unset invalid', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_ and _expire_.'
+          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
         )
       end
     end
@@ -576,7 +576,7 @@ describe SlackGamebot::Commands::SetChannel do
       end
 
       it 'shows expire of 30 minutes' do
-        channel.update_attributes!(expire: 30)
+        channel.update_attributes!(expire: 30, remind: nil)
         expect(message: '@gamebot set expire', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 30 minutes.'
         )
@@ -590,6 +590,7 @@ describe SlackGamebot::Commands::SetChannel do
       end
 
       it 'sets expire in hours' do
+        channel.update_attributes!(remind: nil)
         expect(message: '@gamebot set expire 2 hours', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 2 hours.'
         )
@@ -597,6 +598,7 @@ describe SlackGamebot::Commands::SetChannel do
       end
 
       it 'sets expire in minutes' do
+        channel.update_attributes!(remind: nil)
         expect(message: '@gamebot set expire 30 min', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 30 minutes.'
         )
@@ -604,6 +606,7 @@ describe SlackGamebot::Commands::SetChannel do
       end
 
       it 'sets expire with a bare number (treated as minutes)' do
+        channel.update_attributes!(remind: nil)
         expect(message: '@gamebot set expire 30', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 30 minutes.'
         )
@@ -626,13 +629,19 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'errors on invalid duration' do
         expect(message: '@gamebot set expire banana', user: captain, channel: channel).to respond_with_slack_message(
-          "Sorry, 'banana' is not a valid duration, e.g. _30 minutes_, _2 hours_ or _never_."
+          "Sorry, 'banana' is not a valid duration, e.g. _30m_, _2h_ or _never_."
         )
       end
 
       it 'errors when duration is less than 15 minutes' do
         expect(message: '@gamebot set expire 10 min', user: captain, channel: channel).to respond_with_slack_message(
-          'Expiry duration must be at least 15 minutes.'
+          'Duration must be at least 15 minutes.'
+        )
+      end
+
+      it 'errors when expire is not after remind' do
+        expect(message: '@gamebot set expire 2 hours', user: captain, channel: channel).to respond_with_slack_message(
+          'Expire must be after remind (currently 4 hours).'
         )
       end
 
@@ -652,6 +661,7 @@ describe SlackGamebot::Commands::SetChannel do
           'API for channel <#channel> is on, and the team API token is not set.',
           'Bot aliases are not set.',
           'Challenges expire after 8 hours.',
+          'Reminders will be sent after 4 hours.',
           'GIFs are on.',
           'Elo is 0.',
           'Elo algorithm is adaptive (decay=0.94).',
@@ -663,7 +673,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'errors on unset' do
         expect(message: '@gamebot unset', user: captain, channel: channel).to respond_with_slack_message(
-          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_ and _expire_.'
+          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_ and _remind_.'
         )
       end
     end
@@ -848,6 +858,88 @@ describe SlackGamebot::Commands::SetChannel do
           'Bot aliases are not supported in private channels, sorry.'
         )
       end
+    end
+  end
+
+  context 'remind' do
+    it 'shows current value of remind' do
+      expect(message: '@gamebot set remind', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders will be sent after 4 hours.'
+      )
+    end
+
+    it 'shows remind of 30 minutes' do
+      channel.update_attributes!(remind: 30)
+      expect(message: '@gamebot set remind', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders will be sent after 30 minutes.'
+      )
+    end
+
+    it 'shows remind of never' do
+      channel.update_attributes!(remind: nil)
+      expect(message: '@gamebot set remind', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders are disabled.'
+      )
+    end
+
+    it 'sets remind in hours' do
+      expect(message: '@gamebot set remind 2 hours', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders will be sent after 2 hours.'
+      )
+      expect(channel.reload.remind).to eq 120
+    end
+
+    it 'sets remind in minutes' do
+      expect(message: '@gamebot set remind 30 min', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders will be sent after 30 minutes.'
+      )
+      expect(channel.reload.remind).to eq 30
+    end
+
+    it 'sets remind with a bare number (treated as minutes)' do
+      expect(message: '@gamebot set remind 60', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders will be sent after 1 hour.'
+      )
+      expect(channel.reload.remind).to eq 60
+    end
+
+    it 'sets remind to never' do
+      expect(message: '@gamebot set remind never', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders are disabled.'
+      )
+      expect(channel.reload.remind).to be_nil
+    end
+
+    it 'unsets remind to never' do
+      expect(message: '@gamebot unset remind', user: captain, channel: channel).to respond_with_slack_message(
+        'Reminders are disabled.'
+      )
+      expect(channel.reload.remind).to be_nil
+    end
+
+    it 'errors on invalid duration' do
+      expect(message: '@gamebot set remind banana', user: captain, channel: channel).to respond_with_slack_message(
+        "Sorry, 'banana' is not a valid duration, e.g. _30m_, _2h_ or _never_."
+      )
+    end
+
+    it 'errors when duration is less than 15 minutes' do
+      expect(message: '@gamebot set remind 10 min', user: captain, channel: channel).to respond_with_slack_message(
+        'Duration must be at least 15 minutes.'
+      )
+    end
+
+    it 'errors when remind is not before expire' do
+      expect(message: '@gamebot set remind 9 hours', user: captain, channel: channel).to respond_with_slack_message(
+        'Remind must be before expire (currently 8 hours).'
+      )
+    end
+
+    it 'cannot set remind without being a captain' do
+      non_captain = Fabricate(:user, channel: channel)
+      expect(message: '@gamebot set remind 2 hours', user: non_captain, channel: channel).to respond_with_slack_message(
+        "You're not a captain, sorry."
+      )
     end
   end
 end

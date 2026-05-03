@@ -23,6 +23,7 @@ module SlackGamebot
         end
         instance.once_and_every 15 * 60 do
           expire_challenges!
+          remind_challenges!
         end
       end
     end
@@ -35,6 +36,18 @@ module SlackGamebot
         channel.expire_challenges!
       rescue StandardError => e
         logger.warn "Error expiring challenges for channel #{channel}, #{e.message}."
+      end
+    end
+
+    def remind_challenges!
+      channel_ids = Challenge.accepted.any_of(
+        { :reminded_at.exists => false },
+        { :reminded_at.lt => Time.now.utc - 24.hours }
+      ).distinct(:channel_id)
+      Channel.enabled.where(:id.in => channel_ids, :remind.ne => nil).each do |channel|
+        channel.remind_challenges!
+      rescue StandardError => e
+        logger.warn "Error reminding challenges for channel #{channel}, #{e.message}."
       end
     end
 

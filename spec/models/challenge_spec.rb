@@ -336,4 +336,18 @@ describe Challenge do
       expect { challenge.expire! }.to raise_error(SlackGamebot::Error, 'Challenge has already been accepted.')
     end
   end
+
+  describe '#remind!' do
+    let(:challenge) { Fabricate(:accepted_challenge) }
+
+    it 'sets reminded_at on an accepted challenge' do
+      expect(challenge.channel).to receive(:inform!)
+      challenge.remind!
+      expect(challenge.reload.reminded_at).not_to be_nil
+    end
+
+    it 'cannot remind a proposed challenge' do
+      expect { Fabricate(:challenge).remind! }.to raise_error(SlackGamebot::Error, 'Challenge has already been proposed.')
+    end
+  end
 end
