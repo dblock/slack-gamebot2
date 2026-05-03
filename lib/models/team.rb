@@ -3,6 +3,7 @@
 class Team
   field :dead_at, type: DateTime
   field :trial_informed_at, type: DateTime
+  field :past_due_informed_at, type: DateTime
 
   field :stripe_customer_id, type: String
   field :subscribed, type: Boolean, default: false

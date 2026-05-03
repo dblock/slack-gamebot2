@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/03: Throttle past due subscription notifications to at most once every 72 hours - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: Return an error when a player tries to register someone else - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/04/26: Reorganized help text: merged General and DMs into Other (at end), moved seasons to Stats, removed duplicates - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/04/25: Send a welcome DM to the user who installed the bot when a team is activated - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
