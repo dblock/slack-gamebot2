@@ -15,6 +15,9 @@ module SlackGamebot
         check_subscribed_teams!
         check_active_subscriptions_without_teams!
       end
+      once_and_every 15 * 60 do
+        expire_challenges!
+      end
     end
 
     private
@@ -25,6 +28,15 @@ module SlackGamebot
           yield
           task.sleep tt
         end
+      end
+    end
+
+    def expire_challenges!
+      channel_ids = Challenge.proposed.distinct(:channel_id)
+      Channel.enabled.where(:id.in => channel_ids, :expire.ne => nil).each do |channel|
+        channel.expire_challenges!
+      rescue StandardError => e
+        logger.warn "Error expiring challenges for channel #{channel}, #{e.message}."
       end
     end
 

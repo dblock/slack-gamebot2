@@ -322,4 +322,18 @@ describe Challenge do
       expect(played_challenge).to be_valid
     end
   end
+
+  describe '#expire!' do
+    let(:challenge) { Fabricate(:challenge) }
+
+    it 'expires a proposed challenge' do
+      challenge.expire!
+      expect(challenge.reload.state).to eq ChallengeState::EXPIRED
+    end
+
+    it 'cannot expire an already accepted challenge' do
+      challenge.update_attributes!(state: ChallengeState::ACCEPTED, updated_by: challenge.challenged.first)
+      expect { challenge.expire! }.to raise_error(SlackGamebot::Error, 'Challenge has already been accepted.')
+    end
+  end
 end

@@ -9,6 +9,7 @@ module SlackGamebot
           text: [
             "API for channel #{channel.slack_mention} is #{channel.api_s}, and the team API token is #{channel.team.api_token.blank? ? 'not set' : 'set'}.",
             channel.is_group ? nil : "Bot aliases are #{channel.aliases_s}.",
+            channel.expire_message,
             "GIFs are #{channel.gifs_s}.",
             "Elo is #{channel.elo}.",
             "Elo algorithm is #{channel.elo_algorithm_s}.",
@@ -296,6 +297,22 @@ module SlackGamebot
         logger.info "UNSET: #{channel} - #{user.user_name}: no longer has bot aliases"
       end
 
+      def set_expire(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless v.nil? || user.captain?
+
+        channel.update_attributes!(expire: parse_expire(v)) unless v.nil?
+        channel.slack_client.say(channel: data.channel, text: channel.expire_message, gif: 'timer')
+        logger.info "SET: #{channel} - #{user.user_name}: #{channel.expire_message}"
+      end
+
+      def unset_expire(channel, data, user)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        channel.update_attributes!(expire: nil)
+        channel.slack_client.say(channel: data.channel, text: channel.expire_message, gif: 'timer')
+        logger.info "UNSET: #{channel} - #{user.user_name}: #{channel.expire_message}"
+      end
+
       def set_channel(channel, data, user, k, v)
         case k
         when 'nickname'
@@ -320,12 +337,14 @@ module SlackGamebot
           set_elo channel, data, user, v
         when 'aliases'
           set_aliases channel, data, user, v
+        when 'expire'
+          set_expire channel, data, user, v
         when 'details'
           set_details channel, data, user, v
         when nil
           set_channel_info channel, data, user
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_ and _aliases_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_ and _expire_."
         end
       end
 
@@ -352,12 +371,14 @@ module SlackGamebot
           unset_elo channel, data, user
         when 'aliases'
           unset_aliases channel, data, user
+        when 'expire'
+          unset_expire channel, data, user
         when 'details'
           unset_details channel, data, user
         when nil
-          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_.'
+          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_ and _expire_.'
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_ and _aliases_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_ and _expire_."
         end
       end
     end

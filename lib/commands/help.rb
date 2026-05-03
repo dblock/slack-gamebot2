@@ -38,6 +38,7 @@ module SlackGamebot
         --------
         set nickname [name], unset nickname: set/unset your nickname displayed in leaderboards
         set leaderboard max [number|infinity], unset leaderboard max: set/unset leaderboard max
+        set expire [min|hours|never], unset expire: set/unset challenge expiry, minimum 15 minutes, default is 8 hours
         set gifs [on|off], unset gifs: enable/disable animated GIFs, default is on
         set aliases [<alias> ...], unset aliases: set/unset additional bot aliases in public channels
         set elo [number], unset elo: set/unset base elo for the team

@@ -20,6 +20,8 @@ class Channel
   field :gifs, type: Boolean, default: true
   field :aliases, type: Array, default: []
 
+  field :expire, type: Integer, default: 8 * 60
+
   field :details, type: Array, default: [Details::ELO]
   validates :details, inclusion: { in: Details.values }
 
@@ -83,6 +85,25 @@ class Channel
 
   def leaderboard_max_s
     leaderboard_max || 'not set'
+  end
+
+  def expire_s
+    return 'never' unless expire
+
+    ChronicDuration.output(expire * 60, format: :long)
+  end
+
+  def expire_message
+    expire ? "Challenges expire after #{expire_s}." : 'Challenges never expire.'
+  end
+
+  def expire_challenges!
+    return unless expire
+
+    challenges.proposed.where(:created_at.lt => Time.now.utc - expire.minutes).each do |challenge|
+      challenge.expire!
+      inform!("#{challenge} has expired.")
+    end
   end
 
   def leaderboard_s(max: nil, reverse: false)

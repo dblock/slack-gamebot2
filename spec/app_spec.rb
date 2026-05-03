@@ -42,6 +42,28 @@ describe SlackGamebot::App do
     end
   end
 
+  context 'challenges' do
+    let!(:channel) { Fabricate(:channel) }
+    let!(:proposed_challenge) { Fabricate(:challenge, channel: channel, created_at: 500.minutes.ago) }
+    let!(:recent_challenge) { Fabricate(:challenge, channel: channel, created_at: 400.minutes.ago) }
+
+    describe '#expire_challenges!' do
+      it 'expires proposed challenges older than the expiry' do
+        expect_any_instance_of(Channel).to receive(:inform!).with("#{proposed_challenge} has expired.")
+        subject.send(:expire_challenges!)
+        expect(proposed_challenge.reload.state).to eq ChallengeState::EXPIRED
+        expect(recent_challenge.reload.state).to eq ChallengeState::PROPOSED
+      end
+
+      it 'does not expire challenges when expiry is never' do
+        channel.update_attributes!(expire: nil)
+        expect_any_instance_of(Channel).not_to receive(:inform!)
+        subject.send(:expire_challenges!)
+        expect(proposed_challenge.reload.state).to eq ChallengeState::PROPOSED
+      end
+    end
+  end
+
   context 'subscribed' do
     include_context 'stripe mock'
     let(:plan) { stripe_helper.create_plan(id: 'slack-gamebot2-yearly', amount: 4999, name: 'Plan') }
