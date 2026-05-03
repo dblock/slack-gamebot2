@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/03: [#71](https://github.com/dblock/slack-gamebot2/issues/71): Send a reminder for accepted challenges that were never recorded, configurable with `set remind <duration|never>` and `unset remind`, default is 4 hours - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: Replace never-called `after_start!` with `prepare!`/`cron!` using `Service.instance.once_and_every` - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#70](https://github.com/dblock/slack-gamebot2/issues/70): Proposed challenges auto-expire after 8 hours (minimum 15 minutes); configurable per channel with `set expire <duration|never>` and `unset expire`, supports natural language durations (e.g. `30 minutes`, `2 hours`) - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: Throttle past due subscription notifications to at most once every 72 hours - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).

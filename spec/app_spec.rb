@@ -62,6 +62,47 @@ describe SlackGamebot::App do
         expect(proposed_challenge.reload.state).to eq ChallengeState::PROPOSED
       end
     end
+
+    describe '#remind_challenges!' do
+      let!(:accepted_challenge) do
+        Fabricate(:accepted_challenge, channel: channel, updated_at: 1500.minutes.ago)
+      end
+      let!(:recent_accepted_challenge) do
+        Fabricate(:accepted_challenge, channel: channel, updated_at: 60.minutes.ago)
+      end
+
+      it 'reminds accepted challenges older than the reminder threshold' do
+        players = (accepted_challenge.challengers + accepted_challenge.challenged).map(&:slack_mention).and
+        expect_any_instance_of(Channel).to receive(:inform!).with(
+          "Hey #{players}, #{accepted_challenge} was accepted but never recorded. Please record the match result."
+        )
+        subject.send(:remind_challenges!)
+        expect(accepted_challenge.reload.reminded_at).not_to be_nil
+        expect(recent_accepted_challenge.reload.reminded_at).to be_nil
+      end
+
+      it 'does not remind the same challenge again within 24 hours' do
+        accepted_challenge.update_attributes!(reminded_at: Time.now.utc)
+        expect_any_instance_of(Channel).not_to receive(:inform!)
+        subject.send(:remind_challenges!)
+      end
+
+      it 'reminds again after 24 hours' do
+        accepted_challenge.set(reminded_at: 25.hours.ago)
+        players = (accepted_challenge.challengers + accepted_challenge.challenged).map(&:slack_mention).and
+        expect_any_instance_of(Channel).to receive(:inform!).with(
+          "Hey #{players}, #{accepted_challenge} was accepted but never recorded. Please record the match result."
+        )
+        subject.send(:remind_challenges!)
+      end
+
+      it 'does not remind when remind is never' do
+        channel.update_attributes!(remind: nil)
+        expect_any_instance_of(Channel).not_to receive(:inform!)
+        subject.send(:remind_challenges!)
+        expect(accepted_challenge.reload.reminded_at).to be_nil
+      end
+    end
   end
 
   context 'subscribed' do
