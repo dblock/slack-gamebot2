@@ -23,6 +23,12 @@ class Channel
   field :expire, type: Integer, default: 8 * 60
   field :remind, type: Integer, default: 4 * 60
   field :max_challenges, type: Integer
+  field :max_challenges_per_day, type: Integer
+  field :max_challenges_per_user, type: Integer
+  field :timezone, type: String, default: 'Eastern Time (US & Canada)'
+
+  validates_presence_of :timezone
+  validate :validate_timezone
 
   field :details, type: Array, default: [Details::ELO]
   validates :details, inclusion: { in: Details.values }
@@ -91,6 +97,23 @@ class Channel
 
   def max_challenges_s
     max_challenges || 'not set'
+  end
+
+  def max_challenges_per_day_s
+    max_challenges_per_day || 'not set'
+  end
+
+  def max_challenges_per_user_s
+    max_challenges_per_user || 'not set'
+  end
+
+  def timezone_s
+    timezone || 'not set'
+  end
+
+  def beginning_of_day
+    tz = ActiveSupport::TimeZone.new(timezone) || ActiveSupport::TimeZone.new('Eastern Time (US & Canada)')
+    Time.now.utc.in_time_zone(tz).beginning_of_day.utc
   end
 
   def expire_s
@@ -252,5 +275,13 @@ class Channel
 
   def inform!(message)
     slack_client.chat_postMessage(text: message, channel: channel_id, as_user: true)
+  end
+
+  private
+
+  def validate_timezone
+    return if ActiveSupport::TimeZone.new(timezone)
+
+    errors.add(:timezone, "#{timezone} is not a valid timezone.")
   end
 end

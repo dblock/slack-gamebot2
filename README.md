@@ -710,6 +710,60 @@ gamebot unset max challenges
 Max challenges limit removed.
 ```
 
+#### gamebot set max challenges per day [number|none]
+
+Set the maximum number of challenges that can be proposed in the channel per day. Resets at midnight in the channel's configured timezone. No limit by default.
+
+```
+gamebot set max challenges per day 10
+
+Max challenges per day is 10.
+```
+
+Remove the limit with `set max challenges per day` or `unset max challenges per day`.
+
+```
+gamebot unset max challenges per day
+
+Max challenges per day removed.
+```
+
+#### gamebot set max challenges per user [number|none]
+
+Set the maximum number of challenges a single user can propose per day. Resets at midnight in the channel's configured timezone. No limit by default.
+
+```
+gamebot set max challenges per user 3
+
+Max challenges per user is 3.
+```
+
+Remove the limit with `set max challenges per user` or `unset max challenges per user`.
+
+```
+gamebot unset max challenges per user
+
+Max challenges per user removed.
+```
+
+#### gamebot set timezone [name]
+
+Set the timezone used to determine when each day starts for the daily challenge limits. Default is `Eastern Time (US & Canada)`. See [valid timezone names](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
+
+```
+gamebot set timezone Pacific Time (US & Canada)
+
+Timezone for #channel is Pacific Time (US & Canada).
+```
+
+Reset to the default with `unset timezone`.
+
+```
+gamebot unset timezone
+
+Timezone for #channel has been reset to Eastern Time (US & Canada).
+```
+
 #### gamebot subscription
 
 DM to show paid subscription information.
