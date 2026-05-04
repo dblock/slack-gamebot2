@@ -32,6 +32,8 @@ class Challenge
   validate :validate_opponents_counts
   validate :validate_unique_challenge
   validate :validate_channels
+  validate :validate_max_challenges_per_day, on: :create
+  validate :validate_max_challenges_per_user, on: :create
 
   validates_presence_of :channel
   validates_presence_of :team
@@ -320,5 +322,24 @@ class Challenge
     return if Score.tie?(draw_scores)
 
     errors.add(:scores, 'In a tie both sides must score the same number of points.')
+  end
+
+  def validate_max_challenges_per_day
+    return unless channel&.max_challenges_per_day
+
+    current = channel.challenges.where(:created_at.gte => channel.beginning_of_day).count
+    return unless current >= channel.max_challenges_per_day
+
+    errors.add(:challenge, "Only #{channel.max_challenges_per_day} challenge#{'s' unless channel.max_challenges_per_day == 1} allowed per day in this channel, #{current} already issued today.")
+  end
+
+  def validate_max_challenges_per_user
+    return unless channel&.max_challenges_per_user
+    return unless created_by
+
+    current = channel.challenges.where(:created_at.gte => channel.beginning_of_day, :created_by_id => created_by._id).count
+    return unless current >= channel.max_challenges_per_user
+
+    errors.add(:challenge, "Only #{channel.max_challenges_per_user} challenge#{'s' unless channel.max_challenges_per_user == 1} allowed per day per user, #{current} already issued today.")
   end
 end

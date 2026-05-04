@@ -155,6 +155,62 @@ describe Challenge do
         end.to raise_error Mongoid::Errors::Validations, /#{existing_challenger.user_name} can't play./
       end
     end
+
+    context 'with max_challenges_per_day set' do
+      before do
+        channel.update_attributes!(max_challenges_per_day: 2)
+      end
+
+      it 'allows challenges up to the daily limit' do
+        opp1 = Fabricate(:user, channel: channel)
+        opp2 = Fabricate(:user, channel: channel)
+        described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        described_class.create_from_teammates_and_opponents!(Fabricate(:user, channel: channel), [opp2.slack_mention])
+        expect(channel.challenges.count).to eq 2
+      end
+
+      it 'raises an error when the daily channel limit is reached' do
+        opp1 = Fabricate(:user, channel: channel)
+        opp2 = Fabricate(:user, channel: channel)
+        opp3 = Fabricate(:user, channel: channel)
+        described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        described_class.create_from_teammates_and_opponents!(Fabricate(:user, channel: channel), [opp2.slack_mention])
+        expect do
+          described_class.create_from_teammates_and_opponents!(Fabricate(:user, channel: channel), [opp3.slack_mention])
+        end.to raise_error Mongoid::Errors::Validations, /Only 2 challenges allowed per day in this channel, 2 already issued today./
+      end
+    end
+
+    context 'with max_challenges_per_user set' do
+      before do
+        channel.update_attributes!(max_challenges_per_user: 1)
+      end
+
+      it 'allows the user to challenge up to the per-user daily limit' do
+        opp1 = Fabricate(:user, channel: channel)
+        described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        expect(channel.challenges.count).to eq 1
+      end
+
+      it 'raises an error when the per-user daily limit is reached' do
+        opp1 = Fabricate(:user, channel: channel)
+        opp2 = Fabricate(:user, channel: channel)
+        described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        expect do
+          described_class.create_from_teammates_and_opponents!(challenger, [opp2.slack_mention])
+        end.to raise_error Mongoid::Errors::Validations, /Only 1 challenge allowed per day per user, 1 already issued today./
+      end
+
+      it 'allows a different user to challenge when one user is at their limit' do
+        opp1 = Fabricate(:user, channel: channel)
+        opp2 = Fabricate(:user, channel: channel)
+        another_challenger = Fabricate(:user, channel: channel)
+        described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        expect do
+          described_class.create_from_teammates_and_opponents!(another_challenger, [opp2.slack_mention])
+        end.not_to raise_error
+      end
+    end
   end
 
   describe '#accept!' do

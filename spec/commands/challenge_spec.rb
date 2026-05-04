@@ -153,4 +153,72 @@ describe SlackGamebot::Commands::Challenge do
       ].join("\n"))
     end
   end
+
+  context 'with max challenges per day set' do
+    let(:other_challenger) { Fabricate(:user, channel: channel) }
+    let(:other_challenged) { Fabricate(:user, channel: channel) }
+
+    before do
+      channel.update_attributes!(max_challenges_per_day: 1)
+      Fabricate(:challenge, team: team, challengers: [other_challenger], challenged: [other_challenged])
+    end
+
+    it 'cannot challenge when the daily channel limit is reached' do
+      expect do
+        expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+          'Only 1 challenge allowed per day in this channel, 1 already issued today.'
+        )
+      end.not_to change(Challenge, :count)
+    end
+
+    context 'with a limit of 2' do
+      before { channel.update_attributes!(max_challenges_per_day: 2) }
+
+      it 'can challenge when under the daily limit' do
+        expect do
+          expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+            "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
+          )
+        end.to change(Challenge, :count).by(1)
+      end
+    end
+  end
+
+  context 'with max challenges per user set' do
+    let(:other_opponent) { Fabricate(:user, channel: channel) }
+
+    before do
+      channel.update_attributes!(max_challenges_per_user: 1)
+      Fabricate(:played_challenge, team: team, challengers: [user], challenged: [opponent])
+    end
+
+    it 'cannot challenge a second time on the same day' do
+      expect do
+        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+          'Only 1 challenge allowed per day per user, 1 already issued today.'
+        )
+      end.not_to change(Challenge, :count)
+    end
+
+    it 'allows a different user to challenge when another user is at their limit' do
+      different_user = Fabricate(:user, channel: channel)
+      expect do
+        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: different_user, channel: channel).to respond_with_slack_message(
+          "#{different_user.slack_mention} challenged #{other_opponent.slack_mention} to a match!"
+        )
+      end.to change(Challenge, :count).by(1)
+    end
+
+    context 'with a limit of 2' do
+      before { channel.update_attributes!(max_challenges_per_user: 2) }
+
+      it 'can issue a second challenge when under the per-user limit' do
+        expect do
+          expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+            "#{user.slack_mention} challenged #{other_opponent.slack_mention} to a match!"
+          )
+        end.to change(Challenge, :count).by(1)
+      end
+    end
+  end
 end
