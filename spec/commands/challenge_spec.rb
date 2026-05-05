@@ -195,7 +195,7 @@ describe SlackGamebot::Commands::Challenge do
     it 'cannot challenge a second time on the same day' do
       expect do
         expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
-          'Only 1 challenge allowed per day per user, 1 already issued today.'
+          'Only 1 challenge allowed per day per user, 1 already created today.'
         )
       end.not_to change(Challenge, :count)
     end
@@ -219,6 +219,33 @@ describe SlackGamebot::Commands::Challenge do
           )
         end.to change(Challenge, :count).by(1)
       end
+    end
+  end
+
+  context 'with max games per user set' do
+    let(:other_opponent) { Fabricate(:user, channel: channel) }
+
+    before do
+      channel.update_attributes!(max_games_per_user: 1)
+      # Use a played challenge so the user isn't in an open challenge (avoids unique-challenge error)
+      Fabricate(:played_challenge, channel: channel, challengers: [user], challenged: [opponent])
+    end
+
+    it 'cannot create a challenge when the challenger is at their daily game limit' do
+      expect do
+        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+          "Only 1 game allowed per day per user, #{user.display_name} already has 1 today."
+        )
+      end.not_to change(Challenge, :count)
+    end
+
+    it 'allows a different user to challenge when another is at their game limit' do
+      different_user = Fabricate(:user, channel: channel)
+      expect do
+        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: different_user, channel: channel).to respond_with_slack_message(
+          "#{different_user.slack_mention} challenged #{other_opponent.slack_mention} to a match!"
+        )
+      end.to change(Challenge, :count).by(1)
     end
   end
 end

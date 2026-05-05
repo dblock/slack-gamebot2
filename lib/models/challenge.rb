@@ -34,6 +34,7 @@ class Challenge
   validate :validate_channels
   validate :validate_max_challenges_per_day, on: :create
   validate :validate_max_challenges_per_user, on: :create
+  validate :validate_max_games_per_user, on: :create
 
   validates_presence_of :channel
   validates_presence_of :team
@@ -112,6 +113,15 @@ class Challenge
       current = channel.challenges.where(state: ChallengeState::ACCEPTED).count
       if current >= channel.max_challenges
         raise SlackGamebot::Error, "Only #{channel.max_challenges} accepted challenge#{'s' unless channel.max_challenges == 1} allowed at a time, #{current} already in progress."
+      end
+    end
+
+    if channel.max_games_per_user
+      (challengers + [challenger]).uniq.each do |player|
+        current = games_today_for(player)
+        if current >= channel.max_games_per_user
+          raise SlackGamebot::Error, "Only #{channel.max_games_per_user} game#{'s' unless channel.max_games_per_user == 1} allowed per day per user, #{player.display_name} already has #{current} today."
+        end
       end
     end
 
@@ -340,6 +350,26 @@ class Challenge
     current = channel.challenges.where(:created_at.gte => channel.beginning_of_day, :created_by_id => created_by._id).count
     return unless current >= channel.max_challenges_per_user
 
-    errors.add(:challenge, "Only #{channel.max_challenges_per_user} challenge#{'s' unless channel.max_challenges_per_user == 1} allowed per day per user, #{current} already issued today.")
+    errors.add(:challenge, "Only #{channel.max_challenges_per_user} challenge#{'s' unless channel.max_challenges_per_user == 1} allowed per day per user, #{current} already created today.")
+  end
+
+  def validate_max_games_per_user
+    return unless channel&.max_games_per_user
+    return unless created_by
+
+    current = games_today_for(created_by)
+    return unless current >= channel.max_games_per_user
+
+    errors.add(:challenge, "Only #{channel.max_games_per_user} game#{'s' unless channel.max_games_per_user == 1} allowed per day per user, #{created_by.display_name} already has #{current} today.")
+  end
+
+  def games_today_for(player)
+    channel.challenges.where(
+      :created_at.gte => channel.beginning_of_day,
+      :state.in => [ChallengeState::ACCEPTED, ChallengeState::PLAYED]
+    ).any_of(
+      { :challenger_ids.in => [player._id] },
+      { :challenged_ids.in => [player._id] }
+    ).count
   end
 end

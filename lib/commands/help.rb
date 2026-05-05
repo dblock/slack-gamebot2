@@ -47,7 +47,8 @@ module SlackGamebot
         set remind [m|h|never], unset remind: set/unset reminder for unrecorded accepted challenges, min 15m, default is 4h
         set max challenges [number|none], unset max challenges: set/remove limit on simultaneous accepted challenges
         set max challenges per day [number|none], unset max challenges per day: set/remove daily challenge limit for the channel
-        set max challenges per user [number|none], unset max challenges per user: set/remove daily challenge limit per user
+        set max challenges per user [number|none], unset max challenges per user: set/remove limit on challenges issued per user per day
+        set max games per user [number|none], unset max games per user: set/remove limit on games a user can participate in per day
         set timezone [name], unset timezone: set/reset timezone used for daily limits, default is Eastern Time (US & Canada)
         set gifs [on|off], unset gifs: enable/disable animated GIFs, default is on
         set aliases [<alias> ...], unset aliases: set/unset additional bot aliases in public channels

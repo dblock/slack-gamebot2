@@ -17,7 +17,8 @@ module SlackGamebot
             "Leaderboard max is #{channel.leaderboard_max_s}.",
             "Max challenges number is #{channel.max_challenges_s}.",
             "Max challenges per day is #{channel.max_challenges_per_day_s}.",
-            "Max challenges per user is #{channel.max_challenges_per_user_s}.",
+            "Max challenges issued per user per day is #{channel.max_challenges_per_user_s}.",
+            "Max games per user per day is #{channel.max_games_per_user_s}.",
             "Timezone is #{channel.timezone_s}.",
             "Unbalanced challenges are #{channel.unbalanced_s} by default.",
             "Won command is #{channel.won_s}."
@@ -311,13 +312,28 @@ module SlackGamebot
 
         if v.nil? || v.strip.empty? || v.strip == 'none'
           channel.update_attributes!(max_challenges_per_user: nil)
-          channel.slack_client.say(channel: data.channel, text: 'Max challenges per user removed.', gif: 'count')
+          channel.slack_client.say(channel: data.channel, text: 'Max challenges issued per user per day removed.', gif: 'count')
           logger.info "SET: #{channel} - #{user.user_name}: max_challenges_per_user removed"
         else
           n = parse_int_or_none(v)
           channel.update_attributes!(max_challenges_per_user: n&.positive? ? n : nil)
-          channel.slack_client.say(channel: data.channel, text: "Max challenges per user is #{channel.max_challenges_per_user_s}.", gif: 'count')
+          channel.slack_client.say(channel: data.channel, text: "Max challenges issued per user per day is #{channel.max_challenges_per_user_s}.", gif: 'count')
           logger.info "SET: #{channel} - #{user.user_name}: max_challenges_per_user=#{channel.max_challenges_per_user_s}"
+        end
+      end
+
+      def set_max_games_per_user(channel, data, user, v)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        if v.nil? || v.strip.empty? || v.strip == 'none'
+          channel.update_attributes!(max_games_per_user: nil)
+          channel.slack_client.say(channel: data.channel, text: 'Max games per user per day removed.', gif: 'count')
+          logger.info "SET: #{channel} - #{user.user_name}: max_games_per_user removed"
+        else
+          n = parse_int_or_none(v)
+          channel.update_attributes!(max_games_per_user: n&.positive? ? n : nil)
+          channel.slack_client.say(channel: data.channel, text: "Max games per user per day is #{channel.max_games_per_user_s}.", gif: 'count')
+          logger.info "SET: #{channel} - #{user.user_name}: max_games_per_user=#{channel.max_games_per_user_s}"
         end
       end
 
@@ -330,13 +346,21 @@ module SlackGamebot
           logger.info "UNSET: #{channel} - #{user.user_name}: max_challenges_per_day removed"
         elsif v&.match?(/\Aper\s+user\z/i)
           channel.update_attributes!(max_challenges_per_user: nil)
-          channel.slack_client.say(channel: data.channel, text: 'Max challenges per user removed.', gif: 'count')
+          channel.slack_client.say(channel: data.channel, text: 'Max challenges issued per user per day removed.', gif: 'count')
           logger.info "UNSET: #{channel} - #{user.user_name}: max_challenges_per_user removed"
         else
           channel.update_attributes!(max_challenges: nil)
           channel.slack_client.say(channel: data.channel, text: 'Max challenges number removed.', gif: 'count')
           logger.info "UNSET: #{channel} - #{user.user_name}: max_challenges removed"
         end
+      end
+
+      def unset_max_games_per_user(channel, data, user)
+        raise SlackGamebot::Error, "You're not a captain, sorry." unless user.captain?
+
+        channel.update_attributes!(max_games_per_user: nil)
+        channel.slack_client.say(channel: data.channel, text: 'Max games per user per day removed.', gif: 'count')
+        logger.info "UNSET: #{channel} - #{user.user_name}: max_games_per_user removed"
       end
 
       def set_aliases(channel, data, user, v)
@@ -464,8 +488,13 @@ module SlackGamebot
           case k
           when 'challenges'
             set_max_challenges channel, data, user, v
+          when 'games'
+            raise SlackGamebot::Error, 'Invalid games setting, you can _set max games per user_.' unless v&.match?(/\Aper\s+user\b/i)
+
+            set_max_games_per_user channel, data, user, v.sub(/\Aper\s+user\s*/i, '')
+
           else
-            raise SlackGamebot::Error, "Invalid max setting #{k}, you can _set max challenges_, _set max challenges per day_ and _set max challenges per user_."
+            raise SlackGamebot::Error, "Invalid max setting #{k}, you can _set max challenges_, _set max challenges per day_, _set max challenges per user_ and _set max games per user_."
           end
         when 'details'
           set_details channel, data, user, v
@@ -474,7 +503,7 @@ module SlackGamebot
         when nil
           set_channel_info channel, data, user
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_ and _timezone_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_."
         end
       end
 
@@ -510,17 +539,22 @@ module SlackGamebot
           case k
           when 'challenges'
             unset_max_challenges channel, data, user, v
+          when 'games'
+            raise SlackGamebot::Error, 'Invalid games setting, you can _unset max games per user_.' unless v&.match?(/\Aper\s+user\z/i)
+
+            unset_max_games_per_user channel, data, user
+
           else
-            raise SlackGamebot::Error, "Invalid max setting #{k}, you can _unset max challenges_, _unset max challenges per day_ and _unset max challenges per user_."
+            raise SlackGamebot::Error, "Invalid max setting #{k}, you can _unset max challenges_, _unset max challenges per day_, _unset max challenges per user_ and _unset max games per user_."
           end
         when 'details'
           unset_details channel, data, user
         when 'timezone'
           unset_timezone channel, data, user
         when nil
-          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_ and _timezone_.'
+          raise SlackGamebot::Error, 'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         else
-          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_ and _timezone_."
+          raise SlackGamebot::Error, "Invalid setting #{k}, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_."
         end
       end
     end

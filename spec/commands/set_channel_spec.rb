@@ -557,13 +557,13 @@ describe SlackGamebot::Commands::SetChannel do
     context 'invalid' do
       it 'errors set' do
         expect(message: '@gamebot set invalid on', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_ and _timezone_.'
+          'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         )
       end
 
       it 'errors unset' do
         expect(message: '@gamebot unset invalid', user: captain, channel: channel).to respond_with_slack_message(
-          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_ and _timezone_.'
+          'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         )
       end
     end
@@ -668,7 +668,8 @@ describe SlackGamebot::Commands::SetChannel do
           'Leaderboard max is not set.',
           'Max challenges number is not set.',
           'Max challenges per day is not set.',
-          'Max challenges per user is not set.',
+          'Max challenges issued per user per day is not set.',
+          'Max games per user per day is not set.',
           'Timezone is Eastern Time (US & Canada).',
           'Unbalanced challenges are off by default.',
           'Won command is on.'
@@ -677,7 +678,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'errors on unset' do
         expect(message: '@gamebot unset', user: captain, channel: channel).to respond_with_slack_message(
-          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_ and _timezone_.'
+          'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         )
       end
     end
@@ -1046,20 +1047,20 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'removes max per user (no limit by default)' do
       expect(message: '@gamebot set max challenges per user', user: captain, channel: channel).to respond_with_slack_message(
-        'Max challenges per user removed.'
+        'Max challenges issued per user per day removed.'
       )
     end
 
     it 'sets max per user to 1' do
       expect(message: '@gamebot set max challenges per user 1', user: captain, channel: channel).to respond_with_slack_message(
-        'Max challenges per user is 1.'
+        'Max challenges issued per user per day is 1.'
       )
       expect(channel.reload.max_challenges_per_user).to eq 1
     end
 
     it 'sets max per user to 3' do
       expect(message: '@gamebot set max challenges per user 3', user: captain, channel: channel).to respond_with_slack_message(
-        'Max challenges per user is 3.'
+        'Max challenges issued per user per day is 3.'
       )
       expect(channel.reload.max_challenges_per_user).to eq 3
     end
@@ -1067,7 +1068,7 @@ describe SlackGamebot::Commands::SetChannel do
     it 'unsets max per user' do
       channel.update_attributes!(max_challenges_per_user: 2)
       expect(message: '@gamebot unset max challenges per user', user: captain, channel: channel).to respond_with_slack_message(
-        'Max challenges per user removed.'
+        'Max challenges issued per user per day removed.'
       )
       expect(channel.reload.max_challenges_per_user).to be_nil
     end
@@ -1075,7 +1076,7 @@ describe SlackGamebot::Commands::SetChannel do
     it 'sets max per user to none' do
       channel.update_attributes!(max_challenges_per_user: 2)
       expect(message: '@gamebot set max challenges per user none', user: captain, channel: channel).to respond_with_slack_message(
-        'Max challenges per user removed.'
+        'Max challenges issued per user per day removed.'
       )
       expect(channel.reload.max_challenges_per_user).to be_nil
     end
@@ -1121,6 +1122,53 @@ describe SlackGamebot::Commands::SetChannel do
     it 'cannot set timezone without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
       expect(message: '@gamebot set timezone UTC', user: non_captain, channel: channel).to respond_with_slack_message(
+        "You're not a captain, sorry."
+      )
+    end
+  end
+
+  context 'max games per user' do
+    let(:captain) { Fabricate(:user, channel: channel, captain: true) }
+
+    it 'removes max games per user (no limit by default)' do
+      expect(message: '@gamebot set max games per user', user: captain, channel: channel).to respond_with_slack_message(
+        'Max games per user per day removed.'
+      )
+    end
+
+    it 'sets max games per user to 1' do
+      expect(message: '@gamebot set max games per user 1', user: captain, channel: channel).to respond_with_slack_message(
+        'Max games per user per day is 1.'
+      )
+      expect(channel.reload.max_games_per_user).to eq 1
+    end
+
+    it 'sets max games per user to 3' do
+      expect(message: '@gamebot set max games per user 3', user: captain, channel: channel).to respond_with_slack_message(
+        'Max games per user per day is 3.'
+      )
+      expect(channel.reload.max_games_per_user).to eq 3
+    end
+
+    it 'unsets max games per user' do
+      channel.update_attributes!(max_games_per_user: 2)
+      expect(message: '@gamebot unset max games per user', user: captain, channel: channel).to respond_with_slack_message(
+        'Max games per user per day removed.'
+      )
+      expect(channel.reload.max_games_per_user).to be_nil
+    end
+
+    it 'sets max games per user to none' do
+      channel.update_attributes!(max_games_per_user: 2)
+      expect(message: '@gamebot set max games per user none', user: captain, channel: channel).to respond_with_slack_message(
+        'Max games per user per day removed.'
+      )
+      expect(channel.reload.max_games_per_user).to be_nil
+    end
+
+    it 'cannot set max games per user without being a captain' do
+      non_captain = Fabricate(:user, channel: channel)
+      expect(message: '@gamebot set max games per user 1', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end

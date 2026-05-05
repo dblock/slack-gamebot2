@@ -25,6 +25,7 @@ class Channel
   field :max_challenges, type: Integer
   field :max_challenges_per_day, type: Integer
   field :max_challenges_per_user, type: Integer
+  field :max_games_per_user, type: Integer
   field :timezone, type: String, default: 'Eastern Time (US & Canada)'
 
   validates_presence_of :timezone
@@ -105,6 +106,10 @@ class Channel
 
   def max_challenges_per_user_s
     max_challenges_per_user || 'not set'
+  end
+
+  def max_games_per_user_s
+    max_games_per_user || 'not set'
   end
 
   def timezone_s

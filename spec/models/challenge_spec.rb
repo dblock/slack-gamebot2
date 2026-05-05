@@ -198,7 +198,7 @@ describe Challenge do
         described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
         expect do
           described_class.create_from_teammates_and_opponents!(challenger, [opp2.slack_mention])
-        end.to raise_error Mongoid::Errors::Validations, /Only 1 challenge allowed per day per user, 1 already issued today./
+        end.to raise_error Mongoid::Errors::Validations, /Only 1 challenge allowed per day per user, 1 already created today./
       end
 
       it 'allows a different user to challenge when one user is at their limit' do
@@ -211,9 +211,59 @@ describe Challenge do
         end.not_to raise_error
       end
     end
+
+    context 'with max_games_per_user set' do
+      before do
+        channel.update_attributes!(max_games_per_user: 1)
+      end
+
+      it 'blocks the challenger from creating a new challenge when at their game limit' do
+        opp1 = Fabricate(:user, channel: channel)
+        opp2 = Fabricate(:user, channel: channel)
+        c = described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        c.accept!(opp1)
+        expect do
+          described_class.create_from_teammates_and_opponents!(challenger, [opp2.slack_mention])
+        end.to raise_error Mongoid::Errors::Validations, /Only 1 game allowed per day per user, #{challenger.display_name} already has 1 today./
+      end
+
+      it 'allows a challenger under their game limit to create a challenge' do
+        opp1 = Fabricate(:user, channel: channel)
+        expect do
+          described_class.create_from_teammates_and_opponents!(challenger, [opp1.slack_mention])
+        end.not_to raise_error
+      end
+    end
   end
 
   describe '#accept!' do
+    context 'with max_games_per_user set' do
+      let(:team) { Fabricate(:team) }
+      let!(:channel) { Fabricate(:channel, team: team, max_games_per_user: 1) }
+
+      it 'blocks acceptance when the acceptor is at their daily game limit' do
+        player_a = Fabricate(:user, channel: channel)
+        player_b = Fabricate(:user, channel: channel)
+        player_c = Fabricate(:user, channel: channel)
+        # player_b already has 1 game today via a completed challenge (PLAYED = not open, counts toward daily total)
+        Fabricate(:played_challenge, channel: channel, challengers: [player_a], challenged: [player_b])
+        # player_c challenges player_b; player_b has no PROPOSED/ACCEPTED challenge so creation is OK
+        challenge = Fabricate(:challenge, channel: channel, challengers: [player_c], challenged: [player_b])
+        expect do
+          challenge.accept!(player_b)
+        end.to raise_error SlackGamebot::Error, /Only 1 game allowed per day per user, #{player_b.display_name} already has 1 today./
+      end
+
+      it 'allows acceptance when both sides are under their daily game limit' do
+        player_a = Fabricate(:user, channel: channel)
+        player_b = Fabricate(:user, channel: channel)
+        challenge = Fabricate(:challenge, channel: channel, challengers: [player_a], challenged: [player_b])
+        expect { challenge.accept!(player_b) }.not_to raise_error
+      end
+    end
+  end
+
+  describe '#accept! (original)' do
     let(:challenge) { Fabricate(:challenge) }
 
     it 'can be accepted' do

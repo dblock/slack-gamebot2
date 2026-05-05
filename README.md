@@ -746,6 +746,24 @@ gamebot unset max challenges per user
 Max challenges per user removed.
 ```
 
+#### gamebot set max games per user [number|none]
+
+Set the maximum number of games (challenges in accepted or played state) a single user can participate in per day. This applies both when creating a challenge and when accepting one. Resets at midnight in the channel's configured timezone. No limit by default.
+
+```
+gamebot set max games per user 2
+
+Max games per user is 2.
+```
+
+Remove the limit with `set max games per user` or `unset max games per user`.
+
+```
+gamebot unset max games per user
+
+Max games per user removed.
+```
+
 #### gamebot set timezone [name]
 
 Set the timezone used to determine when each day starts for the daily challenge limits. Default is `Eastern Time (US & Canada)`. See [valid timezone names](https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html).
