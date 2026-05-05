@@ -9,7 +9,7 @@ describe SlackGamebot::Commands::Team do
     let!(:user) { Fabricate(:user, channel: channel, user_name: 'username', captain: true) }
 
     it 'team' do
-      expect(message: '@gamebot team', channel: channel, user: user).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captain username."
+      expect(message: '<@bot_user_id> team', channel: channel, user: user).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captain username."
     end
 
     context 'gifs' do
@@ -23,7 +23,7 @@ describe SlackGamebot::Commands::Team do
         end
 
         it 'sends gif' do
-          expect(message: '@gamebot team', channel: channel, user: user).to respond_with_slack_message(text: "Team #{team.team_id} #{channel.slack_mention}, captain username.\nteam_gif", channel: channel.channel_id)
+          expect(message: '<@bot_user_id> team', channel: channel, user: user).to respond_with_slack_message(text: "Team #{team.team_id} #{channel.slack_mention}, captain username.\nteam_gif", channel: channel.channel_id)
         end
       end
 
@@ -33,7 +33,7 @@ describe SlackGamebot::Commands::Team do
         end
 
         it 'does not send gif' do
-          expect(message: '@gamebot team', channel: channel, user: user).to respond_with_slack_message(text: "Team #{team.team_id} #{channel.slack_mention}, captain username.", channel: channel.channel_id)
+          expect(message: '<@bot_user_id> team', channel: channel, user: user).to respond_with_slack_message(text: "Team #{team.team_id} #{channel.slack_mention}, captain username.", channel: channel.channel_id)
         end
       end
     end
@@ -45,7 +45,7 @@ describe SlackGamebot::Commands::Team do
     end
 
     it 'team' do
-      expect(message: '@gamebot team', channel: channel, user: user).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captains #{channel.captains.map(&:display_name).and}."
+      expect(message: '<@bot_user_id> team', channel: channel, user: user).to respond_with_slack_message "Team #{team.team_id} #{channel.slack_mention}, captains #{channel.captains.map(&:display_name).and}."
     end
   end
 end

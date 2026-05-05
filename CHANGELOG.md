@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/05/05: Fixed command routing bug where usernames containing command keywords (e.g. "edmundo" triggering "undo") would cause the wrong command to be executed - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/04: [#39](https://github.com/dblock/slack-gamebot2/issues/39): Added `set max games per user [number]` to limit how many games (accepted or played) a user can participate in per day; clarified `set max challenges per user` as limiting challenges issued (proposed) per user per day - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/04: [#39](https://github.com/dblock/slack-gamebot2/issues/39): Added `set max challenges per day [number]`, `set max challenges per user [number]`, and `set timezone [name]` to limit daily challenge volume per channel and per user - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/03: [#66](https://github.com/dblock/slack-gamebot2/issues/66): Score updates via `lost`/`won`/`draw` without opponents now only apply to matches within the last hour - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).

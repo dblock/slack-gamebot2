@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::Unsubscribe do
       end
 
       it 'displays all set message' do
-        expect(message: '@gamebot unsubscribe', channel: 'DM').to respond_with_slack_message "You don't have a paid subscription, all set."
+        expect(message: '<@bot_user_id> unsubscribe', channel: 'DM').to respond_with_slack_message "You don't have a paid subscription, all set."
       end
     end
 
@@ -20,7 +20,7 @@ describe SlackGamebot::Commands::Unsubscribe do
       end
 
       it 'displays subscription info' do
-        expect(message: '@gamebot unsubscribe', channel: 'DM').to respond_with_slack_message "You don't have a paid subscription, all set."
+        expect(message: '<@bot_user_id> unsubscribe', channel: 'DM').to respond_with_slack_message "You don't have a paid subscription, all set."
       end
     end
 
@@ -50,15 +50,15 @@ describe SlackGamebot::Commands::Unsubscribe do
             "Subscribed to Plan ($49.99), will auto-renew on #{current_period_end}.",
             "Send `unsubscribe #{active_subscription.id}` to unsubscribe."
           ].join("\n")
-          expect(message: '@gamebot unsubscribe', channel: 'DM').to respond_with_slack_message customer_info
+          expect(message: '<@bot_user_id> unsubscribe', channel: 'DM').to respond_with_slack_message customer_info
         end
 
         it 'cannot unsubscribe with an invalid subscription id' do
-          expect(message: '@gamebot unsubscribe xyz', channel: 'DM').to respond_with_slack_message 'Sorry, I cannot find a subscription with "xyz".'
+          expect(message: '<@bot_user_id> unsubscribe xyz', channel: 'DM').to respond_with_slack_message 'Sorry, I cannot find a subscription with "xyz".'
         end
 
         it 'unsubscribes' do
-          expect(message: "@gamebot unsubscribe #{active_subscription.id}", channel: 'DM').to respond_with_slack_message 'Successfully canceled auto-renew for Plan ($49.99).'
+          expect(message: "<@bot_user_id> unsubscribe #{active_subscription.id}", channel: 'DM').to respond_with_slack_message 'Successfully canceled auto-renew for Plan ($49.99).'
           team.reload
           expect(team.subscribed).to be true
           expect(team.stripe_customer_id).not_to be_nil

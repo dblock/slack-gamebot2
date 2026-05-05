@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
 RSpec.shared_context 'subscribed team' do
-  let!(:team) { Fabricate(:team, subscribed: true) }
+  before do
+    allow_any_instance_of(Team).to receive(:welcome_dm!)
+  end
+
+  let!(:team) { Fabricate(:team, subscribed: true, bot_user_id: 'bot_user_id') }
 end
 
 RSpec.shared_context 'team' do
-  let!(:team) { Fabricate(:team) }
+  before do
+    allow_any_instance_of(Team).to receive(:welcome_dm!)
+  end
+
+  let!(:team) { Fabricate(:team, bot_user_id: 'bot_user_id') }
 end
 
 RSpec.shared_context 'channel' do

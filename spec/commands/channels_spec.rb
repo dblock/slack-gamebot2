@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::Channels do
 
     context 'no channels' do
       it 'returns no channels with an invite hint' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "No channels. To start a leaderboard, invite me to a channel with `/invite #{team.bot_mention}`."
         )
       end
@@ -20,7 +20,7 @@ describe SlackGamebot::Commands::Channels do
       let!(:game_channel) { Fabricate(:channel, team: team) }
 
       it 'shows the channel with zero stats' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "#{game_channel.slack_mention}: 0 matches, 0 players, 0 seasons"
         )
       end
@@ -32,7 +32,7 @@ describe SlackGamebot::Commands::Channels do
       before { Fabricate(:match, channel: game_channel, team: team) }
 
       it 'shows match and player counts' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "#{game_channel.slack_mention}: 1 match, 2 players, 0 seasons"
         )
       end
@@ -48,7 +48,7 @@ describe SlackGamebot::Commands::Channels do
       end
 
       it 'lists both channels in creation order' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "#{game_channel.slack_mention}: 2 matches, 4 players, 0 seasons\n" \
           "#{second_channel.slack_mention}: 1 match, 2 players, 0 seasons"
         )
@@ -64,7 +64,7 @@ describe SlackGamebot::Commands::Channels do
       end
 
       it 'shows season count and only current season match count' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "#{game_channel.slack_mention}: 0 matches, 0 players, 1 season"
         )
       end
@@ -75,7 +75,7 @@ describe SlackGamebot::Commands::Channels do
       let!(:disabled_channel) { Fabricate(:channel, team: team, enabled: false) }
 
       it 'does not show disabled channels' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "#{game_channel.slack_mention}: 0 matches, 0 players, 0 seasons"
         )
       end
@@ -86,7 +86,7 @@ describe SlackGamebot::Commands::Channels do
       let!(:app_home) { Fabricate(:channel, team: team, is_app_home: true) }
 
       it 'does not show app home channels' do
-        expect(message: '@gamebot channels', channel: 'DM', user: user_id).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> channels', channel: 'DM', user: user_id).to respond_with_slack_message(
           "#{game_channel.slack_mention}: 0 matches, 0 players, 0 seasons"
         )
       end
@@ -97,7 +97,7 @@ describe SlackGamebot::Commands::Channels do
     include_context 'user'
 
     it 'tells the user to run the command in a DM' do
-      expect(message: '@gamebot channels', channel: channel.channel_id, user: user.user_id).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> channels', channel: channel.channel_id, user: user.user_id).to respond_with_slack_message(
         'Please run this command in a DM.'
       )
     end

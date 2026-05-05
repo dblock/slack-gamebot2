@@ -9,36 +9,36 @@ describe SlackGamebot::Commands::Reset do
 
   it 'requires a captain' do
     expect(User).not_to receive(:reset_all!).with(channel)
-    expect(message: '@gamebot reset', user: user, channel: channel).to respond_with_slack_message("You're not a captain, sorry.")
+    expect(message: '<@bot_user_id> reset', user: user, channel: channel).to respond_with_slack_message("You're not a captain, sorry.")
   end
 
   it 'requires a team name' do
     expect(User).not_to receive(:reset_all!).with(channel)
-    expect(message: '@gamebot reset', user: captain, channel: channel).to respond_with_slack_message("Missing channel, confirm with _reset #{channel.slack_mention}_.")
+    expect(message: '<@bot_user_id> reset', user: captain, channel: channel).to respond_with_slack_message("Missing channel, confirm with _reset #{channel.slack_mention}_.")
   end
 
   it 'requires a matching channel name' do
     expect(User).not_to receive(:reset_all!).with(channel)
-    expect(message: '@gamebot reset invalid', user: captain, channel: channel).to respond_with_slack_message("Invalid channel, confirm with _reset #{channel.slack_mention}_.")
+    expect(message: '<@bot_user_id> reset invalid', user: captain, channel: channel).to respond_with_slack_message("Invalid channel, confirm with _reset #{channel.slack_mention}_.")
   end
 
   it 'resets with the correct channel mention' do
     Fabricate(:match, channel: channel)
     expect(User).to receive(:reset_all!).with(channel).once
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
   end
 
   it 'resets with the correct channel id' do
     Fabricate(:match, channel: channel)
     expect(User).to receive(:reset_all!).with(channel).once
-    expect(message: "@gamebot reset #{channel.channel_id}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.channel_id}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
   end
 
   it 'resets a channel that has a period and space in the name' do
     team.update_attributes!(name: 'Pets.com Delivery')
     Fabricate(:match, channel: channel)
     expect(User).to receive(:reset_all!).with(channel).once
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
   end
 
   it 'cancels open challenges' do
@@ -47,7 +47,7 @@ describe SlackGamebot::Commands::Reset do
     accepted_challenge = Fabricate(:challenge, channel: channel, state: ChallengeState::PROPOSED)
     accepted_challenge.accept!(accepted_challenge.challenged.first)
 
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
 
     expect(proposed_challenge.reload.state).to eq ChallengeState::CANCELED
     expect(accepted_challenge.reload.state).to eq ChallengeState::CANCELED
@@ -56,7 +56,7 @@ describe SlackGamebot::Commands::Reset do
   it 'resets user stats' do
     Fabricate(:match, channel: channel)
     user = Fabricate(:user, channel: channel, elo: 48, losses: 1, wins: 2, tau: 0.5)
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
     user.reload
     expect(user.wins).to eq 0
     expect(user.losses).to eq 0
@@ -75,7 +75,7 @@ describe SlackGamebot::Commands::Reset do
         end
 
         it 'resets user stats' do
-          expect(message: "@gamebot reset #{channel_ref}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+          expect(message: "<@bot_user_id> reset #{channel_ref}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
         end
       end
     end
@@ -88,7 +88,7 @@ describe SlackGamebot::Commands::Reset do
     channel2 = Fabricate(:channel, team: team2)
     Fabricate(:match, channel: channel2, team: channel2.team)
     user2 = Fabricate(:user, channel: channel2, elo: 48, losses: 1, wins: 2, tau: 0.5, ties: 3)
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
     user1.reload
     expect(user1.wins).to eq 0
     expect(user1.losses).to eq 0
@@ -104,11 +104,11 @@ describe SlackGamebot::Commands::Reset do
   end
 
   it 'cannot be reset unless any games have been played' do
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('No matches have been recorded.')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('No matches have been recorded.')
   end
 
   it 'can be reset with a match lost' do
     Match.lose!(team: team, channel: channel, winners: [Fabricate(:user, channel: channel)], losers: [Fabricate(:user, channel: channel)])
-    expect(message: "@gamebot reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
+    expect(message: "<@bot_user_id> reset #{channel.slack_mention}", user: captain, channel: channel).to respond_with_slack_message('Welcome to the new season!')
   end
 end

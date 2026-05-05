@@ -22,14 +22,14 @@ describe SlackGamebot::Commands::Register do
 
   it 'returns an error when trying to register someone else' do
     user = Fabricate(:user, registered: true, captain: true, updated_at: 2.days.ago, created_at: 2.days.ago, user_name: 'user_name', user_id: 'user_id')
-    expect(message: '@gamebot register <@someone>', channel: channel, user: user).to respond_with_slack_message('Players must register themselves.')
+    expect(message: '<@bot_user_id> register <@someone>', channel: channel, user: user).to respond_with_slack_message('Players must register themselves.')
   end
 
   it 'registers a new user and promotes them to captain' do
     Fabricate(:user, team: team2, channel: channel2) # another user in another team
     allow_any_instance_of(User).to receive(:channel).and_return(channel)
     expect do
-      expect(message: '@gamebot register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play. You're also team captain.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play. You're also team captain.")
     end.to change(User, :count).by(1)
   end
 
@@ -37,7 +37,7 @@ describe SlackGamebot::Commands::Register do
     Fabricate(:user, team: team, channel: channel, registered: true, captain: false) # an existing user in the same team
     allow_any_instance_of(User).to receive(:channel).and_return(channel)
     expect do
-      expect(message: '@gamebot register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play. You're also team captain.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play. You're also team captain.")
     end.to change(User, :count).by(1)
   end
 
@@ -45,21 +45,21 @@ describe SlackGamebot::Commands::Register do
     Fabricate(:user, team: team, channel: channel, registered: true, captain: true) # an existing captain in the same team
     allow_any_instance_of(User).to receive(:channel).and_return(channel)
     expect do
-      expect(message: '@gamebot register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: 'user').to respond_with_slack_message("Welcome <@user>! You're ready to play.")
     end.to change(User, :count).by(1)
   end
 
   it 'registers an existing unregistered user' do
     user = Fabricate(:user, registered: false, captain: true, created_at: 2.days.ago)
     expect do
-      expect(message: '@gamebot register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration. You're also team captain.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration. You're also team captain.")
     end.not_to change(User, :count)
   end
 
   it 'notes an already registered users' do
     user = Fabricate(:user, registered: true, captain: true, updated_at: 2.days.ago, created_at: 2.days.ago, user_name: 'user_name', user_id: 'user_id')
     expect do
-      expect(message: '@gamebot register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, you're already registered. You're also team captain.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, you're already registered. You're also team captain.")
     end.not_to change(User, :count)
   end
 
@@ -67,7 +67,7 @@ describe SlackGamebot::Commands::Register do
     Fabricate(:user, registered: true, captain: true)
     user = Fabricate(:user, registered: false, captain: false, created_at: 2.days.ago, user_name: 'user_name', user_id: 'user_id')
     expect do
-      expect(message: '@gamebot register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration.")
     end.not_to change(User, :count)
     expect(user.reload.registered?).to be true
     expect(user.reload.captain?).to be false
@@ -76,7 +76,7 @@ describe SlackGamebot::Commands::Register do
   it 'registers a previously unregistered user and promotes them to captain' do
     user = Fabricate(:user, registered: false, captain: false, created_at: 2.days.ago)
     expect do
-      expect(message: '@gamebot register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration. You're also team captain.")
+      expect(message: '<@bot_user_id> register', channel: channel, user: user).to respond_with_slack_message("Welcome back #{user.slack_mention}, I've updated your registration. You're also team captain.")
     end.not_to change(User, :count)
     expect(user.reload.registered?).to be true
     expect(user.reload.captain?).to be true

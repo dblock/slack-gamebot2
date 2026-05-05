@@ -7,7 +7,7 @@ describe SlackGamebot::Commands::Help do
     include_context 'subscribed team'
 
     it 'help' do
-      expect(message: '@gamebot help', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message(SlackGamebot::Commands::Help::HELP)
+      expect(message: '<@bot_user_id> help', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message(SlackGamebot::Commands::Help::HELP)
     end
   end
 
@@ -15,7 +15,7 @@ describe SlackGamebot::Commands::Help do
     include_context 'team'
 
     it 'help' do
-      expect(message: '@gamebot help', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message([SlackGamebot::Commands::Help::HELP, team.trial_message].join("\n"))
+      expect(message: '<@bot_user_id> help', user: 'user_not_in_channel', channel: 'DM').to respond_with_slack_message([SlackGamebot::Commands::Help::HELP, team.trial_message].join("\n"))
     end
   end
 end

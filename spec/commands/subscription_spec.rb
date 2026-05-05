@@ -12,7 +12,7 @@ describe SlackGamebot::Commands::Subscription do
       end
 
       it 'displays subscribe message' do
-        expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message team.trial_message
+        expect(message: '<@bot_user_id> subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message team.trial_message
       end
     end
 
@@ -23,7 +23,7 @@ describe SlackGamebot::Commands::Subscription do
 
       it 'displays subscription info' do
         customer_info = 'Team is subscribed.'
-        expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+        expect(message: '<@bot_user_id> subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
       end
     end
 
@@ -34,7 +34,7 @@ describe SlackGamebot::Commands::Subscription do
 
       it 'displays subscription info' do
         customer_info = "Subscriber since #{team.subscribed_at.strftime('%B %d, %Y')}."
-        expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+        expect(message: '<@bot_user_id> subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
       end
     end
 
@@ -45,7 +45,7 @@ describe SlackGamebot::Commands::Subscription do
 
       it 'displays subscription info' do
         customer_info = "Subscriber since #{team.subscribed_at.strftime('%B %d, %Y')}."
-        expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+        expect(message: '<@bot_user_id> subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
       end
     end
 
@@ -77,7 +77,7 @@ describe SlackGamebot::Commands::Subscription do
             "On file Visa card, #{card.name} ending with #{card.last4}, expires #{card.exp_month}/#{card.exp_year}.",
             team.update_cc_text
           ].join("\n")
-          expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+          expect(message: '<@bot_user_id> subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
         end
 
         context 'past due subscription' do
@@ -92,7 +92,7 @@ describe SlackGamebot::Commands::Subscription do
             card = customer.sources.first
             customer_info += "\nOn file Visa card, #{card.name} ending with #{card.last4}, expires #{card.exp_month}/#{card.exp_year}."
             customer_info += "\n#{team.update_cc_text}"
-            expect(message: '@gamebot subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
+            expect(message: '<@bot_user_id> subscription', channel: 'DM', user: 'user_not_in_channel').to respond_with_slack_message customer_info
           end
         end
       end
@@ -100,7 +100,7 @@ describe SlackGamebot::Commands::Subscription do
   end
 
   context 'subscribed team' do
-    let!(:team) { Fabricate(:team, subscribed: true) }
+    let!(:team) { Fabricate(:team, subscribed: true, bot_user_id: 'bot_user_id') }
 
     it_behaves_like 'subscription'
 
