@@ -8,7 +8,7 @@ describe SlackGamebot::Commands::Seasons do
   shared_examples_for 'seasons' do
     context 'no seasons' do
       it 'seasons' do
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message "There're no seasons."
+        expect(message: '<@bot_user_id> seasons', channel: channel).to respond_with_slack_message "There're no seasons."
       end
     end
 
@@ -22,7 +22,7 @@ describe SlackGamebot::Commands::Seasons do
       let!(:season) { Fabricate(:season, channel: channel, team: team) }
 
       it 'seasons' do
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message season.to_s
+        expect(message: '<@bot_user_id> seasons', channel: channel).to respond_with_slack_message season.to_s
       end
     end
 
@@ -38,7 +38,7 @@ describe SlackGamebot::Commands::Seasons do
       end
 
       it 'returns past seasons and current season' do
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message seasons.reverse.join("\n")
+        expect(message: '<@bot_user_id> seasons', channel: channel).to respond_with_slack_message seasons.reverse.join("\n")
       end
     end
 
@@ -49,7 +49,7 @@ describe SlackGamebot::Commands::Seasons do
 
       it 'returns past seasons and current season' do
         current_season = Season.new(team: team, channel: channel)
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message current_season.to_s
+        expect(message: '<@bot_user_id> seasons', channel: channel).to respond_with_slack_message current_season.to_s
       end
     end
 
@@ -66,7 +66,7 @@ describe SlackGamebot::Commands::Seasons do
       end
 
       it 'returns past seasons and current season' do
-        expect(message: '@gamebot seasons', channel: channel).to respond_with_slack_message [current_season, season1].join("\n")
+        expect(message: '<@bot_user_id> seasons', channel: channel).to respond_with_slack_message [current_season, season1].join("\n")
       end
     end
   end
@@ -86,7 +86,7 @@ describe SlackGamebot::Commands::Seasons do
             'event' => {
               'user' => 'user_id',
               'channel' => 'D0AUHTSA763',
-              'text' => '@gamebot seasons'
+              'text' => '<@bot_user_id> seasons'
             }
           )
         )
@@ -96,7 +96,7 @@ describe SlackGamebot::Commands::Seasons do
   end
 
   context 'subscribed team' do
-    let!(:team) { Fabricate(:team, subscribed: true) }
+    let!(:team) { Fabricate(:team, subscribed: true, bot_user_id: 'bot_user_id') }
 
     it_behaves_like 'seasons'
 

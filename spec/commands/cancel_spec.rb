@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::Cancel do
     let!(:challenge) { Fabricate(:challenge, channel: channel, challengers: [challenger]) }
 
     it 'cancels a challenge' do
-      expect(message: '@gamebot cancel', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> cancel', user: challenger.user_id, channel: challenge.channel).to respond_with_slack_message(
         "#{challenge.challengers.map(&:display_name).and} canceled a challenge against #{challenge.challenged.map(&:display_name).and}."
       )
       expect(challenge.reload.state).to eq ChallengeState::CANCELED
@@ -22,7 +22,7 @@ describe SlackGamebot::Commands::Cancel do
     let!(:challenge) { Fabricate(:challenge, channel: channel, challenged: [challenged]) }
 
     it 'cancels a challenge' do
-      expect(message: '@gamebot cancel', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> cancel', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "#{challenge.challenged.map(&:display_name).and} canceled a challenge against #{challenge.challengers.map(&:display_name).and}."
       )
       expect(challenge.reload.state).to eq ChallengeState::CANCELED
@@ -35,7 +35,7 @@ describe SlackGamebot::Commands::Cancel do
     before { user.unregister! }
 
     it 'cannot cancel' do
-      expect(message: '@gamebot cancel', user: user.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> cancel', user: user.user_id, channel: channel).to respond_with_slack_message(
         "You're not registered. Type _register_ to register."
       )
     end

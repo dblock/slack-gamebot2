@@ -53,7 +53,7 @@ describe SlackGamebot::Commands::About do
     include_context 'user'
 
     it 'about' do
-      expect(message: '@gamebot about', channel: channel, user: user).to respond_with_slack_message(SlackGamebot::INFO)
+      expect(message: '<@bot_user_id> about', channel: channel, user: user).to respond_with_slack_message(SlackGamebot::INFO)
     end
   end
 end

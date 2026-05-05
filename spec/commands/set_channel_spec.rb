@@ -14,21 +14,21 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'gifs' do
       it 'shows current value of GIFs on' do
-        expect(message: '@gamebot set gifs', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set gifs', user: captain, channel: channel).to respond_with_slack_message(
           "GIFs for #{channel.slack_mention} are on!"
         )
       end
 
       it 'shows current value of GIFs off' do
         channel.update_attributes!(gifs: false)
-        expect(message: '@gamebot set gifs', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set gifs', user: captain, channel: channel).to respond_with_slack_message(
           "GIFs for #{channel.slack_mention} are off."
         )
       end
 
       it 'enables GIFs' do
         channel.update_attributes!(gifs: false)
-        expect(message: '@gamebot set gifs on', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set gifs on', user: captain, channel: channel).to respond_with_slack_message(
           "GIFs for #{channel.slack_mention} are on!"
         )
         expect(channel.reload.gifs).to be true
@@ -36,7 +36,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables GIFs with set' do
         channel.update_attributes!(gifs: true)
-        expect(message: '@gamebot set gifs off', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set gifs off', user: captain, channel: channel).to respond_with_slack_message(
           "GIFs for #{channel.slack_mention} are off."
         )
         expect(channel.reload.gifs).to be false
@@ -44,7 +44,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables GIFs with unset' do
         channel.update_attributes!(gifs: true)
-        expect(message: '@gamebot unset gifs', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset gifs', user: captain, channel: channel).to respond_with_slack_message(
           "GIFs for #{channel.slack_mention} are off."
         )
         expect(channel.reload.gifs).to be false
@@ -54,14 +54,14 @@ describe SlackGamebot::Commands::SetChannel do
     context 'unbalanced' do
       it 'shows current value of unbalanced off' do
         channel.update_attributes!(unbalanced: false)
-        expect(message: '@gamebot set unbalanced', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set unbalanced', user: captain, channel: channel).to respond_with_slack_message(
           "Unbalanced challenges for #{channel.slack_mention} are off."
         )
       end
 
       it 'enables unbalanced' do
         channel.update_attributes!(unbalanced: false)
-        expect(message: '@gamebot set unbalanced on', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set unbalanced on', user: captain, channel: channel).to respond_with_slack_message(
           "Unbalanced challenges for #{channel.slack_mention} are on!"
         )
         expect(channel.reload.unbalanced).to be true
@@ -69,7 +69,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables unbalanced with set' do
         channel.update_attributes!(unbalanced: true)
-        expect(message: '@gamebot set unbalanced off', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set unbalanced off', user: captain, channel: channel).to respond_with_slack_message(
           "Unbalanced challenges for #{channel.slack_mention} are off."
         )
         expect(channel.reload.unbalanced).to be false
@@ -77,7 +77,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables unbalanced with unset' do
         channel.update_attributes!(unbalanced: true)
-        expect(message: '@gamebot unset unbalanced', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset unbalanced', user: captain, channel: channel).to respond_with_slack_message(
           "Unbalanced challenges for #{channel.slack_mention} are off."
         )
         expect(channel.reload.unbalanced).to be false
@@ -87,21 +87,21 @@ describe SlackGamebot::Commands::SetChannel do
     context 'won' do
       it 'shows current value of won on' do
         channel.update_attributes!(won: true)
-        expect(message: '@gamebot set won', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set won', user: captain, channel: channel).to respond_with_slack_message(
           "Won command for #{channel.slack_mention} is on!"
         )
       end
 
       it 'shows current value of won off' do
         channel.update_attributes!(won: false)
-        expect(message: '@gamebot set won', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set won', user: captain, channel: channel).to respond_with_slack_message(
           "Won command for #{channel.slack_mention} is off."
         )
       end
 
       it 'enables won' do
         channel.update_attributes!(won: false)
-        expect(message: '@gamebot set won on', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set won on', user: captain, channel: channel).to respond_with_slack_message(
           "Won command for #{channel.slack_mention} is on!"
         )
         expect(channel.reload.won).to be true
@@ -109,7 +109,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables won with set' do
         channel.update_attributes!(won: true)
-        expect(message: '@gamebot set won off', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set won off', user: captain, channel: channel).to respond_with_slack_message(
           "Won command for #{channel.slack_mention} is off."
         )
         expect(channel.reload.won).to be false
@@ -117,7 +117,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables won with unset' do
         channel.update_attributes!(won: true)
-        expect(message: '@gamebot unset won', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset won', user: captain, channel: channel).to respond_with_slack_message(
           "Won command for #{channel.slack_mention} is off."
         )
         expect(channel.reload.won).to be false
@@ -127,20 +127,20 @@ describe SlackGamebot::Commands::SetChannel do
     context 'api' do
       it 'shows current value of API on' do
         channel.update_attributes!(api: true)
-        expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set api', user: captain, channel: channel).to respond_with_slack_message(
           "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
         )
       end
 
       it 'shows current value of API off' do
         channel.update_attributes!(api: false)
-        expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set api', user: captain, channel: channel).to respond_with_slack_message(
           "API for #{channel.slack_mention} is off."
         )
       end
 
       it 'enables API' do
-        expect(message: '@gamebot set api on', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set api on', user: captain, channel: channel).to respond_with_slack_message(
           "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
         )
         expect(channel.reload.api).to be true
@@ -148,7 +148,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables API with set' do
         channel.update_attributes!(api: true)
-        expect(message: '@gamebot set api off', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set api off', user: captain, channel: channel).to respond_with_slack_message(
           "API for #{channel.slack_mention} is off."
         )
         expect(channel.reload.api).to be false
@@ -156,7 +156,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'disables API with unset' do
         channel.update_attributes!(api: true)
-        expect(message: '@gamebot unset api', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset api', user: captain, channel: channel).to respond_with_slack_message(
           "API for #{channel.slack_mention} is off."
         )
         expect(channel.reload.api).to be false
@@ -173,14 +173,14 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'shows current value of API on with API URL' do
           channel.update_attributes!(api: true)
-          expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set api', user: captain, channel: channel).to respond_with_slack_message(
             "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to http://local.api/channels/#{channel.id}."
           )
         end
 
         it 'shows current value of API off without API URL' do
           channel.update_attributes!(api: false)
-          expect(message: '@gamebot set api', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set api', user: captain, channel: channel).to respond_with_slack_message(
             "API for #{channel.slack_mention} is off."
           )
         end
@@ -194,41 +194,41 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows current value of aliases' do
-          expect(message: '@gamebot set aliases', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set aliases', user: captain, channel: channel).to respond_with_slack_message(
             "Bot aliases for #{channel.slack_mention} are `foo` and `bar`."
           )
         end
 
         it 'sets aliases' do
-          expect(message: '@gamebot set aliases foo bar baz', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set aliases foo bar baz', user: captain, channel: channel).to respond_with_slack_message(
             "Bot aliases for #{channel.slack_mention} are `foo`, `bar` and `baz`."
           )
           expect(channel.reload.aliases).to eq %w[foo bar baz]
         end
 
         it 'sets comma-separated aliases' do
-          expect(message: '@gamebot set aliases foo,bar', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set aliases foo,bar', user: captain, channel: channel).to respond_with_slack_message(
             "Bot aliases for #{channel.slack_mention} are `foo` and `bar`."
           )
           expect(channel.reload.aliases).to eq %w[foo bar]
         end
 
         it 'sets comma-separated aliases with extra spaces' do
-          expect(message: '@gamebot set aliases   foo,    bar', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set aliases   foo,    bar', user: captain, channel: channel).to respond_with_slack_message(
             "Bot aliases for #{channel.slack_mention} are `foo` and `bar`."
           )
           expect(channel.reload.aliases).to eq %w[foo bar]
         end
 
         it 'sets emoji aliases' do
-          expect(message: '@gamebot set aliases pp :pong:', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set aliases pp :pong:', user: captain, channel: channel).to respond_with_slack_message(
             "Bot aliases for #{channel.slack_mention} are `pp` and `:pong:`."
           )
           expect(channel.reload.aliases).to eq ['pp', ':pong:']
         end
 
         it 'removes aliases' do
-          expect(message: '@gamebot unset aliases', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> unset aliases', user: captain, channel: channel).to respond_with_slack_message(
             "#{channel.slack_mention} no longer has bot aliases."
           )
           expect(channel.reload.aliases).to be_empty
@@ -241,7 +241,7 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows no aliases' do
-          expect(message: '@gamebot set aliases', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set aliases', user: captain, channel: channel).to respond_with_slack_message(
             "#{channel.slack_mention} does not have any bot aliases."
           )
         end
@@ -255,34 +255,34 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows current value of details' do
-          expect(message: '@gamebot set details', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set details', user: captain, channel: channel).to respond_with_slack_message(
             "Match details for #{channel.slack_mention} are `elo`."
           )
         end
 
         it 'sets details' do
-          expect(message: '@gamebot set details elo leaderboard', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set details elo leaderboard', user: captain, channel: channel).to respond_with_slack_message(
             "Match details for #{channel.slack_mention} are `elo` and `leaderboard`."
           )
           expect(channel.reload.details).to eq %w[elo leaderboard]
         end
 
         it 'removes details using unset' do
-          expect(message: '@gamebot unset details', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> unset details', user: captain, channel: channel).to respond_with_slack_message(
             "Match details for #{channel.slack_mention} are not shown."
           )
           expect(channel.reload.details).to be_empty
         end
 
         it 'removes details using set' do
-          expect(message: '@gamebot set details none', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set details none', user: captain, channel: channel).to respond_with_slack_message(
             "Match details for #{channel.slack_mention} are not shown."
           )
           expect(channel.reload.details).to be_empty
         end
 
         it 'handles errors' do
-          expect(message: '@gamebot set details invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set details invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Invalid value: invalid, possible values are elo and leaderboard.'
           )
           expect(channel.reload.details).to eq ['elo']
@@ -295,7 +295,7 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows no details' do
-          expect(message: '@gamebot set details', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set details', user: captain, channel: channel).to respond_with_slack_message(
             "Match details for #{channel.slack_mention} are not shown."
           )
         end
@@ -309,34 +309,34 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows current value of elo' do
-          expect(message: '@gamebot set elo', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo', user: captain, channel: channel).to respond_with_slack_message(
             "Base elo for #{channel.slack_mention} is 1000."
           )
         end
 
         it 'sets elo' do
-          expect(message: '@gamebot set elo 200', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo 200', user: captain, channel: channel).to respond_with_slack_message(
             "Base elo for #{channel.slack_mention} is 200."
           )
           expect(channel.reload.elo).to eq 200
         end
 
         it 'handles errors' do
-          expect(message: '@gamebot set elo invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Sorry, invalid is not a valid number.'
           )
           expect(channel.reload.elo).to eq 1000
         end
 
         it 'resets elo with set' do
-          expect(message: '@gamebot set elo 0', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo 0', user: captain, channel: channel).to respond_with_slack_message(
             "Base elo for #{channel.slack_mention} is 0."
           )
           expect(channel.reload.elo).to eq 0
         end
 
         it 'resets elo with unset' do
-          expect(message: '@gamebot unset elo', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> unset elo', user: captain, channel: channel).to respond_with_slack_message(
             "Base elo for #{channel.slack_mention} has been unset."
           )
           expect(channel.reload.elo).to eq 0
@@ -345,13 +345,13 @@ describe SlackGamebot::Commands::SetChannel do
 
       context 'algorithm' do
         it 'shows current algorithm' do
-          expect(message: '@gamebot set elo algorithm', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm', user: captain, channel: channel).to respond_with_slack_message(
             "Elo algorithm for #{channel.slack_mention} is adaptive (decay=0.94)."
           )
         end
 
         it 'switches to standard at start of season' do
-          expect(message: '@gamebot set elo algorithm standard', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm standard', user: captain, channel: channel).to respond_with_slack_message(
             "Elo algorithm for #{channel.slack_mention} is standard (k=32)."
           )
           expect(channel.reload.elo_algorithm).to eq 'standard'
@@ -359,27 +359,27 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors when matches exist in current season' do
           Fabricate(:match, channel: channel)
-          expect(message: '@gamebot set elo algorithm standard', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm standard', user: captain, channel: channel).to respond_with_slack_message(
             'Elo algorithm can only be changed at the start of a new season.'
           )
           expect(channel.reload.elo_algorithm).to eq 'adaptive'
         end
 
         it 'errors on invalid algorithm' do
-          expect(message: '@gamebot set elo algorithm invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Invalid elo algorithm invalid, valid options are: adaptive, standard, glicko, glicko2.'
           )
         end
 
         it 'switches to glicko at start of season' do
-          expect(message: '@gamebot set elo algorithm glicko', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm glicko', user: captain, channel: channel).to respond_with_slack_message(
             "Elo algorithm for #{channel.slack_mention} is glicko."
           )
           expect(channel.reload.elo_algorithm).to eq 'glicko'
         end
 
         it 'switches to glicko2 at start of season' do
-          expect(message: '@gamebot set elo algorithm glicko2', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm glicko2', user: captain, channel: channel).to respond_with_slack_message(
             "Elo algorithm for #{channel.slack_mention} is glicko2 (τ=0.5)."
           )
           expect(channel.reload.elo_algorithm).to eq 'glicko2'
@@ -387,7 +387,7 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors without captain' do
           non_captain = Fabricate(:user, channel: channel)
-          expect(message: '@gamebot set elo algorithm standard', user: non_captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo algorithm standard', user: non_captain, channel: channel).to respond_with_slack_message(
             "You're not a captain, sorry."
           )
         end
@@ -399,13 +399,13 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows current k' do
-          expect(message: '@gamebot set elo k', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo k', user: captain, channel: channel).to respond_with_slack_message(
             "Elo K for #{channel.slack_mention} is 32."
           )
         end
 
         it 'sets k' do
-          expect(message: '@gamebot set elo k 16', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo k 16', user: captain, channel: channel).to respond_with_slack_message(
             "Elo K for #{channel.slack_mention} is 16."
           )
           expect(channel.reload.elo_k).to eq 16
@@ -413,13 +413,13 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors when algorithm is not standard' do
           channel.update_attributes!(elo_algorithm: 'adaptive')
-          expect(message: '@gamebot set elo k 16', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo k 16', user: captain, channel: channel).to respond_with_slack_message(
             'K can only be set when the elo algorithm is standard.'
           )
         end
 
         it 'errors on invalid number' do
-          expect(message: '@gamebot set elo k invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo k invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Sorry, invalid is not a valid number.'
           )
         end
@@ -427,13 +427,13 @@ describe SlackGamebot::Commands::SetChannel do
 
       context 'decay' do
         it 'shows current decay' do
-          expect(message: '@gamebot set elo decay', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo decay', user: captain, channel: channel).to respond_with_slack_message(
             "Elo decay for #{channel.slack_mention} is 0.94."
           )
         end
 
         it 'sets decay' do
-          expect(message: '@gamebot set elo decay 0.9', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo decay 0.9', user: captain, channel: channel).to respond_with_slack_message(
             "Elo decay for #{channel.slack_mention} is 0.9."
           )
           expect(channel.reload.elo_decay).to eq 0.9
@@ -441,19 +441,19 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors when algorithm is not adaptive' do
           channel.update_attributes!(elo_algorithm: 'standard')
-          expect(message: '@gamebot set elo decay 0.9', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo decay 0.9', user: captain, channel: channel).to respond_with_slack_message(
             'Decay can only be set when the elo algorithm is adaptive.'
           )
         end
 
         it 'errors when decay is out of range' do
-          expect(message: '@gamebot set elo decay 1.5', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo decay 1.5', user: captain, channel: channel).to respond_with_slack_message(
             'Elo decay must be between 0 and 1.'
           )
         end
 
         it 'errors on invalid number' do
-          expect(message: '@gamebot set elo decay invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo decay invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Sorry, invalid is not a valid number.'
           )
         end
@@ -465,13 +465,13 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows current tau' do
-          expect(message: '@gamebot set elo glicko2 tau', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo glicko2 tau', user: captain, channel: channel).to respond_with_slack_message(
             "Glicko2 τ for #{channel.slack_mention} is 0.5."
           )
         end
 
         it 'sets tau' do
-          expect(message: '@gamebot set elo glicko2 tau 0.3', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo glicko2 tau 0.3', user: captain, channel: channel).to respond_with_slack_message(
             "Glicko2 τ for #{channel.slack_mention} is 0.3."
           )
           expect(channel.reload.elo_glicko2_tau).to eq 0.3
@@ -479,19 +479,19 @@ describe SlackGamebot::Commands::SetChannel do
 
         it 'errors when algorithm is not glicko2' do
           channel.update_attributes!(elo_algorithm: 'adaptive')
-          expect(message: '@gamebot set elo glicko2 tau 0.3', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo glicko2 tau 0.3', user: captain, channel: channel).to respond_with_slack_message(
             'Glicko2 τ can only be set when the elo algorithm is glicko2.'
           )
         end
 
         it 'errors when tau is not positive' do
-          expect(message: '@gamebot set elo glicko2 tau 0', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo glicko2 tau 0', user: captain, channel: channel).to respond_with_slack_message(
             'Glicko2 τ must be positive.'
           )
         end
 
         it 'errors on invalid number' do
-          expect(message: '@gamebot set elo glicko2 tau invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set elo glicko2 tau invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Sorry, invalid is not a valid number.'
           )
         end
@@ -505,48 +505,48 @@ describe SlackGamebot::Commands::SetChannel do
         end
 
         it 'shows current value of leaderboard max' do
-          expect(message: '@gamebot set leaderboard max', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set leaderboard max', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} is 5."
           )
         end
 
         it 'sets leaderboard max' do
-          expect(message: '@gamebot set leaderboard max 12', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set leaderboard max 12', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} is 12."
           )
           expect(channel.reload.leaderboard_max).to eq 12
         end
 
         it 'sets leaderboard max to a negative number' do
-          expect(message: '@gamebot set leaderboard max -12', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set leaderboard max -12', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} is -12."
           )
           expect(channel.reload.leaderboard_max).to eq(-12)
         end
 
         it 'handles errors' do
-          expect(message: '@gamebot set leaderboard max invalid', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set leaderboard max invalid', user: captain, channel: channel).to respond_with_slack_message(
             'Sorry, invalid is not a valid number.'
           )
           expect(channel.reload.leaderboard_max).to eq 5
         end
 
         it 'resets leaderboard max with set 0' do
-          expect(message: '@gamebot set leaderboard max 0', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set leaderboard max 0', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} is not set."
           )
           expect(channel.reload.leaderboard_max).to be_nil
         end
 
         it 'resets leaderboard max with set none' do
-          expect(message: '@gamebot set leaderboard max none', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> set leaderboard max none', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} is not set."
           )
           expect(channel.reload.leaderboard_max).to be_nil
         end
 
         it 'resets leaderboard max with unset' do
-          expect(message: '@gamebot unset leaderboard max', user: captain, channel: channel).to respond_with_slack_message(
+          expect(message: '<@bot_user_id> unset leaderboard max', user: captain, channel: channel).to respond_with_slack_message(
             "Leaderboard max for #{channel.slack_mention} has been unset."
           )
           expect(channel.reload.leaderboard_max).to be_nil
@@ -556,13 +556,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'invalid' do
       it 'errors set' do
-        expect(message: '@gamebot set invalid on', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set invalid on', user: captain, channel: channel).to respond_with_slack_message(
           'Invalid setting invalid, you can _set gifs on|off_, _set unbalanced on|off_, _set won on|off_, _api on|off_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         )
       end
 
       it 'errors unset' do
-        expect(message: '@gamebot unset invalid', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset invalid', user: captain, channel: channel).to respond_with_slack_message(
           'Invalid setting invalid, you can _unset gifs_, _unset won_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         )
       end
@@ -570,28 +570,28 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'expire' do
       it 'shows current value of expire' do
-        expect(message: '@gamebot set expire', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 8 hours.'
         )
       end
 
       it 'shows expire of 30 minutes' do
         channel.update_attributes!(expire: 30, remind: nil)
-        expect(message: '@gamebot set expire', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 30 minutes.'
         )
       end
 
       it 'shows expire of never' do
         channel.update_attributes!(expire: nil)
-        expect(message: '@gamebot set expire', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges never expire.'
         )
       end
 
       it 'sets expire in hours' do
         channel.update_attributes!(remind: nil)
-        expect(message: '@gamebot set expire 2 hours', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire 2 hours', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 2 hours.'
         )
         expect(channel.reload.expire).to eq 120
@@ -599,7 +599,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'sets expire in minutes' do
         channel.update_attributes!(remind: nil)
-        expect(message: '@gamebot set expire 30 min', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire 30 min', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 30 minutes.'
         )
         expect(channel.reload.expire).to eq 30
@@ -607,47 +607,47 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'sets expire with a bare number (treated as minutes)' do
         channel.update_attributes!(remind: nil)
-        expect(message: '@gamebot set expire 30', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire 30', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges expire after 30 minutes.'
         )
         expect(channel.reload.expire).to eq 30
       end
 
       it 'sets expire to never' do
-        expect(message: '@gamebot set expire never', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire never', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges never expire.'
         )
         expect(channel.reload.expire).to be_nil
       end
 
       it 'unsets expire to never' do
-        expect(message: '@gamebot unset expire', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset expire', user: captain, channel: channel).to respond_with_slack_message(
           'Challenges never expire.'
         )
         expect(channel.reload.expire).to be_nil
       end
 
       it 'errors on invalid duration' do
-        expect(message: '@gamebot set expire banana', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire banana', user: captain, channel: channel).to respond_with_slack_message(
           "Sorry, 'banana' is not a valid duration, e.g. _30m_, _2h_ or _never_."
         )
       end
 
       it 'errors when duration is less than 15 minutes' do
-        expect(message: '@gamebot set expire 10 min', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire 10 min', user: captain, channel: channel).to respond_with_slack_message(
           'Duration must be at least 15 minutes.'
         )
       end
 
       it 'errors when expire is not after remind' do
-        expect(message: '@gamebot set expire 2 hours', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire 2 hours', user: captain, channel: channel).to respond_with_slack_message(
           'Expire must be after remind (currently 4 hours).'
         )
       end
 
       it 'cannot set expire without being a captain' do
         non_captain = Fabricate(:user, channel: channel)
-        expect(message: '@gamebot set expire 2 hours', user: non_captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set expire 2 hours', user: non_captain, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
@@ -657,7 +657,7 @@ describe SlackGamebot::Commands::SetChannel do
   context 'not captain' do
     context 'without arguments' do
       it 'shows default settings' do
-        expect(message: '@gamebot set', user: captain, channel: channel).to respond_with_slack_message([
+        expect(message: '<@bot_user_id> set', user: captain, channel: channel).to respond_with_slack_message([
           'API for channel <#channel> is on, and the team API token is not set.',
           'Bot aliases are not set.',
           'Challenges expire after 8 hours.',
@@ -677,7 +677,7 @@ describe SlackGamebot::Commands::SetChannel do
       end
 
       it 'errors on unset' do
-        expect(message: '@gamebot unset', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset', user: captain, channel: channel).to respond_with_slack_message(
           'Missing setting, you can _unset gifs_, _api_, _leaderboard max_, _elo_, _nickname_, _aliases_, _expire_, _remind_, _max challenges_, _max challenges per day_, _max challenges per user_, _max games per user_ and _timezone_.'
         )
       end
@@ -685,13 +685,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'api' do
       it 'cannot set api' do
-        expect(message: '@gamebot set api true', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set api true', user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'can see api' do
-        expect(message: '@gamebot set api', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set api', user: user, channel: channel).to respond_with_slack_message(
           "API for #{channel.slack_mention} is on!\nDM the bot _set token_ to get or set an API token to pass as an `X-Access-Token` header to #{channel.api_url}."
         )
       end
@@ -699,13 +699,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'gifs' do
       it 'cannot set GIFs' do
-        expect(message: '@gamebot set gifs true', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set gifs true', user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'can see GIFs value' do
-        expect(message: '@gamebot set gifs', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set gifs', user: user, channel: channel).to respond_with_slack_message(
           "GIFs for #{channel.slack_mention} are on!"
         )
       end
@@ -713,13 +713,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'aliases' do
       it 'cannot set aliases' do
-        expect(message: '@gamebot set aliases foo bar', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set aliases foo bar', user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'can see aliases' do
-        expect(message: '@gamebot set aliases', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set aliases', user: user, channel: channel).to respond_with_slack_message(
           "#{channel.slack_mention} does not have any bot aliases."
         )
       end
@@ -727,13 +727,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'elo' do
       it 'cannot set elo' do
-        expect(message: '@gamebot set elo 1000', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set elo 1000', user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'can see elo' do
-        expect(message: '@gamebot set elo', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set elo', user: user, channel: channel).to respond_with_slack_message(
           "Base elo for #{channel.slack_mention} is 0."
         )
       end
@@ -741,13 +741,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'details' do
       it 'cannot set details' do
-        expect(message: '@gamebot set details leaderboard', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set details leaderboard', user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'can see details' do
-        expect(message: '@gamebot set details', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set details', user: user, channel: channel).to respond_with_slack_message(
           "Match details for #{channel.slack_mention} are `elo`."
         )
       end
@@ -755,13 +755,13 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'leaderboard max' do
       it 'cannot set leaderboard max' do
-        expect(message: '@gamebot set leaderboard max 3', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set leaderboard max 3', user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'can see leaderboard max' do
-        expect(message: '@gamebot set leaderboard max', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set leaderboard max', user: user, channel: channel).to respond_with_slack_message(
           "Leaderboard max for #{channel.slack_mention} is not set."
         )
       end
@@ -773,7 +773,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'with no nickname' do
       it 'shows that the user has no nickname' do
-        expect(message: '@gamebot set nickname', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set nickname', user: user, channel: channel).to respond_with_slack_message(
           "You don't have a nickname set, #{user.user_name}."
         )
       end
@@ -781,21 +781,21 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'without a nickname set' do
       it 'sets nickname' do
-        expect(message: '@gamebot set nickname john doe', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set nickname john doe', user: user, channel: channel).to respond_with_slack_message(
           "Your nickname is now _john doe_, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to eq 'john doe'
       end
 
       it 'does not unset nickname' do
-        expect(message: '@gamebot unset nickname', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset nickname', user: user, channel: channel).to respond_with_slack_message(
           "You don't have a nickname set, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to be_nil
       end
 
       it 'sets emoji nickname' do
-        expect(message: '@gamebot set nickname :dancer:', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set nickname :dancer:', user: user, channel: channel).to respond_with_slack_message(
           "Your nickname is now _:dancer:_, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to eq ':dancer:'
@@ -808,34 +808,34 @@ describe SlackGamebot::Commands::SetChannel do
       end
 
       it 'shows current value of nickname' do
-        expect(message: '@gamebot set nickname', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set nickname', user: user, channel: channel).to respond_with_slack_message(
           "Your nickname is _bob_, #{user.slack_mention}."
         )
       end
 
       it 'sets nickname' do
-        expect(message: '@gamebot set nickname john doe', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set nickname john doe', user: user, channel: channel).to respond_with_slack_message(
           "Your nickname is now _john doe_, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to eq 'john doe'
       end
 
       it 'unsets nickname' do
-        expect(message: '@gamebot unset nickname', user: user, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> unset nickname', user: user, channel: channel).to respond_with_slack_message(
           "You don't have a nickname set anymore, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to be_nil
       end
 
       it 'cannot set nickname unless captain' do
-        expect(message: "@gamebot set nickname #{captain.slack_mention} :dancer:", user: user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> set nickname #{captain.slack_mention} :dancer:", user: user, channel: channel).to respond_with_slack_message(
           "You're not a captain, sorry."
         )
       end
 
       it 'sets nickname for another user' do
         captain = Fabricate(:user, channel: channel, captain: true)
-        expect(message: "@gamebot set nickname #{user.slack_mention} john doe", user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> set nickname #{user.slack_mention} john doe", user: captain, channel: channel).to respond_with_slack_message(
           "Your nickname is now _john doe_, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to eq 'john doe'
@@ -843,7 +843,7 @@ describe SlackGamebot::Commands::SetChannel do
 
       it 'unsets nickname for another user' do
         user.update_attributes!(nickname: 'bob')
-        expect(message: "@gamebot unset nickname #{user.slack_mention}", user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> unset nickname #{user.slack_mention}", user: captain, channel: channel).to respond_with_slack_message(
           "You don't have a nickname set anymore, #{user.slack_mention}."
         )
         expect(user.reload.nickname).to be_nil
@@ -859,7 +859,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     context 'aliases' do
       it 'are not supported' do
-        expect(message: '@gamebot set aliases', user: captain, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> set aliases', user: captain, channel: channel).to respond_with_slack_message(
           'Bot aliases are not supported in private channels, sorry.'
         )
       end
@@ -868,81 +868,81 @@ describe SlackGamebot::Commands::SetChannel do
 
   context 'remind' do
     it 'shows current value of remind' do
-      expect(message: '@gamebot set remind', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders will be sent after 4 hours.'
       )
     end
 
     it 'shows remind of 30 minutes' do
       channel.update_attributes!(remind: 30)
-      expect(message: '@gamebot set remind', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders will be sent after 30 minutes.'
       )
     end
 
     it 'shows remind of never' do
       channel.update_attributes!(remind: nil)
-      expect(message: '@gamebot set remind', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders are disabled.'
       )
     end
 
     it 'sets remind in hours' do
-      expect(message: '@gamebot set remind 2 hours', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind 2 hours', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders will be sent after 2 hours.'
       )
       expect(channel.reload.remind).to eq 120
     end
 
     it 'sets remind in minutes' do
-      expect(message: '@gamebot set remind 30 min', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind 30 min', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders will be sent after 30 minutes.'
       )
       expect(channel.reload.remind).to eq 30
     end
 
     it 'sets remind with a bare number (treated as minutes)' do
-      expect(message: '@gamebot set remind 60', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind 60', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders will be sent after 1 hour.'
       )
       expect(channel.reload.remind).to eq 60
     end
 
     it 'sets remind to never' do
-      expect(message: '@gamebot set remind never', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind never', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders are disabled.'
       )
       expect(channel.reload.remind).to be_nil
     end
 
     it 'unsets remind to never' do
-      expect(message: '@gamebot unset remind', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> unset remind', user: captain, channel: channel).to respond_with_slack_message(
         'Reminders are disabled.'
       )
       expect(channel.reload.remind).to be_nil
     end
 
     it 'errors on invalid duration' do
-      expect(message: '@gamebot set remind banana', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind banana', user: captain, channel: channel).to respond_with_slack_message(
         "Sorry, 'banana' is not a valid duration, e.g. _30m_, _2h_ or _never_."
       )
     end
 
     it 'errors when duration is less than 15 minutes' do
-      expect(message: '@gamebot set remind 10 min', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind 10 min', user: captain, channel: channel).to respond_with_slack_message(
         'Duration must be at least 15 minutes.'
       )
     end
 
     it 'errors when remind is not before expire' do
-      expect(message: '@gamebot set remind 9 hours', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind 9 hours', user: captain, channel: channel).to respond_with_slack_message(
         'Remind must be before expire (currently 8 hours).'
       )
     end
 
     it 'cannot set remind without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
-      expect(message: '@gamebot set remind 2 hours', user: non_captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set remind 2 hours', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end
@@ -952,20 +952,20 @@ describe SlackGamebot::Commands::SetChannel do
     let(:captain) { Fabricate(:user, channel: channel, captain: true) }
 
     it 'removes max (no limit by default)' do
-      expect(message: '@gamebot set max challenges', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges number removed.'
       )
     end
 
     it 'sets max to 1' do
-      expect(message: '@gamebot set max challenges 1', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges 1', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges number is 1.'
       )
       expect(channel.reload.max_challenges).to eq 1
     end
 
     it 'sets max to 3' do
-      expect(message: '@gamebot set max challenges 3', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges 3', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges number is 3.'
       )
       expect(channel.reload.max_challenges).to eq 3
@@ -973,7 +973,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'unsets max' do
       channel.update_attributes!(max_challenges: 2)
-      expect(message: '@gamebot unset max challenges', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> unset max challenges', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges number removed.'
       )
       expect(channel.reload.max_challenges).to be_nil
@@ -981,7 +981,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'sets max to none' do
       channel.update_attributes!(max_challenges: 2)
-      expect(message: '@gamebot set max challenges none', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges none', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges number removed.'
       )
       expect(channel.reload.max_challenges).to be_nil
@@ -989,7 +989,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'cannot set max challenges without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
-      expect(message: '@gamebot set max challenges 1', user: non_captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges 1', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end
@@ -999,20 +999,20 @@ describe SlackGamebot::Commands::SetChannel do
     let(:captain) { Fabricate(:user, channel: channel, captain: true) }
 
     it 'removes max per day (no limit by default)' do
-      expect(message: '@gamebot set max challenges per day', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per day', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges per day removed.'
       )
     end
 
     it 'sets max per day to 1' do
-      expect(message: '@gamebot set max challenges per day 1', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per day 1', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges per day is 1.'
       )
       expect(channel.reload.max_challenges_per_day).to eq 1
     end
 
     it 'sets max per day to 5' do
-      expect(message: '@gamebot set max challenges per day 5', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per day 5', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges per day is 5.'
       )
       expect(channel.reload.max_challenges_per_day).to eq 5
@@ -1020,7 +1020,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'unsets max per day' do
       channel.update_attributes!(max_challenges_per_day: 3)
-      expect(message: '@gamebot unset max challenges per day', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> unset max challenges per day', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges per day removed.'
       )
       expect(channel.reload.max_challenges_per_day).to be_nil
@@ -1028,7 +1028,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'sets max per day to none' do
       channel.update_attributes!(max_challenges_per_day: 3)
-      expect(message: '@gamebot set max challenges per day none', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per day none', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges per day removed.'
       )
       expect(channel.reload.max_challenges_per_day).to be_nil
@@ -1036,7 +1036,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'cannot set max challenges per day without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
-      expect(message: '@gamebot set max challenges per day 1', user: non_captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per day 1', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end
@@ -1046,20 +1046,20 @@ describe SlackGamebot::Commands::SetChannel do
     let(:captain) { Fabricate(:user, channel: channel, captain: true) }
 
     it 'removes max per user (no limit by default)' do
-      expect(message: '@gamebot set max challenges per user', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per user', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges issued per user per day removed.'
       )
     end
 
     it 'sets max per user to 1' do
-      expect(message: '@gamebot set max challenges per user 1', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per user 1', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges issued per user per day is 1.'
       )
       expect(channel.reload.max_challenges_per_user).to eq 1
     end
 
     it 'sets max per user to 3' do
-      expect(message: '@gamebot set max challenges per user 3', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per user 3', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges issued per user per day is 3.'
       )
       expect(channel.reload.max_challenges_per_user).to eq 3
@@ -1067,7 +1067,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'unsets max per user' do
       channel.update_attributes!(max_challenges_per_user: 2)
-      expect(message: '@gamebot unset max challenges per user', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> unset max challenges per user', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges issued per user per day removed.'
       )
       expect(channel.reload.max_challenges_per_user).to be_nil
@@ -1075,7 +1075,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'sets max per user to none' do
       channel.update_attributes!(max_challenges_per_user: 2)
-      expect(message: '@gamebot set max challenges per user none', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per user none', user: captain, channel: channel).to respond_with_slack_message(
         'Max challenges issued per user per day removed.'
       )
       expect(channel.reload.max_challenges_per_user).to be_nil
@@ -1083,7 +1083,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'cannot set max challenges per user without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
-      expect(message: '@gamebot set max challenges per user 1', user: non_captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max challenges per user 1', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end
@@ -1093,13 +1093,13 @@ describe SlackGamebot::Commands::SetChannel do
     let(:captain) { Fabricate(:user, channel: channel, captain: true) }
 
     it 'shows default timezone' do
-      expect(message: '@gamebot set timezone', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set timezone', user: captain, channel: channel).to respond_with_slack_message(
         "Timezone for #{channel.slack_mention} is Eastern Time (US & Canada)."
       )
     end
 
     it 'sets timezone' do
-      expect(message: '@gamebot set timezone Pacific Time (US & Canada)', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set timezone Pacific Time (US & Canada)', user: captain, channel: channel).to respond_with_slack_message(
         "Timezone for #{channel.slack_mention} is Pacific Time (US & Canada)."
       )
       expect(channel.reload.timezone).to eq 'Pacific Time (US & Canada)'
@@ -1107,21 +1107,21 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'unsets timezone to default' do
       channel.update_attributes!(timezone: 'Pacific Time (US & Canada)')
-      expect(message: '@gamebot unset timezone', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> unset timezone', user: captain, channel: channel).to respond_with_slack_message(
         "Timezone for #{channel.slack_mention} has been reset to Eastern Time (US & Canada)."
       )
       expect(channel.reload.timezone).to eq 'Eastern Time (US & Canada)'
     end
 
     it 'errors on invalid timezone' do
-      expect(message: '@gamebot set timezone Invalid/Timezone', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set timezone Invalid/Timezone', user: captain, channel: channel).to respond_with_slack_message(
         'Invalid/Timezone is not a valid timezone, see https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html for valid timezone names.'
       )
     end
 
     it 'cannot set timezone without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
-      expect(message: '@gamebot set timezone UTC', user: non_captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set timezone UTC', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end
@@ -1131,20 +1131,20 @@ describe SlackGamebot::Commands::SetChannel do
     let(:captain) { Fabricate(:user, channel: channel, captain: true) }
 
     it 'removes max games per user (no limit by default)' do
-      expect(message: '@gamebot set max games per user', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max games per user', user: captain, channel: channel).to respond_with_slack_message(
         'Max games per user per day removed.'
       )
     end
 
     it 'sets max games per user to 1' do
-      expect(message: '@gamebot set max games per user 1', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max games per user 1', user: captain, channel: channel).to respond_with_slack_message(
         'Max games per user per day is 1.'
       )
       expect(channel.reload.max_games_per_user).to eq 1
     end
 
     it 'sets max games per user to 3' do
-      expect(message: '@gamebot set max games per user 3', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max games per user 3', user: captain, channel: channel).to respond_with_slack_message(
         'Max games per user per day is 3.'
       )
       expect(channel.reload.max_games_per_user).to eq 3
@@ -1152,7 +1152,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'unsets max games per user' do
       channel.update_attributes!(max_games_per_user: 2)
-      expect(message: '@gamebot unset max games per user', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> unset max games per user', user: captain, channel: channel).to respond_with_slack_message(
         'Max games per user per day removed.'
       )
       expect(channel.reload.max_games_per_user).to be_nil
@@ -1160,7 +1160,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'sets max games per user to none' do
       channel.update_attributes!(max_games_per_user: 2)
-      expect(message: '@gamebot set max games per user none', user: captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max games per user none', user: captain, channel: channel).to respond_with_slack_message(
         'Max games per user per day removed.'
       )
       expect(channel.reload.max_games_per_user).to be_nil
@@ -1168,7 +1168,7 @@ describe SlackGamebot::Commands::SetChannel do
 
     it 'cannot set max games per user without being a captain' do
       non_captain = Fabricate(:user, channel: channel)
-      expect(message: '@gamebot set max games per user 1', user: non_captain, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> set max games per user 1', user: non_captain, channel: channel).to respond_with_slack_message(
         "You're not a captain, sorry."
       )
     end

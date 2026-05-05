@@ -14,7 +14,7 @@ describe SlackGamebot::Commands::Lost do
     end
 
     it 'lost' do
-      expect(message: '@gamebot lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+48) defeated #{challenge.challenged[0].display_name} (-48)."
       )
       challenge.reload
@@ -37,7 +37,7 @@ describe SlackGamebot::Commands::Lost do
       it 'displays leaderboard in a thread' do
         expect(SecureRandom).to receive(:hex).and_return('thread_id')
         message_match_recorded = "Match has been recorded! #{challenge.challengers[0].display_name} defeated #{challenge.challenged[0].display_name}."
-        expect(message: '@gamebot lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
+        expect(message: '<@bot_user_id> lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
         calls = []
         expect(channel.slack_client).to have_received(:chat_postMessage).twice do |call|
           calls << call
@@ -48,7 +48,7 @@ describe SlackGamebot::Commands::Lost do
     end
 
     it 'updates existing challenge when lost to' do
-      expect(message: "@gamebot lost to #{challenge.challengers.first.user_name}", user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> lost to #{challenge.challengers.first.user_name}", user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+48) defeated #{challenge.challenged[0].display_name} (-48)."
       )
       challenge.reload
@@ -58,7 +58,7 @@ describe SlackGamebot::Commands::Lost do
     end
 
     it 'lost with score' do
-      expect(message: '@gamebot lost 15:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 15:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+56) defeated #{challenge.challenged[0].display_name} (-56) with the score of 21:15."
       )
       challenge.reload
@@ -67,13 +67,13 @@ describe SlackGamebot::Commands::Lost do
     end
 
     it 'lost with invalid score' do
-      expect(message: '@gamebot lost 21:15', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 21:15', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         'Loser scores must come first.'
       )
     end
 
     it 'lost with scores' do
-      expect(message: '@gamebot lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+52) defeated #{challenge.challenged[0].display_name} (-52) with the scores of 15:21 21:14 11:5."
       )
       challenge.reload
@@ -81,26 +81,26 @@ describe SlackGamebot::Commands::Lost do
     end
 
     it 'lost with a crushing score' do
-      expect(message: '@gamebot lost 5:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 5:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+78) crushed #{challenge.challenged[0].display_name} (-78) with the score of 21:5."
       )
     end
 
     it 'lost with a humiliating score' do
-      expect(message: '@gamebot lost 0:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 0:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+96) humiliated #{challenge.challenged[0].display_name} (-96) with the score of 21:0."
       )
     end
 
     it 'lost in a close game' do
-      expect(message: '@gamebot lost 19:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 19:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+50) narrowly defeated #{challenge.challenged[0].display_name} (-50) with the score of 21:19."
       )
     end
 
     it 'lost amending scores' do
       challenge.lose!(challenged)
-      expect(message: '@gamebot lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match scores have been updated! #{challenge.challengers[0].display_name} (+48) defeated #{challenge.challenged[0].display_name} (-48) with the scores of 15:21 21:14 11:5."
       )
       challenge.reload
@@ -110,7 +110,7 @@ describe SlackGamebot::Commands::Lost do
     it 'cannot amend scores of a match older than 1 hour' do
       challenge.lose!(challenged)
       challenge.match.update_attributes!(created_at: 2.hours.ago)
-      expect(message: '@gamebot lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost 21:15 14:21 5:11', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         'No challenge to lose!'
       )
     end
@@ -119,7 +119,7 @@ describe SlackGamebot::Commands::Lost do
       challenge.lose!(challenged, [[11, 21]])
       challenge2 = Fabricate(:challenge, challenged: [challenged])
       challenge2.accept!(challenged)
-      expect(message: '@gamebot lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge2.challengers.map(&:display_name)[0]} (+39) defeated #{challenge2.challenged.map(&:display_name)[0]} (-38 → -101)."
       )
       challenge.reload
@@ -131,7 +131,7 @@ describe SlackGamebot::Commands::Lost do
 
     it 'does not update a previously won match' do
       challenge.lose!(challenge.challengers.first, [[11, 21]])
-      expect(message: '@gamebot lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         'No challenge to lose!'
       )
     end
@@ -148,7 +148,7 @@ describe SlackGamebot::Commands::Lost do
     end
 
     it 'lost' do
-      expect(message: '@gamebot lost', user: challenged1.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost', user: challenged1.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challengers[0].display_name} (+48) defeated #{challenge.challenged[0].display_name} (-24) and #{challenge.challenged.map(&:display_name)[1]} (-24)."
       )
       challenge.reload
@@ -171,7 +171,7 @@ describe SlackGamebot::Commands::Lost do
     it 'a player' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name}", user: loser, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> lost to #{winner.user_name}", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} (+48) defeated #{loser.user_name} (-48)."
           )
         end.not_to change(Challenge, :count)
@@ -184,7 +184,7 @@ describe SlackGamebot::Commands::Lost do
     it 'same player' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{loser.user_name}", user: loser, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> lost to #{loser.user_name}", user: loser, channel: channel).to respond_with_slack_message(
             'You cannot lose to yourself!'
           )
         end.not_to change(Challenge, :count)
@@ -196,7 +196,7 @@ describe SlackGamebot::Commands::Lost do
       loser2 = Fabricate(:user, channel: channel)
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} (+48) and #{winner2.user_name} (+48) defeated #{loser.user_name} (-48) and #{loser2.user_name} (-48)."
           )
         end.not_to change(Challenge, :count)
@@ -211,7 +211,7 @@ describe SlackGamebot::Commands::Lost do
       loser2 = Fabricate(:user, channel: channel)
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name} 15:21", user: loser, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> lost to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name} 15:21", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} (+56) and #{winner2.user_name} (+56) defeated #{loser.user_name} (-56) and #{loser2.user_name} (-56) with the score of 21:15."
           )
         end.not_to change(Challenge, :count)
@@ -225,7 +225,7 @@ describe SlackGamebot::Commands::Lost do
     it 'with score' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} 15:21", user: loser, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> lost to #{winner.user_name} 15:21", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} (+56) defeated #{loser.user_name} (-56) with the score of 21:15."
           )
         end.not_to change(Challenge, :count)
@@ -240,7 +240,7 @@ describe SlackGamebot::Commands::Lost do
     it 'with scores' do
       expect do
         expect do
-          expect(message: "@gamebot lost to #{winner.user_name} 21:15 14:21 5:11", user: loser, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> lost to #{winner.user_name} 21:15 14:21 5:11", user: loser, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{winner.user_name} (+52) defeated #{loser.user_name} (-52) with the scores of 15:21 21:14 11:5."
           )
         end.not_to change(Challenge, :count)
@@ -259,7 +259,7 @@ describe SlackGamebot::Commands::Lost do
     before { loser.unregister! }
 
     it 'cannot record a loss' do
-      expect(message: '@gamebot lost', user: loser.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> lost', user: loser.user_id, channel: channel).to respond_with_slack_message(
         "You're not registered. Type _register_ to register."
       )
     end

@@ -14,7 +14,7 @@ describe SlackGamebot::Commands::Resigned do
     end
 
     it 'resigned' do
-      expect(message: '@gamebot resigned', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> resigned', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         "Match has been recorded! #{challenge.challenged[0].display_name} (-48) resigned against #{challenge.challengers[0].display_name} (+48)."
       )
       challenge.reload
@@ -32,7 +32,7 @@ describe SlackGamebot::Commands::Resigned do
       it 'displays leaderboard in a thread' do
         expect(SecureRandom).to receive(:hex).and_return('thread_id')
         message_match_recorded = "Match has been recorded! #{challenge.challenged.map(&:display_name).and} resigned against #{challenge.challengers.map(&:display_name).and}."
-        expect(message: '@gamebot resigned', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
+        expect(message: '<@bot_user_id> resigned', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(message_match_recorded)
         calls = []
         expect(channel.slack_client).to have_received(:chat_postMessage).twice do |call|
           calls << call
@@ -43,7 +43,7 @@ describe SlackGamebot::Commands::Resigned do
     end
 
     it 'resigned with score' do
-      expect(message: '@gamebot resigned 15:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> resigned 15:21', user: challenged.user_id, channel: challenge.channel).to respond_with_slack_message(
         'Cannot score when resigning.'
       )
     end
@@ -56,7 +56,7 @@ describe SlackGamebot::Commands::Resigned do
     it 'a player' do
       expect do
         expect do
-          expect(message: "@gamebot resigned to #{winner.display_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> resigned to #{winner.display_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{loser.user_name} (-48) resigned against #{winner.display_name} (+48)."
           )
         end.not_to change(Challenge, :count)
@@ -72,7 +72,7 @@ describe SlackGamebot::Commands::Resigned do
       loser2 = Fabricate(:user, channel: channel)
       expect do
         expect do
-          expect(message: "@gamebot resigned to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> resigned to #{winner.user_name} #{winner2.user_name} with #{loser2.user_name}", user: loser.user_id, channel: channel).to respond_with_slack_message(
             "Match has been recorded! #{loser.display_name} (-48) and #{loser2.display_name} (-48) resigned against #{winner.display_name} (+48) and #{winner2.display_name} (+48)."
           )
         end.not_to change(Challenge, :count)
@@ -90,7 +90,7 @@ describe SlackGamebot::Commands::Resigned do
     before { user.unregister! }
 
     it 'cannot resign' do
-      expect(message: '@gamebot resigned', user: user.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> resigned', user: user.user_id, channel: channel).to respond_with_slack_message(
         "You're not registered. Type _register_ to register."
       )
     end

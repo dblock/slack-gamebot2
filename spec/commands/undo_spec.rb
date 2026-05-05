@@ -12,7 +12,7 @@ describe SlackGamebot::Commands::Undo do
     let!(:match) { Fabricate(:match, channel: channel, winners: [winner], losers: [loser]) }
 
     it 'undoes the last match' do
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         "Match #{match} has been undone."
       )
       expect(Match.where(id: match.id).first).to be_nil
@@ -20,7 +20,7 @@ describe SlackGamebot::Commands::Undo do
 
     it 'restores wins and losses' do
       expect do
-        expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
           "Match #{match} has been undone."
         )
       end.to change { winner.reload.wins }.by(-1).and change { loser.reload.losses }.by(-1)
@@ -29,7 +29,7 @@ describe SlackGamebot::Commands::Undo do
     it 'restores elo' do
       winner_elo_before = winner.reload.elo
       loser_elo_before = loser.reload.elo
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         "Match #{match} has been undone."
       )
       expect(winner.reload.elo).to be < winner_elo_before
@@ -38,7 +38,7 @@ describe SlackGamebot::Commands::Undo do
 
     it 'restores challenge state to accepted' do
       challenge = match.challenge
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         "Match #{match} has been undone."
       )
       expect(challenge.reload.state).to eq ChallengeState::ACCEPTED
@@ -50,7 +50,7 @@ describe SlackGamebot::Commands::Undo do
 
     it 'restores ties' do
       expect do
-        expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+        expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
           "Match #{match} has been undone."
         )
       end.to change { winner.reload.ties }.by(-1).and change { loser.reload.ties }.by(-1)
@@ -59,7 +59,7 @@ describe SlackGamebot::Commands::Undo do
 
   context 'with no recent match' do
     it 'errors' do
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         'No match to undo.'
       )
     end
@@ -71,14 +71,14 @@ describe SlackGamebot::Commands::Undo do
     let!(:match) { Fabricate(:match, channel: channel, winners: [other_winner], losers: [other_loser]) }
 
     it 'errors' do
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         'No match to undo.'
       )
     end
 
     it 'allows a captain to undo' do
       winner.update_attributes!(captain: true)
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         "Match #{match} has been undone."
       )
       expect(Match.where(id: match.id).first).to be_nil
@@ -93,7 +93,7 @@ describe SlackGamebot::Commands::Undo do
     end
 
     it 'errors' do
-      expect(message: '@gamebot undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> undo', user: winner.user_id, channel: channel).to respond_with_slack_message(
         'No match to undo.'
       )
     end

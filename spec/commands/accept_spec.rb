@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::Accept do
     let!(:challenge) { Fabricate(:challenge, team: team, challenged: [challenged]) }
 
     it 'accepts a challenge' do
-      expect(message: '@gamebot accept', user: challenged.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> accept', user: challenged.user_id, channel: channel).to respond_with_slack_message(
         "#{challenge.challenged.map(&:display_name).and} accepted #{challenge.challengers.map(&:display_name).and}'s challenge."
       )
       expect(challenge.reload.state).to eq ChallengeState::ACCEPTED
@@ -25,7 +25,7 @@ describe SlackGamebot::Commands::Accept do
 
     it 'accepts an open challenge' do
       allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(nil)
-      expect(message: '@gamebot accept', user: acceptor.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> accept', user: acceptor.user_id, channel: channel).to respond_with_slack_message(
         "#{acceptor.display_name} accepted #{challenge.challengers.map(&:display_name).and}'s challenge."
       )
       challenge.reload
@@ -35,7 +35,7 @@ describe SlackGamebot::Commands::Accept do
 
     it 'cannot accept an open challenge with themselves' do
       allow_any_instance_of(Slack::Web::Client).to receive(:users_info).and_return(nil)
-      expect(message: '@gamebot accept', user: user.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> accept', user: user.user_id, channel: channel).to respond_with_slack_message(
         "Player #{user.user_name} cannot play against themselves."
       )
       challenge.reload
@@ -57,7 +57,7 @@ describe SlackGamebot::Commands::Accept do
     end
 
     it 'cannot accept when at the limit' do
-      expect(message: '@gamebot accept', user: challenged.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> accept', user: challenged.user_id, channel: channel).to respond_with_slack_message(
         'Only 1 accepted challenge allowed at a time, 1 already in progress.'
       )
       expect(challenge.reload.state).to eq ChallengeState::PROPOSED
@@ -70,7 +70,7 @@ describe SlackGamebot::Commands::Accept do
     before { user.unregister! }
 
     it 'cannot accept' do
-      expect(message: '@gamebot accept', user: user.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> accept', user: user.user_id, channel: channel).to respond_with_slack_message(
         "You're not registered. Type _register_ to register."
       )
     end

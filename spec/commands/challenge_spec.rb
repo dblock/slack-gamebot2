@@ -10,7 +10,7 @@ describe SlackGamebot::Commands::Challenge do
 
   it 'creates a singles challenge by user id' do
     expect do
-      expect(message: "@gamebot challenge <@#{opponent.user_id}>", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge <@#{opponent.user_id}>", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
@@ -23,7 +23,7 @@ describe SlackGamebot::Commands::Challenge do
 
   it 'creates a singles challenge by user name' do
     expect do
-      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
@@ -33,7 +33,7 @@ describe SlackGamebot::Commands::Challenge do
     opponent2 = Fabricate(:user, channel: channel)
     teammate = Fabricate(:user, channel: channel)
     expect do
-      expect(message: "@gamebot challenge #{opponent.slack_mention} #{opponent2.user_name} with #{teammate.user_name}", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent.slack_mention} #{opponent2.user_name} with #{teammate.user_name}", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} and #{teammate.slack_mention} challenged #{opponent.slack_mention} and #{opponent2.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
@@ -46,7 +46,7 @@ describe SlackGamebot::Commands::Challenge do
 
   it 'creates a singles challenge by user name case-insensitive' do
     expect do
-      expect(message: "@gamebot challenge #{opponent.user_name.capitalize}", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent.user_name.capitalize}", user: user, channel: channel).to respond_with_slack_message(
         "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
       )
     end.to change(Challenge, :count).by(1)
@@ -54,7 +54,7 @@ describe SlackGamebot::Commands::Challenge do
 
   it 'requires an opponent' do
     expect do
-      expect(message: '@gamebot challenge', user: user, channel: channel).to respond_with_slack_message(
+      expect(message: '<@bot_user_id> challenge', user: user, channel: channel).to respond_with_slack_message(
         'Number of teammates (1) and opponents (0) must match.'
       )
     end.not_to change(Challenge, :count)
@@ -64,7 +64,7 @@ describe SlackGamebot::Commands::Challenge do
     opponent1 = Fabricate(:user, channel: channel)
     opponent2 = Fabricate(:user, channel: channel)
     expect do
-      expect(message: "@gamebot challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
         'Number of teammates (1) and opponents (2) must match.'
       )
     end.not_to change(Challenge, :count)
@@ -79,7 +79,7 @@ describe SlackGamebot::Commands::Challenge do
       opponent1 = Fabricate(:user, channel: channel)
       opponent2 = Fabricate(:user, channel: channel)
       expect do
-        expect(message: "@gamebot challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge #{opponent1.slack_mention} #{opponent2.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
           "#{user.slack_mention} challenged #{opponent1.slack_mention} and #{opponent2.slack_mention} to a match!"
         )
       end.to change(Challenge, :count).by(1)
@@ -91,7 +91,7 @@ describe SlackGamebot::Commands::Challenge do
 
   it 'does not butcher names with special characters' do
     allow(channel.team.slack_client).to receive(:users_info)
-    expect(message: '@gamebot challenge Jung-hwa', user: user, channel: channel).to respond_with_slack_message(
+    expect(message: '<@bot_user_id> challenge Jung-hwa', user: user, channel: channel).to respond_with_slack_message(
       "I don't know who Jung-hwa is!"
     )
   end
@@ -102,7 +102,7 @@ describe SlackGamebot::Commands::Challenge do
     end
 
     it 'cannot challenge when unregistered' do
-      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user.user_id, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent.slack_mention}", user: user.user_id, channel: channel).to respond_with_slack_message(
         "You're not registered. Type _register_ to register."
       )
     end
@@ -114,13 +114,13 @@ describe SlackGamebot::Commands::Challenge do
     end
 
     it 'by slack id' do
-      expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
         "I know who #{opponent.slack_mention} is, but they are unregistered. Ask them to _register_."
       )
     end
 
     it 'requires the opponent to be registered by name' do
-      expect(message: "@gamebot challenge #{opponent.user_name}", user: user, channel: channel).to respond_with_slack_message(
+      expect(message: "<@bot_user_id> challenge #{opponent.user_name}", user: user, channel: channel).to respond_with_slack_message(
         "I know who #{opponent.user_name} is, but they are unregistered. Ask them to _register_."
       )
     end
@@ -129,7 +129,7 @@ describe SlackGamebot::Commands::Challenge do
   User::EVERYONE.each do |username|
     it "challenges #{username}" do
       expect do
-        expect(message: "@gamebot challenge <!#{username}>", user: user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge <!#{username}>", user: user, channel: channel).to respond_with_slack_message(
           "#{user.slack_mention} challenged anyone to a match!"
         )
       end.to change(Challenge, :count).by(1)
@@ -149,7 +149,7 @@ describe SlackGamebot::Commands::Challenge do
     it 'challenge' do
       expect(message: 'challenge @someone', channel: 'DM', user: admin.user_id).to respond_with_slack_message([
         'Invite me to a channel to start a new leaderboard.',
-        'Type ` help` for more options.'
+        'Type `<@bot_user_id> help` for more options.'
       ].join("\n"))
     end
   end
@@ -165,7 +165,7 @@ describe SlackGamebot::Commands::Challenge do
 
     it 'cannot challenge when the daily channel limit is reached' do
       expect do
-        expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
           'Only 1 challenge allowed per day in this channel, 1 already issued today.'
         )
       end.not_to change(Challenge, :count)
@@ -176,7 +176,7 @@ describe SlackGamebot::Commands::Challenge do
 
       it 'can challenge when under the daily limit' do
         expect do
-          expect(message: "@gamebot challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> challenge #{opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
             "#{user.slack_mention} challenged #{opponent.slack_mention} to a match!"
           )
         end.to change(Challenge, :count).by(1)
@@ -194,7 +194,7 @@ describe SlackGamebot::Commands::Challenge do
 
     it 'cannot challenge a second time on the same day' do
       expect do
-        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
           'Only 1 challenge allowed per day per user, 1 already created today.'
         )
       end.not_to change(Challenge, :count)
@@ -203,7 +203,7 @@ describe SlackGamebot::Commands::Challenge do
     it 'allows a different user to challenge when another user is at their limit' do
       different_user = Fabricate(:user, channel: channel)
       expect do
-        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: different_user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge #{other_opponent.slack_mention}", user: different_user, channel: channel).to respond_with_slack_message(
           "#{different_user.slack_mention} challenged #{other_opponent.slack_mention} to a match!"
         )
       end.to change(Challenge, :count).by(1)
@@ -214,7 +214,7 @@ describe SlackGamebot::Commands::Challenge do
 
       it 'can issue a second challenge when under the per-user limit' do
         expect do
-          expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+          expect(message: "<@bot_user_id> challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
             "#{user.slack_mention} challenged #{other_opponent.slack_mention} to a match!"
           )
         end.to change(Challenge, :count).by(1)
@@ -233,7 +233,7 @@ describe SlackGamebot::Commands::Challenge do
 
     it 'cannot create a challenge when the challenger is at their daily game limit' do
       expect do
-        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge #{other_opponent.slack_mention}", user: user, channel: channel).to respond_with_slack_message(
           "Only 1 game allowed per day per user, #{user.display_name} already has 1 today."
         )
       end.not_to change(Challenge, :count)
@@ -242,7 +242,7 @@ describe SlackGamebot::Commands::Challenge do
     it 'allows a different user to challenge when another is at their game limit' do
       different_user = Fabricate(:user, channel: channel)
       expect do
-        expect(message: "@gamebot challenge #{other_opponent.slack_mention}", user: different_user, channel: channel).to respond_with_slack_message(
+        expect(message: "<@bot_user_id> challenge #{other_opponent.slack_mention}", user: different_user, channel: channel).to respond_with_slack_message(
           "#{different_user.slack_mention} challenged #{other_opponent.slack_mention} to a match!"
         )
       end.to change(Challenge, :count).by(1)
