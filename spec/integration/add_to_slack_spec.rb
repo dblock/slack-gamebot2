@@ -44,7 +44,7 @@ describe 'Add to Slack', :js, type: :feature do
     )
     expect do
       visit '/?code=code'
-      expect(page.find_by_id('messages')).to have_content 'Team successfully registered!'
+      expect(page.find_by_id('messages')).to have_text 'Team successfully registered!'
     end.to change(Team, :count).by(1)
   end
 end
