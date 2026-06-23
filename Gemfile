@@ -5,7 +5,7 @@ source 'http://rubygems.org'
 ruby '4.0.2'
 
 gem 'chronic_duration'
-gem 'faraday', '~> 2.14.1'
+gem 'faraday', '~> 2.14.3'
 gem 'hashie', '3.4.6'
 gem 'irb'
 gem 'json'
