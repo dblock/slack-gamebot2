@@ -1,6 +1,7 @@
-<html>
+<html lang="en">
   <head>
     <title>PlayPlay.io - Update Credit Card</title>
+    <meta name="robots" content="noindex, nofollow">
     <%= partial 'public/partials/_head.html' %>
     <%
       team = Team.where(team_id: request.params['team_id']).first
@@ -11,7 +12,7 @@
   </head>
   <body style='text-align: center'>
     <p style='margin: 50px;'>
-      <a href='/'><img src='img/game.png' width='120px'></a>
+      <a href='/'><img src='img/game.png' width='120px' alt='PlayPlay.io logo'></a>
     </p>
     <p>
       <h3>PlayPlay.io: Update Credit Card Info</h3>
@@ -31,7 +32,7 @@
         </script>
       </form>
       <p>
-        <img src='/img/stripe.png' width='119' height='26'></img>
+        <img src='/img/stripe.png' width='119' height='26' alt='Powered by Stripe'></img>
         <div class='small'>
           Questions? Contact dblock[at]vestris[dot]com.
         </div>

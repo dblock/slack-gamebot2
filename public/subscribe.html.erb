@@ -1,6 +1,7 @@
-<html>
+<html lang="en">
   <head>
     <title>PlayPlay.io - Subscribe</title>
+    <meta name="robots" content="noindex, nofollow">
     <%= partial 'public/partials/_head.html' %>
     <script src='https://checkout.stripe.com/checkout.js'></script>
     <link rel='stylesheet' href='https://checkout.stripe.com/v3/checkout/button.css'></link>
@@ -16,7 +17,7 @@
   </head>
   <body style='text-align: center'>
     <p style='margin: 50px;'>
-      <a href='/'><img src='img/game.png' width='120px'></a>
+      <a href='/'><img src='img/game.png' width='120px' alt='PlayPlay.io logo'></a>
     </p>
     <p>
       <h3>PlayPlay.io: Subscribe</h3>
@@ -27,7 +28,7 @@
           <span style='display: block; min-height: 30px;'>Pay $<%= amount_dollars %> with Card</span>
       </button>
       <p>
-        <img src='/img/stripe.png' width='119' height='26'></img>
+        <img src='/img/stripe.png' width='119' height='26' alt='Powered by Stripe'></img>
         <div class='small'>
           Questions? Contact dblock[at]vestris[dot]com.
         </div>
