@@ -6,3 +6,13 @@
 .add-to-slack img:hover {
   transform: scale(1.03);
 }
+
+.tagline {
+  color: #fff;
+  font-size: 13px;
+}
+
+#tagline-wrapper {
+  min-height: 1.5em;
+  display: block;
+}
