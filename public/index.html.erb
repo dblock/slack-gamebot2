@@ -71,10 +71,9 @@
         <div class="intro-text">
           <div class="intro-lead-in">
             Keep your leaderboard and scores in Slack.
+            <br>Ping pong, chess, pool, and tic-tac-toe, all in one bot.
             <br><br>
-            <a href="#gotslack" class="page-scroll add-to-slack">
-              <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add PlayPlay.io to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
-            </a>
+            <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add PlayPlay.io to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
           </div>
           <div>
             <img src='img/slack.png' width="100%" alt='PlayPlay.io leaderboard preview in Slack'>
@@ -151,6 +150,9 @@
         <h3 class="section-subheading text-muted text-center">
           See <a href='https://github.com/dblock/slack-gamebot2#usage' target="_blank">detailed usage</a> for other commands.
         </h3>
+        <div class="row text-center">
+          <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add PlayPlay.io to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+        </div>
       </div>
     </section>
     <section id="trial" class="bg-light-gray">

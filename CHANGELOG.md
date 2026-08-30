@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/08/30: Improved homepage conversion by fixing an invalid nested-anchor "Add to Slack" button, adding the supported games to the header tagline, and repeating the CTA after the "3 easy steps" section - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/08/29: Improved SEO for public marketing pages with canonical URLs, social metadata, structured data, noindex transactional pages, and a sitemap - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/05: Fixed command routing bug where usernames containing command keywords (e.g. "edmundo" triggering "undo") would cause the wrong command to be executed - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/05/04: [#39](https://github.com/dblock/slack-gamebot2/issues/39): Added `set max games per user [number]` to limit how many games (accepted or played) a user can participate in per day; clarified `set max challenges per user` as limiting challenges issued (proposed) per user per day - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
