@@ -2,7 +2,7 @@
   <head>
     <title>PlayPlay.io - Update Credit Card</title>
     <meta name="robots" content="noindex, nofollow">
-    <%= partial 'public/partials/_head.html' %>
+    <%= partial 'public/partials/_head.html.erb' %>
     <%
       team = Team.where(team_id: request.params['team_id']).first
       stripe_token = request.params['stripeToken']
