@@ -71,9 +71,13 @@
         <div class="intro-text">
           <div class="intro-lead-in">
             Keep your leaderboard and scores in Slack.
-            <br>Ping pong, chess, pool, and tic-tac-toe, all in one bot.
+            <br>Ping pong, chess, and pool, all in one bot.
             <br><br>
             <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add PlayPlay.io to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+            <br>
+            <div id="tagline-wrapper">
+              <small id="active_teams_count" class="tagline" style="display: none;">The leaderboard bot for startup ping pong since 2016.</small>
+            </div>
           </div>
           <div>
             <img src='img/slack.png' width="100%" alt='PlayPlay.io leaderboard preview in Slack'>
@@ -85,9 +89,6 @@
     <section id= "gotslack" class="bg-light-gray">
       <div class="container">
         <div class="row">
-          <div class="intro-text hidden">
-            <h4 id="active_teams_count" class="intro-lead-in">&nbsp;</h4>
-          </div>
           <div class="text-center">
             <p class="text_muted">Invite the bot to a channel, then follow its lead.</p>
           </div>
