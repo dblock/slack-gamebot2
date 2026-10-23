@@ -2,11 +2,11 @@
 
 source 'http://rubygems.org'
 
-ruby '4.0.2'
+ruby '4.0.9'
 
 gem 'chronic_duration'
 gem 'faraday', '~> 2.14.3'
-gem 'hashie', '3.4.6'
+gem 'hashie'
 gem 'irb'
 gem 'json'
 gem 'kaminari-grape'
