@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/10/23: Upgrade Ruby to 4.0.9 and refresh dependencies, leaving Stripe dependencies unchanged - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/08/30: Added social proof text near the "Add to Slack" CTA and fixed the live active teams/games/players stat (previously hidden due to a CSS class conflict) so it's now visible next to the button - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/08/30: Fixed `_head.html` partial not being processed as ERB (renamed to `_head.html.erb`), which caused raw `<%= %>` tags for canonical URL and Open Graph metadata to leak into the rendered page HTML on all public pages - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/08/30: Added a hover pop effect (shadow, scale) to the "Add to Slack" button, matching discord-strava - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
