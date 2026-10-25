@@ -1,0 +1,672 @@
+<details class="help-topic command-topic">
+  <summary><code>gamebot</code></summary>
+  <p dir="auto">Shows Gamebot version and links.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot hi</code></summary>
+  <p dir="auto">Politely says 'hi' back.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot help</code></summary>
+  <p dir="auto">Get help.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot info</code></summary>
+  <p dir="auto">Bot credits.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot sucks</code></summary>
+  <p dir="auto">You can tell the bot that it sucks. But it will talk back.</p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/sucks.gif"><img src="/img/commands/sucks.gif" alt="Example of gamebot sucks" loading="lazy"></a></p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot register</code></summary>
+  <p dir="auto">Re-registers a user. This is automatic, but a user can unregister and come back with this command.</p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/register.gif"><img src="/img/commands/register.gif" alt="Example of gamebot register" loading="lazy"></a></p>
+<p dir="auto">This command can also update a user's registration, for example after the user has been renamed. The bot notices user renames, but this may be necessary if the bot wasn't running during that operation.</p>
+<pre class="notranslate"><code class="notranslate">gamebot register
+
+Welcome back Victor Barna! I've updated your registration.
+</code></pre>
+<p dir="auto">You can also remove yourself from the leaderboard with <code class="notranslate">gamebot unregister me</code> and re-register yourself again with <code class="notranslate">gamebot register</code>.<br>
+The data is not removed, but the user will no longer appear in the leaderboards and cannot participate in challenges.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot challenge &lt;opponent&gt; ... [with &lt;teammate&gt; ...]</code></summary>
+  <p dir="auto">Creates a new challenge between you and an opponent.</p>
+<pre class="notranslate"><code class="notranslate">gamebot challenge @WangHoe
+
+Victor Barna challenged Wang Hoe to a match!
+</code></pre>
+<p dir="auto">You can challenge anyone to play.</p>
+<pre class="notranslate"><code class="notranslate">gamebot challenge @here
+
+Victor Barna challenged anyone to a match!
+</code></pre>
+<p dir="auto">You can create group challenges, too. Both sides must have the same number of players.</p>
+<pre class="notranslate"><code class="notranslate">gamebot challenge @WangHoe @ZhangJike with @DengYaping
+
+Victor Barna and Deng Yaping challenged Wang Hoe and Zhang Jike to a match!
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot challenge?</code></summary>
+  <p dir="auto">Show elo at stake for each opponent.</p>
+<pre class="notranslate"><code class="notranslate">gamebot challenge? @WangHoe
+
+Victor Barna challenging Wang Hoe to a match is worth 48 and 24 elo.
+</code></pre>
+<p dir="auto">Show elo at stake between other players using <code class="notranslate">against</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot challenge? @WangHoe against @DengYaping
+
+Wang Hoe challenging Deng Yaping to a match is worth 48 elo.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot predict</code></summary>
+  <p dir="auto">Predict the win probability based on current Elo ratings.</p>
+<pre class="notranslate"><code class="notranslate">gamebot predict @WangHoe
+
+Victor Barna has a 65% chance of beating Wang Hoe.
+</code></pre>
+<p dir="auto">Predict between other players using <code class="notranslate">against</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot predict @WangHoe against @DengYaping
+
+Wang Hoe has a 55% chance of beating Deng Yaping.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot accept</code></summary>
+  <p dir="auto">Accept a challenge.</p>
+<pre class="notranslate"><code class="notranslate">gamebot accept
+
+Wang Hoe and Zhang Jike accepted Victor Barna and Deng Yaping's challenge.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]</code></summary>
+  <p dir="auto">Record your loss.</p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/lost.gif"><img src="/img/commands/lost.gif" alt="Example of gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]" loading="lazy"></a></p>
+<p dir="auto">Record your loss with a score, loser first. The result verb depends on how lopsided the score is: <em>narrowly defeated</em>, <em>defeated</em>, <em>crushed</em>, or <em>humiliated</em> (shutout).</p>
+<pre class="notranslate"><code class="notranslate">gamebot lost 5:21
+
+Match has been recorded! Wang Hoe crushed Victor Barna with the score of 21:5.
+</code></pre>
+<pre class="notranslate"><code class="notranslate">gamebot lost 0:21
+
+Match has been recorded! Wang Hoe humiliated Victor Barna with the score of 21:0.
+</code></pre>
+<p dir="auto">You can record scores for an entire match.</p>
+<pre class="notranslate"><code class="notranslate">gamebot lost 15:21 21:17 18:21
+
+Match has been recorded! Wang Hoe defeated Victor Barna with the scores of 21:15 17:21 21:18.
+</code></pre>
+<p dir="auto">You can record scores for a match you have already lost.</p>
+<pre class="notranslate"><code class="notranslate">gamebot lost
+
+Match has been recorded! Wang Hoe defeated Victor Barna.
+
+gamebot lost 15:21 21:17 18:21
+
+Match scores have been updated! Wang Hoe defeated Victor Barna with the scores of 21:15 17:21 21:18.
+</code></pre>
+<p dir="auto">You can record a loss without a challenge.</p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/lost_to.gif"><img src="/img/commands/lost_to.gif" alt="Example of gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]" loading="lazy"></a></p>
+<p dir="auto">You can also record scores and record lost matches without a challenge including with multiple players.</p>
+<pre class="notranslate"><code class="notranslate">gamebot lost to @WangHoe @ZhangJike with @DengYaping 5:21
+
+Match has been recorded! Wang Hoe and Zhang Jike defeated Victor Barna and Deng Yaping with the score of 21:5.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot won [against &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]</code></summary>
+  <p dir="auto">Record your win. Scores are entered in winner:loser order.</p>
+<pre class="notranslate"><code class="notranslate">gamebot won 21:5
+
+Match has been recorded! Wang Hoe crushed Victor Barna with the score of 21:5.
+</code></pre>
+<p dir="auto">You can record a win without a challenge.</p>
+<pre class="notranslate"><code class="notranslate">gamebot won against @VictorBarna 21:15
+
+Match has been recorded! Wang Hoe defeated Victor Barna with the score of 21:15.
+</code></pre>
+<p dir="auto">You can also record wins with multiple players.</p>
+<pre class="notranslate"><code class="notranslate">gamebot won against @WangHoe @ZhangJike with @DengYaping 21:5
+
+Match has been recorded! Victor Barna and Deng Yaping defeated Wang Hoe and Zhang Jike with the score of 21:5.
+</code></pre>
+<p dir="auto">Use <code class="notranslate">set won off</code> to disable this command if you're concerned about players claiming wins they didn't actually win.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot draw [score ...]</code></summary>
+  <p dir="auto">Draws a challenge, and records a tie. All other players will also have to draw to record a match.</p>
+<pre class="notranslate"><code class="notranslate">gamebot draw
+
+Match is a draw, waiting to hear from Victor Barna.
+
+gamebot draw 2:2
+
+Match has been recorded. Victor Barna tied with Zhang Jike with a score of 2:2.
+</code></pre>
+<p dir="auto">You can also record scores and ties without a challenge.</p>
+<pre class="notranslate"><code class="notranslate">gamebot draw to @VictorBarna
+
+Match is a draw, waiting to hear from Victor Barna.
+
+gamebot draw 2:2
+
+Match is a draw! Wang Hoe tied with Victor Barna with the score of 2:2.
+</code></pre>
+<p dir="auto">You can also record scores and have multiple players.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot resigned [to &lt;opponent&gt; [with &lt;teammate&gt;]]</code></summary>
+  <p dir="auto">Records your resignation, which is a special kind of <code class="notranslate">lost</code> without a score.</p>
+<pre class="notranslate"><code class="notranslate">gamebot resigned
+
+Match has been recorded! Victor Barna resigned against Wang Hoe.
+</code></pre>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/resigned.gif"><img src="/img/commands/resigned.gif" alt="Example of gamebot resigned [to &lt;opponent&gt; [with &lt;teammate&gt;]]" loading="lazy"></a></p>
+<p dir="auto">You can resign without a prior challenge.</p>
+<pre class="notranslate"><code class="notranslate">gamebot resigned to WangHoe
+
+Match has been recorded! Victor Barna resigned against Wang Hoe.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot undo</code></summary>
+  <p dir="auto">Undo the last match recorded in the channel within the last hour. Restores Elo, wins, losses, and challenge state.</p>
+<pre class="notranslate"><code class="notranslate">gamebot undo
+
+Match Victor Barna defeated Wang Hoe has been undone.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot decline</code></summary>
+  <p dir="auto">Decline a challenge.</p>
+<pre class="notranslate"><code class="notranslate">gamebot decline
+
+Wang Hoe and Zhang Jike declined Victor Barna and Deng Yaping's challenge.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot cancel</code></summary>
+  <p dir="auto">Cancel a challenge.</p>
+<pre class="notranslate"><code class="notranslate">gamebot cancel
+
+Victor Barna and Deng Yaping canceled a challenge against Wang Hoe and Zhang Jike.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot taunt &lt;opponent&gt; [&lt;opponent&gt; ...]</code></summary>
+  <p dir="auto">Taunt other players.</p>
+<pre class="notranslate"><code class="notranslate">gamebot taunt @WangHoe
+
+Victor Barna says Wang Hoe sucks at ping pong!
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot leaderboard [number|infinity]</code></summary>
+  <p dir="auto">Get the leaderboard.</p>
+<pre class="notranslate"><code class="notranslate">gamebot leaderboard
+
+1. Victor Barna: 3 wins, 2 losses (elo: 148, avg: 140, lws: 5)
+2. Deng Yaping: 1 win, 3 losses (elo: 24, avg: 30)
+3. Wang Hoe: 0 wins, 1 loss (elo: -12, avg: -6)
+</code></pre>
+<p dir="auto">The leaderboard contains players ranked by <a href="http://en.wikipedia.org/wiki/Elo_rating_system" rel="nofollow">Elo</a>, use <em>leaderboard 10</em> or <em>leaderboard infinity</em> to see 10 players or all players, respectively. Use <code class="notranslate">set leaderboard max 3</code> to limit the default leaderboard size to 3.</p>
+<p dir="auto">The leaderboard also shows the longest winning (lws) and losing (lls) streaks of at least 3, as well as a rolling 10-game elo average (avg) once a player has played at least 2 games.</p>
+<p dir="auto">In case you want to see the leaderboard in reverse order (which would be totally wrong but motivational for people at the bottom of the leaderboard), specify a negative number or <code class="notranslate">-infinity</code>:</p>
+<pre class="notranslate"><code class="notranslate">gamebot leaderboard -5
+
+1. Wang Hoe: 0 wins, 1 loss (elo: -12, avg: -6)
+2. Deng Yaping: 1 win, 3 losses (elo: 24, avg: 30)
+3. Victor Barna: 3 wins, 2 losses (elo: 148, avg: 140, lws: 5)
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot matches [number|infinity]</code></summary>
+  <p dir="auto">Displays top 10 match totals in the current season.</p>
+<pre class="notranslate"><code class="notranslate">gamebot matches
+
+Victor Barna defeated Wang Hoe 3 times
+Deng Yaping defeated Victor Barna once
+</code></pre>
+<p dir="auto">You can also get match totals for specific players.</p>
+<pre class="notranslate"><code class="notranslate">gamebot matches @WangHoe
+
+Victor Barna defeated Wang Hoe 5 times
+Wang Hoe defeated Deng Yaping twice
+</code></pre>
+<p dir="auto">Use <em>matches 3</em> to see top 3 matches or <em>matches inifinity</em> to see all matches in the season.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot games [&lt;player&gt; ...]</code></summary>
+  <p dir="auto">Displays total games played and a per-player breakdown of wins, losses, and ties, sorted by most games played.</p>
+<pre class="notranslate"><code class="notranslate">gamebot games
+
+A total of 5 games have been played.
+Victor Barna: 3 wins, 1 loss
+Wang Hoe: 2 wins, 2 losses
+Deng Yaping: 0 wins, 2 losses
+</code></pre>
+<p dir="auto">You can also filter by specific players.</p>
+<pre class="notranslate"><code class="notranslate">gamebot games @WangHoe @DengYaping
+
+A total of 4 games have been played.
+Wang Hoe: 2 wins, 2 losses
+Deng Yaping: 0 wins, 2 losses
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot challenges</code></summary>
+  <p dir="auto">Displays all outstanding (proposed and accepted) challenges. Proposed challenges that have not been accepted automatically expire after 8 hours (configurable with <code class="notranslate">set expire</code>). Accepted challenges that have not been recorded will be reminded after 4 hours (configurable with <code class="notranslate">set remind</code>).</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot rank [&lt;player&gt; ...]</code></summary>
+  <p dir="auto">Show the smallest range of ranks for a list of players.  If no user is specified, your rank is shown.</p>
+<pre class="notranslate"><code class="notranslate">gamebot rank @WangHoe @DengYaping
+
+2. Deng Yaping: 1 win, 3 losses (elo: 24, avg: 30)
+3. Wang Hoe: 0 wins, 1 loss (elo: -12, avg: -6)
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot promote &lt;player&gt; ...</code></summary>
+  <p dir="auto">Promotes other users to captain. Must be a captain to do that.</p>
+<pre class="notranslate"><code class="notranslate">gamebot promote @WangHoe @DengYaping
+
+Victor Barna promoted Wang Hoe and Deng Yaping to captain.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot demote me</code></summary>
+  <p dir="auto">Demotes from captain to a normal user. Must be a captain and the team must have other captains to do this.</p>
+<pre class="notranslate"><code class="notranslate">gamebot demote me
+
+Victor Barna is no longer captain.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot team</code></summary>
+  <p dir="auto">Display current team's info, including captains.</p>
+<pre class="notranslate"><code class="notranslate">gamebot team
+
+Team T04KB5WQH #pong, captains Deng Yaping and Victor Barna.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot reset &lt;team id|team name&gt;</code></summary>
+  <p dir="auto">Reset all users and pending challenges and start a new season. Must be a captain to do this and confirm by specifying the team ID or name.</p>
+<pre class="notranslate"><code class="notranslate">gamebot reset #pong
+
+Welcome to the new season!
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot season</code></summary>
+  <p dir="auto">Display the current season's leader and game totals.</p>
+<pre class="notranslate"><code class="notranslate">gamebot season
+
+Current: Deng Yaping: 1 win, 0 losses (elo: 48), 1 game, 2 players
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot seasons</code></summary>
+  <p dir="auto">Display the current season's leader, past seasons' winners and game totals.</p>
+<pre class="notranslate"><code class="notranslate">gamebot seasons
+
+Current: Deng Yaping: 1 win, 0 losses (elo: 48), 1 game, 2 players
+2015-07-16: Wang Hoe: 28 wins, 19 losses (elo: 214), 206 games, 25 players
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot unregister &lt;player&gt;</code></summary>
+  <p dir="auto">Captains can remove users.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unregister @WangHoe
+
+I've removed @WangHoe from the leaderboard.
+</code></pre>
+<p dir="auto">Users that have left a Slack team can be removed by omitting the <code class="notranslate">@</code>, e.g. <code class="notranslate">gamebot unregister WangHoe</code>.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set</code></summary>
+  <p dir="auto">Show current default settings in a DM or channel settings in a channel.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set nickname [name]</code></summary>
+  <p dir="auto">Sets a nickname for display purposes in a channel.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set nickname John Doe
+</code></pre>
+<p dir="auto">Unset a nickname.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset nickname
+</code></pre>
+<p dir="auto">Captains can set nicknames of users by using a Slack mention.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set nickname @WangHoe John Doe
+</code></pre>
+<p dir="auto">Captains can unset nicknames, too.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset nickname @WangHoe
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set gifs on|off</code></summary>
+  <p dir="auto">Enable/disable GIFs for your team.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set gifs off
+
+GIFs are now off.
+</code></pre>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/gifs.gif"><img src="/img/commands/gifs.gif" alt="Example of gamebot set gifs on|off" loading="lazy"></a></p>
+<p dir="auto">Using <code class="notranslate">unset gifs</code> is equivalent to <code class="notranslate">set gifs off</code>.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set leaderboard max [number|none]</code></summary>
+  <p dir="auto">Set and reset the leaderboard max. The default is none, ie. to show the entire leaderboard.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set leaderboard max 5
+</code></pre>
+<p dir="auto">The following are equivalent.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set leaderboard max 0
+gamebot set leaderboard max none
+gamebot unset leaderboard max
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set elo [number]</code></summary>
+  <p dir="auto">Set and reset the base elo for new seasons. The default is 0.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set elo 1000
+</code></pre>
+<pre class="notranslate"><code class="notranslate">gamebot unset elo
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set elo algorithm &lt;adaptive|standard|glicko|glicko2&gt;</code></summary>
+  <p dir="auto">Set the ELO algorithm. Can only be changed at the start of a new season (no matches recorded yet). The default is <code class="notranslate">adaptive</code>.</p>
+<ul dir="auto">
+<li>
+<strong>adaptive</strong>: The existing tau-decay system. Each player accumulates a <code class="notranslate">tau</code> value with every match played. ELO volatility scales by <code class="notranslate">decay^tau</code>, so new players experience larger swings and veterans stabilize over time. Tunable with <code class="notranslate">set elo decay</code>.</li>
+<li>
+<strong>standard</strong>: The textbook <code class="notranslate">K * (S - E)</code> formula with a fixed K-factor. Tunable with <code class="notranslate">set elo k</code>.</li>
+<li>
+<strong>glicko</strong>: The <a href="http://www.glicko.net/glicko/glicko.pdf" rel="nofollow">Glicko-1 system</a> (Glickman, 1995). Each player has a rating deviation (RD) that reflects the uncertainty of their rating. RD shrinks as more games are played and grows during inactivity. Higher RD means larger rating swings.</li>
+<li>
+<strong>glicko2</strong>: The <a href="http://www.glicko.net/glicko/glicko2.pdf" rel="nofollow">Glicko-2 system</a> (Glickman, 2001). Extends Glicko by adding per-player volatility (σ), which measures consistency of performance. The system constant τ controls how quickly volatility can change. Tunable with <code class="notranslate">set elo glicko2 tau</code>.</li>
+</ul>
+<pre class="notranslate"><code class="notranslate">gamebot set elo algorithm standard
+
+Elo algorithm for #channel is standard (k=32).
+</code></pre>
+<pre class="notranslate"><code class="notranslate">gamebot set elo algorithm glicko2
+
+Elo algorithm for #channel is glicko2 (τ=0.5).
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set elo k &lt;number&gt;</code></summary>
+  <p dir="auto">Set the K-factor for the <code class="notranslate">standard</code> algorithm. The default is 32.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set elo k 16
+
+Elo K for #channel is 16.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set elo decay &lt;number&gt;</code></summary>
+  <p dir="auto">Set the decay factor for the <code class="notranslate">adaptive</code> algorithm. Must be between 0 and 1. The default is 0.94.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set elo decay 0.9
+
+Elo decay for #channel is 0.9.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set elo glicko2 tau &lt;number&gt;</code></summary>
+  <p dir="auto">Set the system constant τ for the <code class="notranslate">glicko2</code> algorithm. Controls how much a player's volatility (σ) can change per match. Smaller values restrict volatility changes; larger values allow more dramatic swings. Must be positive. The default is 0.5.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set elo glicko2 tau 0.3
+
+Glicko2 τ for #channel is 0.3.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set aliases &lt;alias|none&gt; ...</code></summary>
+  <p dir="auto">Set additional aliases for the bot. For example, you could upload a custom emoji for :pong: and set an alias for it.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set aliases pp :pong:
+
+Bot aliases are set to pp and :pong:.
+</code></pre>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/aliases.gif"><img src="/img/commands/aliases.gif" alt="Example of gamebot set aliases &lt;alias|none&gt; ..." loading="lazy"></a></p>
+<p dir="auto">Remove all aliases with <code class="notranslate">unset aliases</code>.</p>
+<p dir="auto">Aliases only work in public channels.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set details &lt;elo,leaderboard|none&gt; ...</code></summary>
+  <p dir="auto">Use <code class="notranslate">elo</code> to display ELO change details when a match being recorded.<br>
+Use <code class="notranslate">leaderboard</code> to display a leaderboard in a thread after a match has been recorded.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set details elo leaderboard
+
+Channel details are now `elo` and `leaderboard`.
+</code></pre>
+<p dir="auto">Remove all details with <code class="notranslate">unset details</code>.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set api on|off</code></summary>
+  <p dir="auto">Enable/disable team data in the public API for your team and display team API URL.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set api on
+
+API is now on!
+https://gamebot2.playplay.io/api/teams/57224e65bc526eac95bfe316
+</code></pre>
+<pre class="notranslate"><code class="notranslate">gamebot unset api
+
+API is now off.
+</code></pre>
+<p dir="auto">You will need a token to use the API, DM the bot <code class="notranslate">set token xyz</code>, then pass <code class="notranslate">X-Access-Token: xyz</code> in a header to the API.</p>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set unbalanced on|off</code></summary>
+  <p dir="auto">Allow unbalanced challenges with different numbers of opponents.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set unbalanced on
+
+Unbalanced challenges are now on!
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set won on|off</code></summary>
+  <p dir="auto">Enable or disable the <code class="notranslate">won</code> command. New channels have it enabled by default.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set won off
+
+Won command for #channel is off.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set expire [hours|never]</code></summary>
+  <p dir="auto">Set how long a proposed challenge remains open before being automatically canceled. Default is 8 hours. Use <code class="notranslate">never</code> to disable expiry.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set expire 24
+
+Challenge expiry for #channel is 24 hours.
+</code></pre>
+<pre class="notranslate"><code class="notranslate">gamebot set expire never
+
+Challenge expiry for #channel is never.
+</code></pre>
+<p dir="auto">Reset to the default with <code class="notranslate">unset expire</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset expire
+
+Challenge expiry for #channel is 8 hours.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set remind [duration|never]</code></summary>
+  <p dir="auto">Set how long after a challenge is accepted before players are reminded to record the result. Default is 4 hours. Reminders repeat every 24 hours. Use <code class="notranslate">never</code> to disable reminders. Reminder must be set to less than expire.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set remind 2h
+
+Reminders will be sent after 2 hours.
+</code></pre>
+<pre class="notranslate"><code class="notranslate">gamebot set remind never
+
+Reminders are disabled.
+</code></pre>
+<p dir="auto">Reset to the default with <code class="notranslate">unset remind</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset remind
+
+Reminders are disabled.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set max challenges [number|none]</code></summary>
+  <p dir="auto">Set the maximum number of simultaneously accepted challenges. Useful when you only have one table. No limit by default.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set max challenges 1
+
+Max challenges limit is 1.
+</code></pre>
+<p dir="auto">Remove the limit with <code class="notranslate">set max challenges</code> or <code class="notranslate">unset max challenges</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset max challenges
+
+Max challenges limit removed.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set max challenges per day [number|none]</code></summary>
+  <p dir="auto">Set the maximum number of challenges that can be proposed in the channel per day. Resets at midnight in the channel's configured timezone. No limit by default.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set max challenges per day 10
+
+Max challenges per day is 10.
+</code></pre>
+<p dir="auto">Remove the limit with <code class="notranslate">set max challenges per day</code> or <code class="notranslate">unset max challenges per day</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset max challenges per day
+
+Max challenges per day removed.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set max challenges per user [number|none]</code></summary>
+  <p dir="auto">Set the maximum number of challenges a single user can propose per day. Resets at midnight in the channel's configured timezone. No limit by default.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set max challenges per user 3
+
+Max challenges per user is 3.
+</code></pre>
+<p dir="auto">Remove the limit with <code class="notranslate">set max challenges per user</code> or <code class="notranslate">unset max challenges per user</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset max challenges per user
+
+Max challenges per user removed.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set max games per user [number|none]</code></summary>
+  <p dir="auto">Set the maximum number of games (challenges in accepted or played state) a single user can participate in per day. This applies both when creating a challenge and when accepting one. Resets at midnight in the channel's configured timezone. No limit by default.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set max games per user 2
+
+Max games per user is 2.
+</code></pre>
+<p dir="auto">Remove the limit with <code class="notranslate">set max games per user</code> or <code class="notranslate">unset max games per user</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset max games per user
+
+Max games per user removed.
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set timezone [name]</code></summary>
+  <p dir="auto">Set the timezone used to determine when each day starts for the daily challenge limits. Default is <code class="notranslate">Eastern Time (US &amp; Canada)</code>. See <a href="https://api.rubyonrails.org/classes/ActiveSupport/TimeZone.html" rel="nofollow">valid timezone names</a>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot set timezone Pacific Time (US &amp; Canada)
+
+Timezone for #channel is Pacific Time (US &amp; Canada).
+</code></pre>
+<p dir="auto">Reset to the default with <code class="notranslate">unset timezone</code>.</p>
+<pre class="notranslate"><code class="notranslate">gamebot unset timezone
+
+Timezone for #channel has been reset to Eastern Time (US &amp; Canada).
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot subscription</code></summary>
+  <p dir="auto">DM to show paid subscription information.</p>
+<pre class="notranslate"><code class="notranslate">subscription
+
+Your trial subscription expires in 13 days. Subscribe your team for $49.99 a year at ... .
+</code></pre>
+<p dir="auto">Captains can see credit card info.</p>
+<pre class="notranslate"><code class="notranslate">subscription
+
+Customer since August 11, 2018.
+Subscribed to Slack PlayPlay (Yearly) ($49.99), will auto-renew on August 11, 2019.
+Invoice for $49.99 on August 11, 2018, paid.
+On file Visa card, user@example.com ending with 4242, expires 2/2022.
+Update your credit card info at ... .
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot unsubscribe [id]</code></summary>
+  <p dir="auto">DM to cancel auto-renew for a paid subscription.</p>
+<pre class="notranslate"><code class="notranslate">unsubscribe
+
+Subscribed to Slack PlayPlay (Yearly) ($49.99), will auto-renew on August 11, 2019.
+Send `unsubscribe sub_DOvlBd1lETNimB` to unsubscribe.
+</code></pre>
+<pre class="notranslate"><code class="notranslate">unsubscribe sub_DOvlBd1lETNimB
+
+Successfully canceled auto-renew for Slack PlayPlay (Yearly) ($49.99).
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot channels</code></summary>
+  <p dir="auto">DM the bot to show all channels with their current season statistics.</p>
+<pre class="notranslate"><code class="notranslate">channels
+</code></pre>
+</details>
+
+<details class="help-topic command-topic">
+  <summary><code>gamebot set token [token]</code></summary>
+  <p dir="auto">DM the bot to set an API token, or clear it with <code class="notranslate">unset token</code>. Pass the token in the <code class="notranslate">X-Access-Token</code> header when calling the API.</p>
+<pre class="notranslate"><code class="notranslate">set token your-api-token
+unset token
+</code></pre>
+</details>
