@@ -12,7 +12,7 @@
   </head>
   <body style='text-align: center'>
     <p style='margin: 50px;'>
-      <a href='/'><img src='img/game.png' width='120px' alt='PlayPlay.io logo'></a>
+      <a href='/'><img src='<%= h asset_path('/img/game.png') %>' width='120px' alt='PlayPlay.io logo'></a>
     </p>
     <p>
       <h3>PlayPlay.io: Update Credit Card Info</h3>
@@ -23,7 +23,7 @@
         <script
           src="https://checkout.stripe.com/checkout.js" class="stripe-button"
           data-key="<%= ENV['STRIPE_API_PUBLISHABLE_KEY'] %>"
-          data-image='/img/game.png'
+          data-image='<%= h asset_path('/img/game.png') %>'
           data-name="Playplay.io"
           data-panel-label="Update Credit Card"
           data-label="Update Credit Card"
@@ -32,12 +32,12 @@
         </script>
       </form>
       <p>
-        <img src='/img/stripe.png' width='119' height='26' alt='Powered by Stripe'></img>
+        <img src='<%= h asset_path('/img/stripe.png') %>' width='119' height='26' alt='Powered by Stripe'></img>
         <div class='small'>
           Questions? Contact dblock[at]vestris[dot]com.
         </div>
       </p>
-      <%= partial 'public/partials/_scripts.html' %>
+      <%= partial 'public/partials/_scripts.html.erb' %>
       <script>
         $(document).ready(function() {
           var data = {

@@ -80,7 +80,7 @@
             </div>
           </div>
           <div>
-            <img src='img/slack.png' width="100%" alt='PlayPlay.io leaderboard preview in Slack' class="header-screenshot">
+            <img src='<%= h asset_path('/img/slack.png') %>' width="100%" alt='PlayPlay.io leaderboard preview in Slack' class="header-screenshot">
           </div>
         </div>
       </div>
@@ -109,7 +109,7 @@
               <div class="portfolio-hover">
                 <div class="portfolio-hover-content">
                   <i class="fa fa-plus fa-3x"></i>
-                  <img src="img/portfolio/welcomesnapshot.png" class="img-responsive" alt="Inviting gamebot to a Slack channel">
+                  <img src="<%= h asset_path('/img/portfolio/welcomesnapshot.png') %>" class="img-responsive" alt="Inviting gamebot to a Slack channel">
                 </div>
               </div>
             </a>
@@ -125,7 +125,7 @@
                   <i class="fa fa-plus fa-3x"></i>
                 </div>
               </div>
-              <img src="img/portfolio/challengesnapshot.png" class="img-responsive" alt="Challenging a teammate in Slack">
+              <img src="<%= h asset_path('/img/portfolio/challengesnapshot.png') %>" class="img-responsive" alt="Challenging a teammate in Slack">
             </a>
             <div class="portfolio-caption">
               <h4>Step 2</h4>
@@ -139,7 +139,7 @@
                   <i class="fa fa-plus fa-3x"></i>
                 </div>
               </div>
-              <img src="img/portfolio/resultsnapshot.png" class="img-responsive" alt="Reporting a game result in Slack">
+              <img src="<%= h asset_path('/img/portfolio/resultsnapshot.png') %>" class="img-responsive" alt="Reporting a game result in Slack">
             </a>
             <div class="portfolio-caption">
               <h4>Step 3</h4>
@@ -175,7 +175,7 @@
           <div class="col-lg-12 text-center">
             <h3 class="section-heading">Open-Source</h3>
             <h3 class="section-subheading text-muted">The game bot service and the playplay.io website are open-source under the MIT license.</h3>
-            <div><img src='img/github.png' alt='GitHub logo' class="img-responsive img-centered"></div>
+            <div><img src='<%= h asset_path('/img/github.png') %>' alt='GitHub logo' class="img-responsive img-centered"></div>
             <h3 class="section-subheading text-muted"><a href="https://github.com/dblock/slack-gamebot2" target="_blank">Fork us on Github</a></h3>
           </div>
         </div>
@@ -187,7 +187,7 @@
           <div class="col-lg-12 text-center">
             <h3 class="setion-heading">Hypermedia API</h3>
             <h3 class="section-subheading text-muted">All public game data is available via a Hypermedia HAL API.</h3>
-            <div><img src='img/api.png' alt='PlayPlay.io hypermedia API screenshot' class="img-responsive img-centered"></div>
+            <div><img src='<%= h asset_path('/img/api.png') %>' alt='PlayPlay.io hypermedia API screenshot' class="img-responsive img-centered"></div>
             <h3 class="section-subheading text-muted">Try <a href="<%= SlackRubyBotServer::Service.api_url %>" target="_blank"><%= SlackRubyBotServer::Service.api_url %></a>.</h3>
           </div>
         </div>
@@ -238,7 +238,7 @@
                 <!-- Project Details Go Here -->
                 <h2>Step 1: Invite the gamebot</h2>
                 <p class="item-intro text-muted">Invite the gamebot</p>
-                <img class="img-responsive img-centered" src="img/portfolio/welcome.gif" alt="Inviting gamebot to a Slack channel">
+                <img class="img-responsive img-centered" src="<%= h asset_path('/img/portfolio/welcome.gif') %>" alt="Inviting gamebot to a Slack channel">
                 <p>
                   It's easy to join. Create a Slack channel (#pong, #chess, #pool or #tictactoe) and invite the bot (@gamebot) to it.
                 </p>
@@ -264,9 +264,9 @@
               <div class="modal-body">
                 <h2>Step 2: Invite friends for a challenge</h2>
                 <p class="item-intro text-muted">Challenges a member of your team by sending: @gamebot challenge @opponent</p>
-                <img class="img-responsive img-centered" src="img/portfolio/gamechallenge.gif" alt="Issuing a game challenge in Slack">
+                <img class="img-responsive img-centered" src="<%= h asset_path('/img/portfolio/gamechallenge.gif') %>" alt="Issuing a game challenge in Slack">
                 <p class="item-intro text-muted">Accept the challenge with: @gamebot accept</p>
-                <img class="img-responsive img-centered" src="img/portfolio/gameaccept.gif" alt="Accepting a game challenge in Slack">
+                <img class="img-responsive img-centered" src="<%= h asset_path('/img/portfolio/gameaccept.gif') %>" alt="Accepting a game challenge in Slack">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
               </div>
             </div>
@@ -289,9 +289,9 @@
               <div class="modal-body">
                 <h2>Results</h2>
                 <p class="item-intro text-muted">Lost the game? Send: @gamebot lost, in a draw both say @gamebot draw</p>
-                <img class="img-responsive img-centered" src="img/portfolio/gameresult.gif" alt="Reporting a lost or drawn game in Slack">
+                <img class="img-responsive img-centered" src="<%= h asset_path('/img/portfolio/gameresult.gif') %>" alt="Reporting a lost or drawn game in Slack">
                 <p class="item-intro text-muted">Check your rankings with: @gamebot leaderboard 10 or @gamebot rank.</p>
-                <img class="img-responsive img-centered" src="img/portfolio/teamrankings.png" alt="Team rankings leaderboard in Slack">
+                <img class="img-responsive img-centered" src="<%= h asset_path('/img/portfolio/teamrankings.png') %>" alt="Team rankings leaderboard in Slack">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
               </div>
             </div>
@@ -314,12 +314,12 @@
         </div>
       </div>
     </div>
-    <%= partial 'public/partials/_scripts.html' %>
+    <%= partial 'public/partials/_scripts.html.erb' %>
     <!-- Slack -->
-    <script src="js/register.js"></script>
-    <script src="js/status.js"></script>
-    <script src="js/toggle.js"></script>
+    <script src="<%= h asset_path('/js/register.js') %>"></script>
+    <script src="<%= h asset_path('/js/status.js') %>"></script>
+    <script src="<%= h asset_path('/js/toggle.js') %>"></script>
     <!-- Uptime -->
-    <script src="js/uptime.js"></script>
+    <script src="<%= h asset_path('/js/uptime.js') %>"></script>
   </body>
 </html>
