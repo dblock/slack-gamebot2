@@ -7,13 +7,12 @@ describe SlackGamebot::Api::Middleware do
 
   let(:app) { described_class.instance }
 
-  %w[/ /privacy.html /subscribe.html /update_cc.html].each do |path|
+  %w[/ /help.html /privacy.html /subscribe.html /update_cc.html].each do |path|
     it "versions local assets and revalidates #{path}" do
       get path
 
       assets = Capybara.string(last_response.body).all('script[src], link[href], img[src], meta[name="msapplication-TileImage"]', visible: :all)
-      # Leave the pre-existing missing Android icon outside this upgrade.
-      urls = assets.map { |asset| asset[:src] || asset[:href] || asset[:content] } - ['/android-icon-192x192.png']
+      urls = assets.map { |asset| asset[:src] || asset[:href] || asset[:content] }
       urls.reject! { |url| url.start_with?('http:', 'https:', '//') }
       expect(last_response.status).to eq 200
       expect(last_response.headers['Cache-Control']).to eq 'private, no-cache'
@@ -34,7 +33,7 @@ describe SlackGamebot::Api::Middleware do
   end
 
   it 'revalidates CSS and regenerates nested artwork URLs after an image-only change' do
-    get '/css/agency.css'
+    get '/styles.css'
     image_hash = Digest::SHA256.file('public/img/header-bg.jpg').hexdigest
     expect(last_response.content_type).to eq 'text/css; charset=utf-8'
     expect(last_response.headers['Cache-Control']).to eq 'private, no-cache'
@@ -42,7 +41,7 @@ describe SlackGamebot::Api::Middleware do
 
     allow(Digest::SHA256).to receive(:file).and_call_original
     allow(Digest::SHA256).to receive(:file).with('public/img/header-bg.jpg').and_return(double(hexdigest: 'f' * 64))
-    get '/css/agency.css', {}, 'HTTP_IF_MODIFIED_SINCE' => File.mtime('public/css/agency.css.erb').httpdate
+    get '/styles.css', {}, 'HTTP_IF_MODIFIED_SINCE' => File.mtime('public/styles.css.erb').httpdate
     expect(last_response.status).to eq 200
     expect(last_response.body).to include("/img/header-bg.jpg?v=#{'f' * 64}")
     expect(last_response.body).not_to include(image_hash)

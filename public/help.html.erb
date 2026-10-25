@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>GameBot - Help</title>
+    <meta name="description" content="Invite Gamebot to Slack, challenge a teammate, record a result, and check your channel's leaderboard.">
+    <%= partial 'public/partials/_head.html.erb' %>
+  </head>
+  <body class="site-page">
+    <%= partial 'public/partials/_navigation.html.erb' %>
+    <main id="main" class="page-container help-content">
+      <header class="help-header">
+        <h1>Help</h1>
+      </header>
+      <section class="help-section" aria-labelledby="getting-started-title">
+        <h2 id="getting-started-title">Your first game</h2>
+        <ol class="getting-started-steps">
+          <li>Add GameBot to your workspace, then invite <code>@gamebot</code> to a Slack channel such as <code>#pong</code>, <code>#chess</code>, or <code>#pool</code>.</li>
+          <li>Challenge someone with <code>@gamebot challenge @opponent</code>. They can reply with <code>@gamebot accept</code>.</li>
+          <li>Play your game. The losing player reports <code>@gamebot lost</code>; for a draw, both players say <code>@gamebot draw</code>.</li>
+        </ol>
+      </section>
+      <section class="help-section" aria-labelledby="commands-title">
+        <h2 id="commands-title">FAQ</h2>
+        <details class="help-topic">
+          <summary>How do I invite the bot to a channel?</summary>
+          <p>First <a href="/#pricing">add GameBot to Slack</a>, create a channel for your game, and invite <code>@gamebot</code>. Each channel has its own leaderboard.</p>
+        </details>
+        <details class="help-topic">
+          <summary>How do I challenge a teammate?</summary>
+          <p>Send <code>@gamebot challenge @opponent</code>. Your opponent accepts with <code>@gamebot accept</code>. You can challenge anyone with <code>@gamebot challenge @here</code>, or include teammates with <code>with @teammate</code>.</p>
+          <img src="<%= h asset_path('/img/portfolio/gamechallenge.gif') %>" width="580" alt="Issuing a game challenge in Slack" loading="lazy">
+          <img src="<%= h asset_path('/img/portfolio/gameaccept.gif') %>" width="580" alt="Accepting a game challenge in Slack" loading="lazy">
+        </details>
+        <details class="help-topic">
+          <summary>How do I record a result?</summary>
+          <p>Lost the game? Send <code>@gamebot lost</code>. If it was a draw, both sides send <code>@gamebot draw</code>. You can include the score, for example <code>@gamebot lost 1:3</code>.</p>
+          <img src="<%= h asset_path('/img/portfolio/gameresult.gif') %>" width="580" alt="Reporting a lost or drawn game in Slack" loading="lazy">
+        </details>
+        <details class="help-topic">
+          <summary>Where can I see the rankings?</summary>
+          <p>Use <code>@gamebot leaderboard 10</code> for the top ten players, or <code>@gamebot rank</code> for your own position.</p>
+          <img src="<%= h asset_path('/img/portfolio/teamrankings.png') %>" width="400" height="310" alt="A channel's Gamebot leaderboard in Slack" loading="lazy">
+        </details>
+        <details class="help-topic">
+          <summary>How do subscriptions work?</summary>
+          <p>Try GameBot free for two weeks, then subscribe your Slack team for $49.99 a year. DM the bot <code>help</code> for a subscription link, or <code>subscription</code> to see your subscription and payment details.</p>
+          <p>To cancel auto-renewal, DM <code>unsubscribe</code> and follow the bot's confirmation instructions.</p>
+        </details>
+        <details class="help-topic">
+          <summary>Where is the full command reference?</summary>
+          <p>Read the <a href="#command-reference">complete command reference below</a> for challenges, rankings, settings, captain controls, and more. You can also ask <code>@gamebot help</code> in Slack.</p>
+        </details>
+      </section>
+      <section class="help-section" id="command-reference" aria-labelledby="reference-title">
+        <h2 id="reference-title">Command reference</h2>
+        <p>In a channel, mention <code>@gamebot</code> before the command. Square brackets indicate optional arguments; angle brackets indicate placeholders. Subscription and account commands can also be sent by DM.</p>
+        <%= partial 'public/partials/_command_reference.html.erb' %>
+      </section>
+      <section class="help-section" id="support" aria-labelledby="support-title">
+        <h2 id="support-title">Need a hand?</h2>
+        <p><a href="https://github.com/dblock/slack-gamebot2/issues/new">Open an issue</a> or email <a href="mailto:dblock@vestris.com">dblock@vestris.com</a>.</p>
+      </section>
+    </main>
+    <%= partial 'public/partials/_footer.html.erb' %>
+    <%= partial 'public/partials/_scripts.html.erb' %>
+  </body>
+</html>

@@ -7,6 +7,10 @@ A leaderboard game bot for Slack. Install [here](https://gamebot2.playplay.io). 
 
 ![](screenshots/game.gif)
 
+## Website design
+
+The website uses Sup2's focused hero, product demonstrations, pricing panel, shared navigation/footer, and expandable help, with Gamebot's warm amber accents and original product screenshots. The existing `public/img/header-bg.jpg` ping-pong photograph remains unchanged and is still the hero background; it has not been replaced with ribbon artwork. Supporting pages share the same responsive layout. The help page includes the full command reference, examples and existing demonstration images in `public/partials/_command_reference.html.erb`; keep it in sync with the command documentation below and Slack's help. Keep the live statistics sources, OAuth scopes, two-week trial, $49.99 yearly team subscription, checkout handlers, and privacy-policy text intact.
+
 ## Usage
 
 Start talking to your bot!
@@ -843,10 +847,4 @@ This project is licensed under the [MIT License](LICENSE.md).
 
 ### Website caching
 
-Local website assets use `h asset_path('/img/example.png')` in ERB HTML
-and `asset_path('/img/example.png').to_json` in JavaScript to include a
-content hash. HTML and generated CSS revalidate with `private, no-cache`,
-configured centrally through `SlackRubyBotServer.config.server_pages`.
-Generated CSS also hashes nested artwork, so image-only changes are picked
-up on reload. Static files retain content ETags and timestamp validation;
-do not add immutable or long-lived cache policies.
+Local website assets use `h asset_path('/img/example.png')` in ERB HTML and `asset_path('/img/example.png').to_json` in JavaScript to include a content hash. HTML and generated CSS revalidate with `private, no-cache`, configured centrally through `SlackRubyBotServer.config.server_pages`. The generated `/styles.css` also hashes the original background photograph, so image-only changes are picked up on reload. Static files retain content ETags and timestamp validation; do not add immutable or long-lived cache policies.
