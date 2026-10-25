@@ -21,13 +21,13 @@
 <details class="help-topic command-topic">
   <summary><code>gamebot sucks</code></summary>
   <p dir="auto">You can tell the bot that it sucks. But it will talk back.</p>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/sucks.gif"><img src="/img/commands/sucks.gif" alt="Example of gamebot sucks" loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/sucks.gif') %>"><img src="<%= h asset_path('/img/commands/sucks.gif') %>" alt="Example of gamebot sucks" loading="lazy"></a></p>
 </details>
 
 <details class="help-topic command-topic">
   <summary><code>gamebot register</code></summary>
   <p dir="auto">Re-registers a user. This is automatic, but a user can unregister and come back with this command.</p>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/register.gif"><img src="/img/commands/register.gif" alt="Example of gamebot register" loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/register.gif') %>"><img src="<%= h asset_path('/img/commands/register.gif') %>" alt="Example of gamebot register" loading="lazy"></a></p>
 <p dir="auto">This command can also update a user's registration, for example after the user has been renamed. The bot notices user renames, but this may be necessary if the bot wasn't running during that operation.</p>
 <pre class="notranslate"><code class="notranslate">gamebot register
 
@@ -96,7 +96,7 @@ Wang Hoe and Zhang Jike accepted Victor Barna and Deng Yaping's challenge.
 <details class="help-topic command-topic">
   <summary><code>gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]</code></summary>
   <p dir="auto">Record your loss.</p>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/lost.gif"><img src="/img/commands/lost.gif" alt="Example of gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]" loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/lost.gif') %>"><img src="<%= h asset_path('/img/commands/lost.gif') %>" alt="Example of gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]" loading="lazy"></a></p>
 <p dir="auto">Record your loss with a score, loser first. The result verb depends on how lopsided the score is: <em>narrowly defeated</em>, <em>defeated</em>, <em>crushed</em>, or <em>humiliated</em> (shutout).</p>
 <pre class="notranslate"><code class="notranslate">gamebot lost 5:21
 
@@ -121,7 +121,7 @@ gamebot lost 15:21 21:17 18:21
 Match scores have been updated! Wang Hoe defeated Victor Barna with the scores of 21:15 17:21 21:18.
 </code></pre>
 <p dir="auto">You can record a loss without a challenge.</p>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/lost_to.gif"><img src="/img/commands/lost_to.gif" alt="Example of gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]" loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/lost_to.gif') %>"><img src="<%= h asset_path('/img/commands/lost_to.gif') %>" alt="Example of gamebot lost [to &lt;opponent&gt; [with &lt;teammate&gt;]] [score ...]" loading="lazy"></a></p>
 <p dir="auto">You can also record scores and record lost matches without a challenge including with multiple players.</p>
 <pre class="notranslate"><code class="notranslate">gamebot lost to @WangHoe @ZhangJike with @DengYaping 5:21
 
@@ -179,7 +179,7 @@ Match is a draw! Wang Hoe tied with Victor Barna with the score of 2:2.
 
 Match has been recorded! Victor Barna resigned against Wang Hoe.
 </code></pre>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/resigned.gif"><img src="/img/commands/resigned.gif" alt="Example of gamebot resigned [to &lt;opponent&gt; [with &lt;teammate&gt;]]" loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/resigned.gif') %>"><img src="<%= h asset_path('/img/commands/resigned.gif') %>" alt="Example of gamebot resigned [to &lt;opponent&gt; [with &lt;teammate&gt;]]" loading="lazy"></a></p>
 <p dir="auto">You can resign without a prior challenge.</p>
 <pre class="notranslate"><code class="notranslate">gamebot resigned to WangHoe
 
@@ -387,7 +387,7 @@ I've removed @WangHoe from the leaderboard.
 
 GIFs are now off.
 </code></pre>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/gifs.gif"><img src="/img/commands/gifs.gif" alt="Example of gamebot set gifs on|off" loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/gifs.gif') %>"><img src="<%= h asset_path('/img/commands/gifs.gif') %>" alt="Example of gamebot set gifs on|off" loading="lazy"></a></p>
 <p dir="auto">Using <code class="notranslate">unset gifs</code> is equivalent to <code class="notranslate">set gifs off</code>.</p>
 </details>
 
@@ -469,7 +469,7 @@ Glicko2 τ for #channel is 0.3.
 
 Bot aliases are set to pp and :pong:.
 </code></pre>
-<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/img/commands/aliases.gif"><img src="/img/commands/aliases.gif" alt="Example of gamebot set aliases &lt;alias|none&gt; ..." loading="lazy"></a></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="<%= h asset_path('/img/commands/aliases.gif') %>"><img src="<%= h asset_path('/img/commands/aliases.gif') %>" alt="Example of gamebot set aliases &lt;alias|none&gt; ..." loading="lazy"></a></p>
 <p dir="auto">Remove all aliases with <code class="notranslate">unset aliases</code>.</p>
 <p dir="auto">Aliases only work in public channels.</p>
 </details>

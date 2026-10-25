@@ -6,8 +6,8 @@ describe 'Website', :js, type: :feature do
   it 'keeps the original background photograph and loads the Slack demonstration' do
     visit '/'
     background = page.evaluate_script("getComputedStyle(document.querySelector('.hero')).backgroundImage")
-    expect(background).to include('/img/header-bg.jpg')
-    expect(page).to have_css('.hero-preview img[src="/img/slack.png"]') do |image|
+    expect(background).to include("/img/header-bg.jpg?v=#{Digest::SHA256.file('public/img/header-bg.jpg').hexdigest}")
+    expect(page).to have_css('.hero-preview img[src^="/img/slack.png?v="]') do |image|
       image.evaluate_script('this.complete && this.naturalWidth > 0')
     end
     expect(page).to have_css('#pricing .price', text: '$49.99')
