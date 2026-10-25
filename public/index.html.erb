@@ -21,305 +21,93 @@
     }
     </script>
   </head>
-  <body id="page-top" class="index">
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand page-scroll" href="#page-top">PlayPlay.io</a>
-        </div>
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav navbar-right">
-            <li class="hidden">
-              <a href="#page-top"></a>
-            </li>
-            <li>
-              <a class="page-scroll" href="#gotslack">Got Slack?</a>
-            </li>
-            <li>
-              <a class="page-scroll" href="#howtouse">How To Use</a>
-            </li>
-            <li>
-              <a class="page-scroll" href="#oss">Open-Source</a>
-            </li>
-            <li>
-              <a class="page-scroll" href="#api">API</a>
-            </li>
-            <li>
-              <a class="page-scroll" href="#contact">Help</a>
-            </li>
-            <li>
-              <a class="page-scroll" target="_blank" href="https://twitter.com/playplayio">Follow Us</a>
-            </li>
-          </ul>
-        </div>
-        <!-- /.navbar-collapse -->
-      </div>
-      <!-- /.container-fluid -->
-    </nav>
-    <!-- Header -->
-    <header>
-      <div class="container">
-        <div class="intro-text">
-          <div class="intro-lead-in">
-            Keep your leaderboard and scores in Slack.
-            <br class="hidden-xs">
-            <span class="hidden-xs">Ping pong, chess, and pool, all in one bot.</span>
-            <br><br>
-            <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add PlayPlay.io to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
-            <div id="tagline-wrapper">
-              <small id="active_teams_count" class="tagline" style="display: none;">The leaderboard bot for startup ping pong since 2016.</small>
+  <body id="page-top" class="site-page">
+    <%= partial 'public/partials/_navigation.html.erb' %>
+    <main id="main">
+      <div id="homepage">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="page-container">
+            <div class="hero-copy">
+              <h1 id="hero-title">Keep score.</h1>
+              <p class="hero-description">Challenge a colleague to ping pong, chess, or pool. Record the result and let Gamebot keep your channel's rankings up to date, right in Slack.</p>
+              <div class="hero-actions">
+                <%= partial 'public/partials/_install_button.html.erb' %>
+                <a class="hero-link" href="#howtouse">See how it works</a>
+              </div>
+              <p class="trial-note">Free for two weeks. Then $49.99 per team / year.</p>
             </div>
+            <figure class="hero-preview">
+              <img src="/img/slack.png" width="1600" height="1000" alt="Gamebot recording a challenge, match score, and leaderboard in a Slack channel">
+              <figcaption class="team-count"><span id="active_teams_count" class="tagline" style="display: none;">The leaderboard bot for startup ping pong since 2016.</span></figcaption>
+            </figure>
           </div>
+        </section>
+        <section class="feature-section" id="howtouse" aria-labelledby="challenge-title">
+          <div class="page-container feature-layout">
+            <div class="feature-copy">
+              <h2 id="challenge-title">Challenge someone</h2>
+              <p>Invite <code>@gamebot</code> to a channel, then challenge someone. Gamebot also supports doubles.</p>
+            </div>
+            <figure class="feature-preview">
+              <img src="/img/portfolio/challengesnapshot.png" width="611" height="384" alt="Gamebot announcing a teammate's game challenge in Slack" loading="lazy">
+            </figure>
+          </div>
+        </section>
+        <section class="feature-section" aria-labelledby="result-title">
+          <div class="page-container feature-layout">
+            <div class="feature-copy">
+              <h2 id="result-title">Don't be a loser</h2>
+              <p>Lost the game? Send <code>@gamebot lost</code>. In a draw, both players send <code>@gamebot draw</code>. Gamebot records the result and updates your rankings.</p>
+            </div>
+            <figure class="feature-preview">
+              <img src="/img/portfolio/resultsnapshot.png" width="612" height="362" alt="A lost match recorded in Slack with a reaction saying see you losers tomorrow" loading="lazy">
+            </figure>
+          </div>
+        </section>
+        <section class="feature-section" aria-labelledby="leaderboard-title">
+          <div class="page-container feature-layout">
+            <div class="feature-copy">
+              <h2 id="leaderboard-title">Stay on top</h2>
+              <p>Check your rank with <code>@gamebot rank</code>, or see the top ten with <code>@gamebot leaderboard 10</code>. Each channel keeps its own leaderboard.</p>
+            </div>
+            <figure class="feature-preview">
+              <img src="/img/portfolio/teamrankings.png" width="400" height="310" alt="Gamebot's channel leaderboard showing player rankings and Elo ratings" loading="lazy">
+            </figure>
+          </div>
+        </section>
+        <section class="pricing-section page-container" id="pricing" aria-label="Pricing">
           <div>
-            <img src='img/slack.png' width="100%" alt='PlayPlay.io leaderboard preview in Slack' class="header-screenshot">
+            <p>Try PlayPlay.io free for two weeks, then subscribe your Slack team for $49.99 a year.</p>
+            <p>DM the bot <code>help</code> for your subscription link. Cancel auto-renewal any time with <code>unsubscribe</code> and the bot's confirmation instructions.</p>
+            <a href="/help.html#support">Questions? We're here to help.</a>
           </div>
-        </div>
+          <div class="pricing-action">
+            <p class="section-label">Simple pricing</p>
+            <p class="price"><strong>$49.99</strong><span>per team / year</span></p>
+            <%= partial 'public/partials/_install_button.html.erb' %>
+          </div>
+        </section>
+        <section class="project-info page-container" id="oss" aria-labelledby="source-title">
+          <div>
+            <h2 id="source-title">Open by design.</h2>
+            <p>The bot and website are MIT-licensed Ruby code.<br><a href="https://github.com/dblock/slack-gamebot2">Explore the project on GitHub</a>.</p>
+          </div>
+          <div id="api">
+            <h3>Build on your game data.</h3>
+            <p>Your team data is accessible using AI or code.<br><a href="https://github.com/dblock/slack-gamebot2#api">Explore the API</a>.</p>
+          </div>
+        </section>
       </div>
-    </header>
-    <!--This section describes how to connect your slack account-->
-    <section id= "gotslack" class="bg-light-gray">
-      <div class="container">
-        <div class="row">
-          <div class="text-center">
-            <p class="text_muted">Invite the bot to a channel, then follow its lead.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- This section describes how to use the bots -->
-    <section id="howtouse">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h3 class="section-subheading text-muted">3 easy steps</h3>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4 col-sm-6 portfolio-item">
-            <a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-              <div class="portfolio-hover">
-                <div class="portfolio-hover-content">
-                  <i class="fa fa-plus fa-3x"></i>
-                  <img src="img/portfolio/welcomesnapshot.png" class="img-responsive" alt="Inviting gamebot to a Slack channel">
-                </div>
-              </div>
-            </a>
-            <div class="portfolio-caption">
-              <h4>Step 1</h4>
-              <p class="text-muted">Invite the gamebot to a channel</p>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-6 portfolio-item">
-            <a href="#portfolioModal2" class="portfolio-link" data-toggle="modal">
-              <div class="portfolio-hover">
-                <div class="portfolio-hover-content">
-                  <i class="fa fa-plus fa-3x"></i>
-                </div>
-              </div>
-              <img src="img/portfolio/challengesnapshot.png" class="img-responsive" alt="Challenging a teammate in Slack">
-            </a>
-            <div class="portfolio-caption">
-              <h4>Step 2</h4>
-              <p class="text-muted">Challenge someone</p>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-6 portfolio-item">
-            <a href="#portfolioModal3" class="portfolio-link" data-toggle="modal">
-              <div class="portfolio-hover">
-                <div class="portfolio-hover-content">
-                  <i class="fa fa-plus fa-3x"></i>
-                </div>
-              </div>
-              <img src="img/portfolio/resultsnapshot.png" class="img-responsive" alt="Reporting a game result in Slack">
-            </a>
-            <div class="portfolio-caption">
-              <h4>Step 3</h4>
-              <p class="text-muted">Send in the result</p>
-            </div>
-          </div>
-        </div>
-        <div class="row spacer"></div>
-        <h3 class="section-subheading text-muted text-center">
-          See <a href='https://github.com/dblock/slack-gamebot2#usage' target="_blank">detailed usage</a> for other commands.
-        </h3>
-        <div class="row text-center">
-          <a class="add-to-slack" href="<%= SlackRubyBotServer::Config.oauth_authorize_url %>?scope=<%= SlackRubyBotServer::Config.oauth_scope_s %>&amp;client_id=<%= ENV['SLACK_CLIENT_ID'] %>"><img alt="Add PlayPlay.io to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
-        </div>
-      </div>
-    </section>
-    <section id="trial" class="bg-light-gray">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h4>
-              <small>
-                Free 2 week trial. Type "help" to get a link to subscribe your team for $49.99/yr.
-              </small>
-            </h4>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="oss">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h3 class="section-heading">Open-Source</h3>
-            <h3 class="section-subheading text-muted">The game bot service and the playplay.io website are open-source under the MIT license.</h3>
-            <div><img src='img/github.png' alt='GitHub logo' class="img-responsive img-centered"></div>
-            <h3 class="section-subheading text-muted"><a href="https://github.com/dblock/slack-gamebot2" target="_blank">Fork us on Github</a></h3>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="api" class="bg-light-gray">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h3 class="setion-heading">Hypermedia API</h3>
-            <h3 class="section-subheading text-muted">All public game data is available via a Hypermedia HAL API.</h3>
-            <div><img src='img/api.png' alt='PlayPlay.io hypermedia API screenshot' class="img-responsive img-centered"></div>
-            <h3 class="section-subheading text-muted">Try <a href="<%= SlackRubyBotServer::Service.api_url %>" target="_blank"><%= SlackRubyBotServer::Service.api_url %></a>.</h3>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="contact">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h2 class="section-subheading text-muted">About Us and Help</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12 white text-center text-muted">
-            <a id="uptime" href="https://twitter.com/playplayio">
-              <h6 id="value" class="section-subheading text-center">&nbsp;</h6>
-            </a>
-            <div>
-              <a href='https://github.com/dblock/slack-gamebot2'>Fork me on Github</a>,
-              <a href='https://github.com/dblock/slack-gamebot2/issues/new'>open an issue</a>,
-              or <a href='mailto:dblock[at]vestris[dot]com'>e-mail dblock[at]vestris[dot]com</a>.
-              <br><br>
-              Follow Us at <a href='https://twitter.com/playplayio' target="_blank">@playplayio on X</a> and show us some love on <a href='https://www.producthunt.com/tech/playplay-io' target='_blank'>ProductHunt</a>.
-              <br><br>
-              tl;dr: PlayPlay.io does not want to know who you are and tries to collect just enough data to enable our services. Read our <a href='privacy.html' target="_blank">Privacy Policy</a>.
-              <br><br>
-              Playplay is written by <a href='https://twitter.com/dblockdotorg' target="_blank">@dblockdotorg</a>, 
-              <a href="https://www.vestris.com" target="_blank">&copy; Vestris LLC</a>.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Add your portfolio modal in this section -->
-    <!-- Portfolio Modal 1 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-          <div class="lr">
-            <div class="rl">
-            </div>
-          </div>
-        </div>
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-              <div class="modal-body">
-                <!-- Project Details Go Here -->
-                <h2>Step 1: Invite the gamebot</h2>
-                <p class="item-intro text-muted">Invite the gamebot</p>
-                <img class="img-responsive img-centered" src="img/portfolio/welcome.gif" alt="Inviting gamebot to a Slack channel">
-                <p>
-                  It's easy to join. Create a Slack channel (#pong, #chess, #pool or #tictactoe) and invite the bot (@gamebot) to it.
-                </p>
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Portfolio Modal 2 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-          <div class="lr">
-            <div class="rl">
-            </div>
-          </div>
-        </div>
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-              <div class="modal-body">
-                <h2>Step 2: Invite friends for a challenge</h2>
-                <p class="item-intro text-muted">Challenges a member of your team by sending: @gamebot challenge @opponent</p>
-                <img class="img-responsive img-centered" src="img/portfolio/gamechallenge.gif" alt="Issuing a game challenge in Slack">
-                <p class="item-intro text-muted">Accept the challenge with: @gamebot accept</p>
-                <img class="img-responsive img-centered" src="img/portfolio/gameaccept.gif" alt="Accepting a game challenge in Slack">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Portfolio Modal 3 -->
-    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-          <div class="lr">
-            <div class="rl">
-            </div>
-          </div>
-        </div>
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-              <div class="modal-body">
-                <h2>Results</h2>
-                <p class="item-intro text-muted">Lost the game? Send: @gamebot lost, in a draw both say @gamebot draw</p>
-                <img class="img-responsive img-centered" src="img/portfolio/gameresult.gif" alt="Reporting a lost or drawn game in Slack">
-                <p class="item-intro text-muted">Check your rankings with: @gamebot leaderboard 10 or @gamebot rank.</p>
-                <img class="img-responsive img-centered" src="img/portfolio/teamrankings.png" alt="Team rankings leaderboard in Slack">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="register" style="display: none;">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <div class="row spacer"></div>
-            <div id="messages" class="alert">just click the button</div>
-            <div class="alert">
-              <a href="https://twitter.com/share" class="twitter-share-button" data-url="<%= SlackRubyBotServer::Service.url %>" data-text="I'm team captain on playplay.io, a leaderboard bot for @SlackHQ @SlackAPI." data-via="playplayio" data-size="large" data-related="SlackAPI">Tweet</a>
-              <br><br>
-              <a href='<%= SlackRubyBotServer::Service.url %>'>Go back to playplay.io.</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <%= partial 'public/partials/_scripts.html' %>
-    <!-- Slack -->
-    <script src="js/register.js"></script>
-    <script src="js/status.js"></script>
-    <script src="js/toggle.js"></script>
-    <!-- Uptime -->
-    <script src="js/uptime.js"></script>
+      <section id="register" class="page-container registration-panel" style="display: none;" aria-labelledby="register-title">
+        <h1 id="register-title">Connect your Slack team</h1>
+        <p id="messages" role="status" aria-live="polite">Working, please wait ...</p>
+        <p>Invite the bot to a channel after installation, or <a href="/">go back to PlayPlay.io</a>.</p>
+      </section>
+    </main>
+    <%= partial 'public/partials/_footer.html.erb' %>
+    <%= partial 'public/partials/_scripts.html.erb' %>
+    <script src="/js/register.js"></script>
+    <script src="/js/status.js"></script>
+    <script src="/js/uptime.js"></script>
   </body>
 </html>

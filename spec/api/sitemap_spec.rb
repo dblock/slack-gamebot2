@@ -11,6 +11,7 @@ describe Api do
     expect(last_response.status).to eq 200
     expect(last_response.headers['Content-Type']).to include 'application/xml'
     expect(last_response.body).to include '<loc>https://gamebot2.playplay.io/</loc>'
+    expect(last_response.body).to include '<loc>https://gamebot2.playplay.io/help.html</loc>'
     expect(last_response.body).to include '<loc>https://gamebot2.playplay.io/privacy.html</loc>'
   end
 
