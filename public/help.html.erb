@@ -28,18 +28,18 @@
         <details class="help-topic">
           <summary>How do I challenge a teammate?</summary>
           <p>Send <code>@gamebot challenge @opponent</code>. Your opponent accepts with <code>@gamebot accept</code>. You can challenge anyone with <code>@gamebot challenge @here</code>, or include teammates with <code>with @teammate</code>.</p>
-          <img src="/img/portfolio/gamechallenge.gif" width="580" alt="Issuing a game challenge in Slack" loading="lazy">
-          <img src="/img/portfolio/gameaccept.gif" width="580" alt="Accepting a game challenge in Slack" loading="lazy">
+          <img src="<%= h asset_path('/img/portfolio/gamechallenge.gif') %>" width="580" alt="Issuing a game challenge in Slack" loading="lazy">
+          <img src="<%= h asset_path('/img/portfolio/gameaccept.gif') %>" width="580" alt="Accepting a game challenge in Slack" loading="lazy">
         </details>
         <details class="help-topic">
           <summary>How do I record a result?</summary>
           <p>Lost the game? Send <code>@gamebot lost</code>. If it was a draw, both sides send <code>@gamebot draw</code>. You can include the score, for example <code>@gamebot lost 1:3</code>.</p>
-          <img src="/img/portfolio/gameresult.gif" width="580" alt="Reporting a lost or drawn game in Slack" loading="lazy">
+          <img src="<%= h asset_path('/img/portfolio/gameresult.gif') %>" width="580" alt="Reporting a lost or drawn game in Slack" loading="lazy">
         </details>
         <details class="help-topic">
           <summary>Where can I see the rankings?</summary>
           <p>Use <code>@gamebot leaderboard 10</code> for the top ten players, or <code>@gamebot rank</code> for your own position.</p>
-          <img src="/img/portfolio/teamrankings.png" width="400" height="310" alt="A channel's Gamebot leaderboard in Slack" loading="lazy">
+          <img src="<%= h asset_path('/img/portfolio/teamrankings.png') %>" width="400" height="310" alt="A channel's Gamebot leaderboard in Slack" loading="lazy">
         </details>
         <details class="help-topic">
           <summary>How do subscriptions work?</summary>

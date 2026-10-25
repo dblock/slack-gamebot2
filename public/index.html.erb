@@ -37,7 +37,7 @@
               <p class="trial-note">Free for two weeks. Then $49.99 per team / year.</p>
             </div>
             <figure class="hero-preview">
-              <img src="/img/slack.png" width="1600" height="1000" alt="Gamebot recording a challenge, match score, and leaderboard in a Slack channel">
+              <img src="<%= h asset_path('/img/slack.png') %>" width="1600" height="1000" alt="Gamebot recording a challenge, match score, and leaderboard in a Slack channel">
               <figcaption class="team-count"><span id="active_teams_count" class="tagline" style="display: none;">The leaderboard bot for startup ping pong since 2016.</span></figcaption>
             </figure>
           </div>
@@ -49,7 +49,7 @@
               <p>Invite <code>@gamebot</code> to a channel, then challenge someone. Gamebot also supports doubles.</p>
             </div>
             <figure class="feature-preview">
-              <img src="/img/portfolio/challengesnapshot.png" width="611" height="384" alt="Gamebot announcing a teammate's game challenge in Slack" loading="lazy">
+              <img src="<%= h asset_path('/img/portfolio/challengesnapshot.png') %>" width="611" height="384" alt="Gamebot announcing a teammate's game challenge in Slack" loading="lazy">
             </figure>
           </div>
         </section>
@@ -60,7 +60,7 @@
               <p>Lost the game? Send <code>@gamebot lost</code>. In a draw, both players send <code>@gamebot draw</code>. Gamebot records the result and updates your rankings.</p>
             </div>
             <figure class="feature-preview">
-              <img src="/img/portfolio/resultsnapshot.png" width="612" height="362" alt="A lost match recorded in Slack with a reaction saying see you losers tomorrow" loading="lazy">
+              <img src="<%= h asset_path('/img/portfolio/resultsnapshot.png') %>" width="612" height="362" alt="A lost match recorded in Slack with a reaction saying see you losers tomorrow" loading="lazy">
             </figure>
           </div>
         </section>
@@ -71,7 +71,7 @@
               <p>Check your rank with <code>@gamebot rank</code>, or see the top ten with <code>@gamebot leaderboard 10</code>. Each channel keeps its own leaderboard.</p>
             </div>
             <figure class="feature-preview">
-              <img src="/img/portfolio/teamrankings.png" width="400" height="310" alt="Gamebot's channel leaderboard showing player rankings and Elo ratings" loading="lazy">
+              <img src="<%= h asset_path('/img/portfolio/teamrankings.png') %>" width="400" height="310" alt="Gamebot's channel leaderboard showing player rankings and Elo ratings" loading="lazy">
             </figure>
           </div>
         </section>
@@ -106,8 +106,8 @@
     </main>
     <%= partial 'public/partials/_footer.html.erb' %>
     <%= partial 'public/partials/_scripts.html.erb' %>
-    <script src="/js/register.js"></script>
-    <script src="/js/status.js"></script>
-    <script src="/js/uptime.js"></script>
+    <script src="<%= h asset_path('/js/register.js') %>"></script>
+    <script src="<%= h asset_path('/js/status.js') %>"></script>
+    <script src="<%= h asset_path('/js/uptime.js') %>"></script>
   </body>
 </html>

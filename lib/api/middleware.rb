@@ -26,7 +26,9 @@ module SlackGamebot
 
           use Rack::Robotz, 'User-Agent' => '*', 'Disallow' => '/api', 'Sitemap' => "#{SlackRubyBotServer::Service.url}/sitemap.xml"
 
-          use Rack::ServerPages
+          use Rack::ServerPages do |pages|
+            SlackRubyBotServer.config.server_pages&.call(pages)
+          end
 
           run SlackGamebot::Api::Middleware.new
         end.to_app
