@@ -11,6 +11,8 @@ A leaderboard game bot for Slack. Install [here](https://gamebot2.playplay.io). 
 
 The website uses Sup2's focused hero, product demonstrations, pricing panel, shared navigation/footer, and expandable help, with Gamebot's warm amber accents and original product screenshots. The existing `public/img/header-bg.jpg` ping-pong photograph remains unchanged and is still the hero background; it has not been replaced with ribbon artwork. Supporting pages share the same responsive layout. The help page includes the full command reference, examples and existing demonstration images in `public/partials/_command_reference.html.erb`; keep it in sync with the command documentation below and Slack's help. Keep the live statistics sources, OAuth scopes, two-week trial, $49.99 yearly team subscription, checkout handlers, and privacy-policy text intact.
 
+The site uses only `public/styles.css.erb` for styling. The retired Agency/Bootstrap theme, Font Awesome, bundled theme fonts, LESS/Sass sources and unused theme/widget scripts have been removed; original artwork and historical license credits remain.
+
 ## Usage
 
 Start talking to your bot!

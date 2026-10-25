@@ -1,4 +1,6 @@
-# [Start Bootstrap](http://startbootstrap.com): [Agency](http://startbootstrap.com/template-overviews/agency)
+# Legacy website theme
+
+The Agency theme and its bundled assets are no longer used. These original credits are retained for historical attribution.
 
 [Agency](http://startbootstrap.com/template-overviews/agency/) is a one page agency portfolio theme for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/). Start Bootstrap was created by and is maintained by **David Miller**, Managing Partner at [Iron Summit Media Strategies](http://www.ironsummitmedia.com/).
 
