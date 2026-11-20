@@ -1,5 +1,6 @@
 ### Change Log
 
+* 2026/11/20: Upgrade Ruby to 4.0.10 and update dependencies to their latest minor versions, leaving Stripe dependencies unchanged - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/10/25: Redesign the website with Sup2-inspired layout, shared navigation, clear game demonstrations, pricing, expandable FAQ and a complete command reference while preserving the original ping-pong background photograph, Slack installation, live statistics, payments, and privacy text - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/10/25: Upgrade slack-ruby-bot-server to 2.3 and rack-server-pages to 0.3; version local website assets, revalidate pages and generated CSS, and remove unused legacy theme assets - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).
 * 2026/10/23: Upgrade Ruby to 4.0.9 and refresh dependencies, leaving Stripe dependencies unchanged - [@dblock](https://github.com/dblock), [@Copilot](https://github.com/apps/copilot-swe-agent).

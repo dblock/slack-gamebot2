@@ -2,7 +2,7 @@
 
 source 'http://rubygems.org'
 
-ruby '4.0.9'
+ruby '4.0.10'
 
 gem 'chronic_duration'
 gem 'faraday', '~> 2.14.3'
